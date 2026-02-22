@@ -87,14 +87,14 @@ export async function POST(request: Request) {
       now
     );
 
-    const entry = db.prepare("SELECT * FROM knowledge WHERE id = ?").get(result.lastInsertRowid);
+    const entry = db.prepare("SELECT * FROM knowledge WHERE id = ?").get(result.lastInsertRowid) as Record<string, unknown> | undefined;
 
     return NextResponse.json({
       success: true,
-      entry: {
+      entry: entry ? {
         ...entry,
-        tags: entry.tags ? JSON.parse(entry.tags) : []
-      },
+        tags: entry.tags ? JSON.parse(entry.tags as string) : []
+      } : null,
       message: "Knowledge added"
     });
   } catch (error) {

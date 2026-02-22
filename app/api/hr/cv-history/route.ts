@@ -1,0 +1,207 @@
+import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+import { getCVHistoryFromDB } from "@/lib/hr-db";
+
+const MEMORY_DIR = path.join(
+  process.env.HOME || "/root",
+  ".openclaw/workspace/memory"
+);
+
+export interface CVHistoryEntry {
+  id: number;
+  company: string;
+  role: string;
+  atsScore: number | null;
+  date: string;
+  outcome: string;
+}
+
+/** Map a status string to a display outcome label */
+function mapOutcome(status: string): string {
+  const s = (status || "").toLowerCase();
+  if (s.includes("interview")) return "Interview";
+  if (s.includes("offer")) return "Offered";
+  if (s.includes("reject")) return "Rejected";
+  if (s.includes("submit") || s.includes("generated") || s.includes("ready")) return "Submitted";
+  if (s.includes("withdraw")) return "Rejected";
+  return "Pending";
+}
+
+/** Parse ATS score from file content like "ATS Score: 82%" or "ATS Score Estimate: 91%" */
+function extractAtsScore(content: string): number | null {
+  const match = content.match(/ATS\s+Score(?:\s+Estimate)?[:\s*]*(\d+)%/i);
+  if (match) return parseInt(match[1], 10);
+  return null;
+}
+
+/** Extract company name from cv-output file content */
+function extractCompanyFromContent(content: string, filename: string): string {
+  // Try "Company: Foo" header first
+  const companyMatch = content.match(/^\*?\*?Company\*?\*?:\s*(.+)$/im);
+  if (companyMatch) return companyMatch[1].trim();
+
+  // Try "Ahmed Nasr × Company Name" pattern
+  const crossMatch = content.match(/Ahmed\s+Nasr\s*[×x]\s*(.+?)(?:\n|$)/i);
+  if (crossMatch) return crossMatch[1].trim();
+
+  // Try "CV Analysis: CompanyName"
+  const analysisMatch = content.match(/CV\s+Analysis:\s*(.+?)(?:\s+-\s|\n|$)/i);
+  if (analysisMatch) return analysisMatch[1].trim();
+
+  // Fall back to filename: cv-output-2026-02-21-delphi → "Delphi"
+  const slug = filename.replace(/^cv-output-\d{4}-\d{2}-\d{2}-/, "").replace(".md", "");
+  return slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/** Extract role from cv-output file content */
+function extractRoleFromContent(content: string): string {
+  // Try "Role: Senior AI PM" header
+  const roleMatch = content.match(/^\*?\*?Role\*?\*?:\s*(.+)$/im);
+  if (roleMatch) return roleMatch[1].trim();
+
+  // Try "CV Analysis: Company Name - Role Title"
+  const analysisMatch = content.match(/CV\s+Analysis:\s*.+?-\s*(.+?)(?:\n|$)/i);
+  if (analysisMatch) return analysisMatch[1].trim();
+
+  // Try first h2 after the personal details block
+  const h2Match = content.match(/^## (.+)$/m);
+  if (h2Match && !/professional summary|core competencies|Ahmed Nasr/i.test(h2Match[1])) {
+    return h2Match[1].trim();
+  }
+
+  return "Unknown Role";
+}
+
+/** Extract date from cv-output filename: cv-output-2026-02-21-foo.md */
+function extractDateFromFilename(filename: string): string {
+  const match = filename.match(/cv-output-(\d{4}-\d{2}-\d{2})/);
+  return match ? match[1] : new Date().toISOString().split("T")[0];
+}
+
+/** Parse cv-history.md for structured entries */
+function parseCVHistoryFile(): CVHistoryEntry[] {
+  const filePath = path.join(MEMORY_DIR, "cv-history.md");
+  if (!fs.existsSync(filePath)) return [];
+
+  const content = fs.readFileSync(filePath, "utf-8");
+  const entries: CVHistoryEntry[] = [];
+  let idCounter = 1000; // offset to avoid collision with DB ids
+
+  // Match blocks: ## Company - Role / **Company:** / **ATS Score:** / **Status:** / **Date:**
+  const blocks = content.split(/^##\s+/m).slice(1);
+  for (const block of blocks) {
+    const lines = block.split("\n");
+    const headline = lines[0]?.trim() || "";
+    // "GMG - Transformational Senior Manager" style
+    const [companyRaw, ...roleParts] = headline.split("-");
+    const company = companyRaw?.trim() || "Unknown";
+    const role = roleParts.join("-").trim() || "Unknown Role";
+
+    const atsMatch = block.match(/\*?\*?ATS\s+Score\*?\*?:\s*(\d+)%/i);
+    const atsScore = atsMatch ? parseInt(atsMatch[1], 10) : null;
+    const statusMatch = block.match(/\*?\*?Status\*?\*?:\s*(.+?)(?:\n|$)/i);
+    const outcome = mapOutcome(statusMatch?.[1] || "");
+    const dateMatch = block.match(/\*?\*?Date\*?\*?:\s*(\d{4}-\d{2}-\d{2})/i);
+    const date = dateMatch?.[1] || new Date().toISOString().split("T")[0];
+
+    if (company && company !== "Unknown") {
+      entries.push({ id: idCounter++, company, role, atsScore, date, outcome });
+    }
+  }
+  return entries;
+}
+
+/** Scan memory directory for cv-output-*.md files */
+function parseCVOutputFiles(): CVHistoryEntry[] {
+  try {
+    const files = fs.readdirSync(MEMORY_DIR).filter(
+      (f) => f.startsWith("cv-output-") && f.endsWith(".md")
+    );
+
+    const entries: CVHistoryEntry[] = [];
+    let idCounter = 2000;
+
+    for (const file of files) {
+      const content = fs.readFileSync(path.join(MEMORY_DIR, file), "utf-8");
+      const company = extractCompanyFromContent(content, file);
+      const role = extractRoleFromContent(content);
+      const atsScore = extractAtsScore(content);
+      const date = extractDateFromFilename(file);
+
+      // Infer outcome: if ats_score >= 85 and exists, treat as submitted; no status clue otherwise
+      entries.push({
+        id: idCounter++,
+        company,
+        role,
+        atsScore,
+        date,
+        outcome: "Submitted",
+      });
+    }
+
+    return entries;
+  } catch {
+    return [];
+  }
+}
+
+const FALLBACK: CVHistoryEntry[] = [
+  {
+    id: 1,
+    company: "Delphi Consulting",
+    role: "Senior AI PM",
+    atsScore: 91,
+    date: "2026-02-21",
+    outcome: "Interview",
+  },
+];
+
+export async function GET() {
+  try {
+    // 1) Try DB
+    const dbRows = getCVHistoryFromDB(100);
+    if (dbRows.length > 0) {
+      const history: CVHistoryEntry[] = dbRows.map((r, i) => ({
+        id: r.id,
+        company: r.company,
+        role: r.jobTitle,
+        atsScore: r.atsScore,
+        date: r.createdAt.split("T")[0],
+        outcome: mapOutcome(r.status),
+      }));
+      return NextResponse.json({ history });
+    }
+
+    // 2) Try cv-history.md file
+    const fileHistory = parseCVHistoryFile();
+
+    // 3) Parse cv-output-*.md files
+    const outputFiles = parseCVOutputFiles();
+
+    // Merge: prefer cv-history.md entries over output files (output files deduplicated by company+role)
+    const seen = new Set<string>();
+    const merged: CVHistoryEntry[] = [];
+
+    for (const entry of [...fileHistory, ...outputFiles]) {
+      const key = `${entry.company}|${entry.role}`.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        merged.push(entry);
+      }
+    }
+
+    // Sort by date descending
+    merged.sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
+
+    if (merged.length > 0) {
+      return NextResponse.json({ history: merged });
+    }
+
+    // 4) Hardcoded fallback from GOALS.md
+    return NextResponse.json({ history: FALLBACK });
+  } catch (err) {
+    console.error("[HR CV History API]", err);
+    return NextResponse.json({ history: FALLBACK }, { status: 200 });
+  }
+}

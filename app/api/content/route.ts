@@ -79,7 +79,7 @@ export async function PATCH(request: Request) {
     const now = new Date().toISOString();
     
     // Check if post exists and get current status
-    const existing = db.prepare("SELECT * FROM content_posts WHERE id = ?").get(id);
+    const existing = db.prepare("SELECT * FROM content_posts WHERE id = ?").get(id) as Record<string, unknown> | undefined;
     if (!existing) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
@@ -96,10 +96,10 @@ export async function PATCH(request: Request) {
       WHERE id = ?
     `).run(status, content, assignee, priority, title, now, id);
 
-    const updated = db.prepare("SELECT * FROM content_posts WHERE id = ?").get(id);
+    const updated = db.prepare("SELECT * FROM content_posts WHERE id = ?").get(id) as Record<string, unknown> | undefined;
 
     // Trigger posting if status changed to Published
-    if (status === "Published" && existing.status !== "Published") {
+    if (status === "Published" && updated && existing.status !== "Published") {
       try {
         // Post to the appropriate platform
         if (updated.platform === "LinkedIn" || updated.platform === "Both") {
