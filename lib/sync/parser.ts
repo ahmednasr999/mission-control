@@ -516,18 +516,18 @@ export function parseCVHistory(content: string): ParsedCVHistory[] {
   for (const line of lines) {
     const trimmed = line.trim();
 
-    // Entry heading: ## Title - Company
+    // Entry heading: ## Company - Job Title (cv-history.md format)
     if (trimmed.startsWith('## ') && !trimmed.toLowerCase().includes('cv history')) {
       flush();
       const heading = trimmed.replace(/^##\s*/, '');
-      // Split on " - " for "Title - Company" format
+      // Split on " - " for "Company - Job Title" format
       const dashIdx = heading.indexOf(' - ');
       if (dashIdx > -1) {
-        currentTitle = heading.substring(0, dashIdx).trim();
-        company = heading.substring(dashIdx + 3).trim();
+        company = heading.substring(0, dashIdx).trim();      // First part is company
+        currentTitle = heading.substring(dashIdx + 3).trim(); // Second part is job title
       } else {
-        currentTitle = heading;
-        company = '';
+        company = heading;
+        currentTitle = '';
       }
       inEntry = true;
       continue;

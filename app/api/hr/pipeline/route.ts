@@ -18,9 +18,9 @@ const DB_PATH = "/root/.openclaw/workspace/mission-control/mission-control.db";
 function getAtsFromCvHistory(company: string): number | null {
   try {
     const db = new Database(DB_PATH, { readonly: true });
-    // Search by jobTitle column (which stores company name due to parser swap)
+    // Search by company column (now correctly populated after parser fix)
     const row = db
-      .prepare("SELECT atsScore FROM cv_history WHERE jobTitle = ? LIMIT 1")
+      .prepare("SELECT atsScore FROM cv_history WHERE company = ? LIMIT 1")
       .get(company) as { atsScore: number | null } | undefined;
     db.close();
     return row?.atsScore ?? null;
