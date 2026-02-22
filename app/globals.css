@@ -807,9 +807,9 @@ select.toolbar-btn option {
 .tag-linkedin { background: rgba(10, 102, 194, 0.15); color: #60a5fa; }
 .tag-x { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
 
-/* Hamburger menu - mobile only */
+/* Hamburger menu - all screen sizes */
 .topbar-hamburger {
-  display: none;
+  display: flex;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -822,10 +822,4 @@ select.toolbar-btn option {
 .topbar-hamburger:hover {
   color: #F0F0F5;
   background: rgba(255, 255, 255, 0.05);
-}
-
-@media (max-width: 767px) {
-  .topbar-hamburger {
-    display: flex;
-  }
 }

@@ -2,9 +2,11 @@
 
 /**
  * DashboardShell — Client wrapper for the dashboard layout.
- * Phase 2: Handles mobile sidebar toggle state.
- * - Desktop (≥768px): Sidebar always visible
- * - Mobile (<768px): Sidebar hidden behind hamburger toggle
+ * Phase 2: Collapsible sidebar on all screen sizes.
+ * - Hamburger always visible
+ * - Sidebar collapsed by default, toggle to open
+ * - Mobile: slides over with backdrop
+ * - Desktop: slides beside content
  */
 
 import { useState, useEffect, useCallback } from "react";
@@ -25,9 +27,7 @@ export default function DashboardShell({ children }: DashboardShellProps) {
   // Detect mobile on mount and resize
   useEffect(() => {
     const checkMobile = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (!mobile) setSidebarOpen(false); // reset when going back to desktop
+      setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
@@ -48,7 +48,7 @@ export default function DashboardShell({ children }: DashboardShellProps) {
           position: "relative",
         }}
       >
-        {/* Sidebar — always visible on desktop, slide-in on mobile */}
+        {/* Sidebar — collapsible on all screen sizes */}
         <div
           style={{
             position: isMobile ? "fixed" : "relative",
@@ -56,15 +56,15 @@ export default function DashboardShell({ children }: DashboardShellProps) {
             left: 0,
             height: "100vh",
             zIndex: isMobile ? 50 : "auto",
-            transform: isMobile ? (sidebarOpen ? "translateX(0)" : "translateX(-100%)") : "none",
-            transition: isMobile ? "transform 0.25s ease" : "none",
+            transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
+            transition: "transform 0.25s ease",
             flexShrink: 0,
           }}
         >
           <Sidebar />
         </div>
 
-        {/* Mobile overlay backdrop */}
+        {/* Overlay backdrop — mobile only */}
         {isMobile && sidebarOpen && (
           <div
             onClick={closeSidebar}
