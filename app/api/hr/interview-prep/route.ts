@@ -7,8 +7,7 @@ const MEMORY_DIR = path.join(
   ".openclaw/workspace/memory"
 );
 
-// Static interview prep data - loaded from memory files
-const INTERVIEW_PREP_DATA: Record<string, {
+interface InterviewPrepData {
   company: string;
   role: string;
   atsScore: number;
@@ -18,7 +17,10 @@ const INTERVIEW_PREP_DATA: Record<string, {
   strengths: string[];
   salaryTarget: string;
   notes: string;
-}> = {
+  jdFile?: string;
+}
+
+const INTERVIEW_PREP_DATA: Record<string, InterviewPrepData> = {
   "delphi consulting": {
     company: "Delphi Consulting",
     role: "Senior AI Project Manager",
@@ -57,7 +59,8 @@ const INTERVIEW_PREP_DATA: Record<string, {
       "Power Platform implementation (40% efficiency gains)"
     ],
     salaryTarget: "50,000-55,000 AED/month",
-    notes: "Interview with Kritika Chhabra. JD emphasizes: end-to-end delivery, AI/ML hands-on, Power Platform, C-level stakeholder management, budget ownership. CV highlights: $50M transformation, Talabat scale story, PMP/CSM/CSPO certs, Power Platform efficiency gains."
+    notes: "Interview with Kritika Chhabra. JD emphasizes: end-to-end delivery, AI/ML hands-on, Power Platform, C-level stakeholder management, budget ownership. CV highlights: $50M transformation, Talabat scale story, PMP/CSM/CSPO certs, Power Platform efficiency gains.",
+    jdFile: "/jd/Delphi - Senior AI PM - UAE.pdf"
   }
 };
 
@@ -65,10 +68,8 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const company = searchParams.get("company")?.toLowerCase() || "";
   
-  // Try exact match first
   let prepData = INTERVIEW_PREP_DATA[company];
   
-  // Try partial match
   if (!prepData) {
     for (const key of Object.keys(INTERVIEW_PREP_DATA)) {
       if (company.includes(key) || key.includes(company)) {
@@ -78,7 +79,6 @@ export async function GET(request: Request) {
     }
   }
   
-  // Try to load from memory files if not in static data
   if (!prepData) {
     try {
       const files = fs.readdirSync(MEMORY_DIR).filter(

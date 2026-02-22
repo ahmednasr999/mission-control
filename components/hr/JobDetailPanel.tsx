@@ -23,6 +23,7 @@ interface InterviewPrep {
   strengths: string[];
   salaryTarget: string;
   notes: string;
+  jdFile?: string;
 }
 
 interface JobDetailPanelProps {
@@ -547,6 +548,33 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
                   Interview Prep
                 </span>
               </div>
+
+              {/* JD File Link */}
+              {interviewPrep.jdFile && (
+                <div style={{ marginBottom: "12px" }}>
+                  <a
+                    href={interviewPrep.jdFile}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: "10px 14px",
+                      background: "rgba(79, 142, 247, 0.15)",
+                      border: "1px solid rgba(79, 142, 247, 0.3)",
+                      borderRadius: "6px",
+                      color: "#4F8EF7",
+                      fontSize: "13px",
+                      fontWeight: 600,
+                      textDecoration: "none",
+                    }}
+                  >
+                    <FileText size={14} />
+                    View Job Description (PDF)
+                  </a>
+                </div>
+              )}
 
               {/* Company Research */}
               {interviewPrep.companyResearch && (
