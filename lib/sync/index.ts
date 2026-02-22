@@ -353,12 +353,15 @@ export async function initSync(): Promise<void> {
     console.log('[sync] Cron sync triggered');
 
     // Phase 2: Check if sync has been failing for > 5 minutes
-    const msSinceLastSync = Date.now() - lastSuccessfulSyncTime;
-    if (msSinceLastSync > SYNC_FAILURE_ALERT_MS) {
-      const minutesAgo = Math.round(msSinceLastSync / 60_000);
-      const alertMsg = `Sync stale — last successful sync was ${minutesAgo} minute(s) ago`;
-      logSyncFailure(alertMsg);
-      await sendTelegramAlert(`⚠️ Mission Control sync alert: ${alertMsg}`);
+    // Only alert if we've actually completed at least one sync since startup
+    if (lastFullSync) {
+      const msSinceLastSync = Date.now() - lastSuccessfulSyncTime;
+      if (msSinceLastSync > SYNC_FAILURE_ALERT_MS) {
+        const minutesAgo = Math.round(msSinceLastSync / 60_000);
+        const alertMsg = `Sync stale — last successful sync was ${minutesAgo} minute(s) ago`;
+        logSyncFailure(alertMsg);
+        await sendTelegramAlert(`⚠️ Mission Control sync alert: ${alertMsg}`);
+      }
     }
 
     await syncAll();
