@@ -8,7 +8,6 @@ import PipelinePreview from "@/components/command-center/PipelinePreview";
 import ActivityFeed from "@/components/command-center/ActivityFeed";
 import ContentPreview from "@/components/command-center/ContentPreview";
 import GoalsProgress from "@/components/command-center/GoalsProgress";
-import QuickActionsBar from "@/components/command-center/QuickActionsBar";
 
 // ---- Types ----
 
@@ -333,9 +332,6 @@ export default function CommandCenterPage() {
           Mission overview — live data pipeline
         </p>
       </div>
-
-      {/* Quick Actions Bar */}
-      <QuickActionsBar />
 
       {/* Alert Banner */}
       <AlertBanner alerts={data.alerts} />
