@@ -1,15 +1,14 @@
 "use client";
 
 /**
- * ActivityFeed — Phase 3: A+ Animations
- * - Staggered slide-in on mount
- * - Hover lift with icon pulse
- * - Timestamp fade
- * - Card entrance animation
+ * ActivityFeed — Phase 3: A+ Polish (SSR-safe)
+ * - Staggered fade-in using CSS only
+ * - Hover lift effects
+ * - SSR-safe (no state changes on mount)
  */
 
-import { useEffect, useState } from "react";
-import { CheckCircle2, Briefcase, FileText, Zap, Clock } from "lucide-react";
+import { useState } from "react";
+import { CheckCircle2, Briefcase, Zap, Clock } from "lucide-react";
 
 interface Activity {
   id: string;
@@ -51,61 +50,52 @@ const TYPE_STYLES: Record<string, { bg: string; border: string; icon: string }> 
 };
 
 export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityFeedProps) {
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [mounted, setMounted] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  useEffect(() => {
-    setMounted(true);
-    const generated: Activity[] = [];
+  // Build activities synchronously (SSR-safe)
+  const activities: Activity[] = [];
 
-    // Add task activities
-    if (tasks?.length > 0) {
-      tasks.slice(0, 3).forEach((task, i) => {
-        generated.push({
-          id: `task-${i}`,
-          type: "task",
-          icon: <CheckCircle2 size={14} />,
-          message: `Task "${task.title}" marked ${task.status}`,
-          timestamp: task.updatedAt || new Date().toISOString(),
-          timeAgo: getTimeAgo(task.updatedAt),
-        });
+  if (tasks?.length > 0) {
+    tasks.slice(0, 3).forEach((task, i) => {
+      activities.push({
+        id: `task-${i}`,
+        type: "task",
+        icon: <CheckCircle2 size={14} />,
+        message: `Task "${task.title}" marked ${task.status}`,
+        timestamp: task.updatedAt || new Date().toISOString(),
+        timeAgo: getTimeAgo(task.updatedAt),
       });
-    }
+    });
+  }
 
-    // Add job activities
-    if (jobs?.length > 0) {
-      jobs.slice(0, 2).forEach((job, i) => {
-        generated.push({
-          id: `job-${i}`,
-          type: "job",
-          icon: <Briefcase size={14} />,
-          message: `${job.company} — ${job.role} (${job.status})`,
-          timestamp: job.updatedAt || new Date().toISOString(),
-          timeAgo: getTimeAgo(job.updatedAt),
-        });
+  if (jobs?.length > 0) {
+    jobs.slice(0, 2).forEach((job, i) => {
+      activities.push({
+        id: `job-${i}`,
+        type: "job",
+        icon: <Briefcase size={14} />,
+        message: `${job.company} — ${job.role} (${job.status})`,
+        timestamp: job.updatedAt || new Date().toISOString(),
+        timeAgo: getTimeAgo(job.updatedAt),
       });
-    }
+    });
+  }
 
-    // Add agent activities
-    if (agents?.length > 0) {
-      agents.slice(0, 2).forEach((agent, i) => {
-        generated.push({
-          id: `agent-${i}`,
-          type: "agent",
-          icon: <Zap size={14} />,
-          message: `${agent.emoji} ${agent.name}: ${agent.lastAction}`,
-          timestamp: agent.timestamp || new Date().toISOString(),
-          timeAgo: getTimeAgo(agent.timestamp),
-        });
+  if (agents?.length > 0) {
+    agents.slice(0, 2).forEach((agent, i) => {
+      activities.push({
+        id: `agent-${i}`,
+        type: "agent",
+        icon: <Zap size={14} />,
+        message: `${agent.emoji} ${agent.name}: ${agent.lastAction}`,
+        timestamp: agent.timestamp || new Date().toISOString(),
+        timeAgo: getTimeAgo(agent.timestamp),
       });
-    }
+    });
+  }
 
-    // Sort by timestamp (newest first)
-    generated.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-
-    setActivities(generated.slice(0, 6));
-  }, [tasks, jobs, agents, loading]);
+  activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  const displayActivities = activities.slice(0, 6);
 
   if (loading) {
     return (
@@ -117,36 +107,20 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
   }
 
   return (
-    <div style={{
-      ...cardStyle,
-      opacity: mounted ? 1 : 0,
-      transform: mounted ? "translateY(0)" : "translateY(12px)",
-      transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-    }}>
+    <div style={cardStyle}>
       <style>{`
         @keyframes slideInRight {
-          from { 
-            opacity: 0; 
-            transform: translateX(10px);
-          }
-          to { 
-            opacity: 1; 
-            transform: translateX(0);
-          }
-        }
-        @keyframes iconPulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.15); }
+          from { opacity: 0; transform: translateX(10px); }
+          to { opacity: 1; transform: translateX(0); }
         }
         .activity-item {
           animation: slideInRight 0.3s ease forwards;
-          opacity: 0;
         }
       `}</style>
 
-      <CardHeader title="Live Activity" icon={<Clock size={16} />} badge={activities.length} />
+      <CardHeader title="Live Activity" icon={<Clock size={16} />} badge={displayActivities.length} />
 
-      {activities.length === 0 ? (
+      {displayActivities.length === 0 ? (
         <EmptyState
           message="No recent activity"
           submessage="Start working — actions will appear here"
@@ -154,7 +128,7 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
         />
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          {activities.map((activity, i) => {
+          {displayActivities.map((activity, i) => {
             const styles = TYPE_STYLES[activity.type];
             const isHovered = hoveredId === activity.id;
 
@@ -170,7 +144,7 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
                   background: isHovered ? styles.bg.replace("0.08", "0.15") : styles.bg,
                   border: `1px solid ${isHovered ? styles.border.replace("0.2", "0.4") : styles.border}`,
                   borderRadius: "8px",
-                  transform: isHovered ? "translateX(6px) scale(1.01)" : "translateX(0) scale(1)",
+                  transform: isHovered ? "translateX(6px)" : "translateX(0)",
                   transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
                   cursor: "pointer",
                   animationDelay: `${i * 50}ms`,
@@ -184,7 +158,6 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
                   marginTop: "2px",
                   transform: isHovered ? "scale(1.2)" : "scale(1)",
                   transition: "transform 0.2s ease",
-                  animation: isHovered ? "iconPulse 0.4s ease" : "none",
                 }}>
                   {activity.icon}
                 </span>
@@ -225,8 +198,6 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
     </div>
   );
 }
-
-// ---- Subcomponents ----
 
 function CardHeader({ title, icon, badge }: { title: string; icon: React.ReactNode; badge?: number }) {
   return (
@@ -278,15 +249,8 @@ function EmptyState({ message, submessage, action }: { message: string; submessa
         textAlign: "center",
         padding: "24px 16px",
         color: "#A0A0B0",
-        animation: "fadeIn 0.4s ease",
       }}
     >
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
       <div style={{ fontSize: "24px", marginBottom: "8px" }}>📭</div>
       <div
         style={{
