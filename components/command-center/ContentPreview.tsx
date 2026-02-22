@@ -26,12 +26,13 @@ interface StageColumnProps {
   delay?: number;
 }
 
-// Animated counter hook
+// Animated counter hook - browser only
 function useAnimatedCounter(target: number, duration = 800, startOnMount = true) {
   const [count, setCount] = useState(0);
   const hasStarted = useRef(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (!startOnMount || hasStarted.current) return;
     hasStarted.current = true;
 

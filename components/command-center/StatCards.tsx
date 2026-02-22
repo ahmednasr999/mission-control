@@ -34,12 +34,13 @@ interface StatCardProps {
   delay?: number;
 }
 
-// Animated counter hook
+// Animated counter hook - browser only
 function useAnimatedCounter(target: number, duration = 600) {
   const [count, setCount] = useState(0);
   const prevTargetRef = useRef(target);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (target === prevTargetRef.current) return;
     prevTargetRef.current = target;
 

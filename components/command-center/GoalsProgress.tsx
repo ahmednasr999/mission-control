@@ -18,12 +18,13 @@ interface Goal {
   status: string;
 }
 
-// Animated progress hook
+// Animated progress hook - browser only
 function useAnimatedProgress(target: number, duration = 1000, delay = 0) {
   const [progress, setProgress] = useState(0);
   const hasStarted = useRef(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (hasStarted.current) return;
 
     const startTimer = setTimeout(() => {
