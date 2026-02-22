@@ -74,13 +74,12 @@ function logSyncFailure(message: string): void {
 }
 
 /**
- * Telegram alert stub — fires when sync has been failing for > 5 minutes.
- * Phase 2: Logs alert to memory file; actual Telegram send to be wired by NASR.
- *
- * To activate: replace the fs.appendFile call below with an actual Telegram API call.
+ * Telegram alert — fires when sync has been failing for > 5 minutes.
+ * Sends actual Telegram message to user's chat.
  */
-function sendTelegramAlertStub(message: string): void {
+async function sendTelegramAlert(message: string): Promise<void> {
   try {
+    // Log to file first (audit trail)
     const alertPath = path.join(
       os.homedir(),
       '.openclaw', 'workspace', 'memory', 'sync-telegram-alerts.log'
@@ -95,18 +94,21 @@ function sendTelegramAlertStub(message: string): void {
     });
     fs.appendFileSync(
       alertPath,
-      `[${timestamp} CAI] TELEGRAM_ALERT_PENDING: ${message}\n`,
+      `[${timestamp} CAI] TELEGRAM_SENT: ${message}\n`,
       'utf-8'
     );
-    console.warn(`[sync] Telegram alert stub fired: ${message}`);
-    // TODO (NASR): Replace the appendFileSync above with:
-    //   await fetch('https://api.telegram.org/bot${BOT_TOKEN}/sendMessage', {
-    //     method: 'POST',
-    //     body: JSON.stringify({ chat_id: CHAT_ID, text: message }),
-    //     headers: { 'Content-Type': 'application/json' },
-    //   });
-  } catch {
-    // swallow
+
+    // Send actual Telegram message using OpenClaw CLI
+    const { execSync } = require('child_process');
+    const escapedMessage = message.replace(/"/g, '\\"');
+    execSync(
+      `openclaw message send --channel telegram --target 866838380 --message "${escapedMessage}"`,
+      { stdio: 'ignore', timeout: 10000 }
+    );
+    console.warn(`[sync] Telegram alert sent: ${message}`);
+  } catch (err) {
+    console.error('[sync] Failed to send Telegram alert:', err);
+    // Don't throw — sync should continue even if alert fails
   }
 }
 
@@ -356,7 +358,7 @@ export async function initSync(): Promise<void> {
       const minutesAgo = Math.round(msSinceLastSync / 60_000);
       const alertMsg = `Sync stale — last successful sync was ${minutesAgo} minute(s) ago`;
       logSyncFailure(alertMsg);
-      sendTelegramAlertStub(`⚠️ Mission Control sync alert: ${alertMsg}`);
+      await sendTelegramAlert(`⚠️ Mission Control sync alert: ${alertMsg}`);
     }
 
     await syncAll();
