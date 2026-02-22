@@ -1,20 +1,20 @@
 "use client";
 
 /**
- * StatCards — Phase 2 updates:
- * - Collapsible/expandable secondary stats toggle
- * - Trending indicators (↑ ↓ →) based on historical data or N/A
- * - Mobile-responsive grid (2-col on small screens)
+ * StatCards — Phase 3: A+ Animations
+ * - Smooth expand/collapse with height animation
+ * - Card hover lift + shadow
+ * - Staggered fade-in on mount
+ * - Counter animation on value change
  */
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface Stats {
   activeJobs: number;
   avgAts: number | null;
   contentDue: number;
   openTasks: number;
-  /** Phase 2: optional previous-day values for trend calculation */
   prevActiveJobs?: number | null;
   prevAvgAts?: number | null;
   prevContentDue?: number | null;
@@ -31,6 +31,36 @@ interface StatCardProps {
   trend: TrendDirection;
   showDetails: boolean;
   details?: string;
+  delay?: number;
+}
+
+// Animated counter hook
+function useAnimatedCounter(target: number, duration = 600) {
+  const [count, setCount] = useState(0);
+  const prevTargetRef = useRef(target);
+
+  useEffect(() => {
+    if (target === prevTargetRef.current) return;
+    prevTargetRef.current = target;
+
+    const start = 0;
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(start + (target - start) * easeOut));
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [target, duration]);
+
+  return count;
 }
 
 function TrendBadge({ trend }: { trend: TrendDirection }) {
@@ -59,13 +89,23 @@ function TrendBadge({ trend }: { trend: TrendDirection }) {
       fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
       color,
       fontWeight: 700,
+      animation: "fadeIn 0.3s ease",
     }} title={label}>
       {icon}
     </span>
   );
 }
 
-function StatCard({ value, label, color, glow, trend, showDetails, details }: StatCardProps) {
+function StatCard({ value, label, color, glow, trend, showDetails, details, delay = 0 }: StatCardProps) {
+  const [mounted, setMounted] = useState(false);
+  const numericValue = typeof value === "number" ? value : parseInt(value as string) || 0;
+  const animatedValue = useAnimatedCounter(numericValue);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), delay);
+    return () => clearTimeout(timer);
+  }, [delay]);
+
   return (
     <div
       className="stat-card"
@@ -78,6 +118,20 @@ function StatCard({ value, label, color, glow, trend, showDetails, details }: St
         padding: "20px 20px 18px",
         position: "relative",
         overflow: "hidden",
+        opacity: mounted ? 1 : 0,
+        transform: mounted ? "translateY(0)" : "translateY(12px)",
+        transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+        cursor: "pointer",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "translateY(-4px)";
+        e.currentTarget.style.boxShadow = "0 12px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(79, 142, 247, 0.1)";
+        e.currentTarget.style.borderColor = "#2a3f5f";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.boxShadow = "none";
+        e.currentTarget.style.borderColor = "#1E2D45";
       }}
     >
       {/* Subtle glow blob */}
@@ -93,6 +147,7 @@ function StatCard({ value, label, color, glow, trend, showDetails, details }: St
           filter: "blur(30px)",
           opacity: 0.35,
           pointerEvents: "none",
+          transition: "opacity 0.3s ease",
         }}
       />
 
@@ -110,7 +165,9 @@ function StatCard({ value, label, color, glow, trend, showDetails, details }: St
           letterSpacing: "-0.03em",
         }}
       >
-        {value}
+        {typeof value === "string" && value.includes("%") 
+          ? `${animatedValue}%` 
+          : value === "N/A" ? "N/A" : animatedValue}
       </div>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
@@ -130,7 +187,12 @@ function StatCard({ value, label, color, glow, trend, showDetails, details }: St
       </div>
 
       {/* Secondary details — shown when expanded */}
-      {showDetails && details && (
+      <div style={{
+        maxHeight: showDetails && details ? "60px" : "0",
+        opacity: showDetails && details ? 1 : 0,
+        overflow: "hidden",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+      }}>
         <div style={{
           marginTop: "8px",
           paddingTop: "8px",
@@ -142,7 +204,7 @@ function StatCard({ value, label, color, glow, trend, showDetails, details }: St
         }}>
           {details}
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -162,6 +224,19 @@ function calcTrend(current: number | null | undefined, prev: number | null | und
 export default function StatCards({ stats, loading }: StatCardsProps) {
   const [showDetails, setShowDetails] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleExpand = () => {
+    setIsAnimating(true);
+    setCollapsed(false);
+    setTimeout(() => setIsAnimating(false), 400);
+  };
+
+  const handleCollapse = () => {
+    setIsAnimating(true);
+    setCollapsed(true);
+    setTimeout(() => setIsAnimating(false), 400);
+  };
 
   const cards = [
     {
@@ -200,10 +275,29 @@ export default function StatCards({ stats, loading }: StatCardsProps) {
 
   return (
     <div style={{ marginBottom: "16px" }}>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideDown {
+          from { opacity: 0; max-height: 0; }
+          to { opacity: 1; max-height: 500px; }
+        }
+        @keyframes slideUp {
+          from { opacity: 1; max-height: 500px; }
+          to { opacity: 0; max-height: 0; }
+        }
+        .stat-cards-container {
+          animation: ${collapsed ? 'slideUp' : 'slideDown'} 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          overflow: hidden;
+        }
+      `}</style>
+
       {/* Collapsed header view */}
       {collapsed ? (
         <div
-          onClick={() => setCollapsed(false)}
+          onClick={handleExpand}
           style={{
             display: "flex",
             alignItems: "center",
@@ -213,13 +307,18 @@ export default function StatCards({ stats, loading }: StatCardsProps) {
             border: "1px solid #1E2D45",
             borderRadius: "8px",
             cursor: "pointer",
-            transition: "all 0.15s ease",
+            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            animation: "fadeIn 0.3s ease",
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = "#2a3f5f";
+            e.currentTarget.style.transform = "translateY(-1px)";
+            e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.2)";
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = "#1E2D45";
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.boxShadow = "none";
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -240,10 +339,14 @@ export default function StatCards({ stats, loading }: StatCardsProps) {
               {loading ? "—" : `${stats?.activeJobs ?? 0} jobs · ${stats?.openTasks ?? 0} tasks · ${stats?.avgAts ?? 0}% ATS`}
             </span>
           </div>
-          <span style={{ fontSize: "11px", color: "#4F8EF7" }}>▼ Expand</span>
+          <span style={{ 
+            fontSize: "11px", 
+            color: "#4F8EF7",
+            transition: "transform 0.2s ease",
+          }}>▼ Expand</span>
         </div>
       ) : (
-        <>
+        <div className="stat-cards-container">
           {/* Cards row */}
           <div className="stat-cards-grid" style={{ marginBottom: "8px" }}>
             <style>{`
@@ -262,15 +365,20 @@ export default function StatCards({ stats, loading }: StatCardsProps) {
                 }
               }
             `}</style>
-            {cards.map((card) => (
-              <StatCard key={card.label} {...card} showDetails={showDetails} />
+            {cards.map((card, i) => (
+              <StatCard key={card.label} {...card} delay={i * 80} showDetails={showDetails} />
             ))}
           </div>
 
           {/* Toggle controls */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ 
+            display: "flex", 
+            justifyContent: "space-between", 
+            alignItems: "center",
+            animation: "fadeIn 0.3s ease 0.3s both",
+          }}>
             <button
-              onClick={() => setCollapsed(true)}
+              onClick={handleCollapse}
               style={{
                 background: "transparent",
                 border: "none",
@@ -279,6 +387,14 @@ export default function StatCards({ stats, loading }: StatCardsProps) {
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                 color: "#4F8EF7",
                 cursor: "pointer",
+                transition: "all 0.15s ease",
+                borderRadius: "4px",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(79, 142, 247, 0.1)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
               }}
             >
               ▲ Collapse
@@ -294,13 +410,21 @@ export default function StatCards({ stats, loading }: StatCardsProps) {
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                 color: "#A0A0B0",
                 cursor: "pointer",
-                transition: "all 0.12s ease",
+                transition: "all 0.15s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "#2a3f5f";
+                e.currentTarget.style.color = "#F0F0F5";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "#1E2D45";
+                e.currentTarget.style.color = "#A0A0B0";
               }}
             >
               {showDetails ? "▲ Hide details" : "▼ Show details"}
             </button>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
