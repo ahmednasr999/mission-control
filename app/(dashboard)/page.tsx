@@ -152,10 +152,10 @@ function PriorityFocusCard({ tasks, loading }: { tasks: Task[]; loading: boolean
           🎯 Priority Focus
         </span>
         <span style={{
-          fontSize: "10px",
+          fontSize: "12px",
           fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
           color: "#4F8EF7",
-          opacity: 0.8,
+          fontWeight: 500,
         }}>
           TOP {focusTasks.length} TODAY
         </span>
@@ -183,21 +183,24 @@ function PriorityFocusCard({ tasks, loading }: { tasks: Task[]; loading: boolean
               <span style={{
                 flex: 1,
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                fontSize: "14px",
-                fontWeight: 500,
+                fontSize: "13px",
+                fontWeight: 600,
                 color: "#F0F0F5",
-                lineHeight: 1.4,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}>
                 {task.title}
               </span>
               <span style={{
-                fontSize: "10px",
+                fontSize: "12px",
                 fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                 color: "#4F8EF7",
+                fontWeight: 600,
                 flexShrink: 0,
                 background: "rgba(79,142,247,0.1)",
-                padding: "2px 6px",
-                borderRadius: "4px",
+                padding: "3px 8px",
+                borderRadius: "6px",
               }}>
                 #{i + 1}
               </span>
