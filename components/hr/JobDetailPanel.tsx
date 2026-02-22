@@ -13,6 +13,18 @@ interface CVInfo {
   filePath?: string;
 }
 
+interface InterviewPrep {
+  company: string;
+  role: string;
+  atsScore: number;
+  companyResearch: string;
+  roleRequirements: string[];
+  likelyQuestions: string[];
+  strengths: string[];
+  salaryTarget: string;
+  notes: string;
+}
+
 interface JobDetailPanelProps {
   job: Job | null;
   onClose: () => void;
@@ -26,6 +38,7 @@ function findCVForJob(job: Job): CVInfo | null {
 
 export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
   const [cvInfo, setCvInfo] = useState<CVInfo | null>(null);
+  const [interviewPrep, setInterviewPrep] = useState<InterviewPrep | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -42,6 +55,18 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
           setCvInfo(null);
           setLoading(false);
         });
+
+      // Fetch interview prep if in interview column
+      if (job.column === "interview") {
+        fetch(`/api/hr/interview-prep?company=${encodeURIComponent(job.company)}`)
+          .then(r => r.json())
+          .then(data => {
+            setInterviewPrep(data.prep || null);
+          })
+          .catch(() => {
+            setInterviewPrep(null);
+          });
+      }
     }
   }, [job]);
 
@@ -490,6 +515,96 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
               </span>
             </div>
           </div>
+
+          {/* Interview Prep Section - Only show for interview column */}
+          {job.column === "interview" && interviewPrep && (
+            <div
+              style={{
+                background: "#0D1220",
+                border: "1px solid #F59E0B40",
+                borderRadius: "10px",
+                padding: "16px",
+                marginBottom: "16px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  marginBottom: "12px",
+                }}
+              >
+                <span style={{ fontSize: "16px" }}>🎯</span>
+                <span
+                  style={{
+                    fontSize: "13px",
+                    color: "#F59E0B",
+                    fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                    fontWeight: 600,
+                  }}
+                >
+                  Interview Prep
+                </span>
+              </div>
+
+              {/* Company Research */}
+              {interviewPrep.companyResearch && (
+                <div style={{ marginBottom: "12px" }}>
+                  <div style={{ fontSize: "11px", color: "#A0A0B0", marginBottom: "4px", textTransform: "uppercase" }}>Company</div>
+                  <div style={{ fontSize: "12px", color: "#F0F0F5", lineHeight: 1.4 }}>
+                    {interviewPrep.companyResearch}
+                  </div>
+                </div>
+              )}
+
+              {/* Role Requirements */}
+              {interviewPrep.roleRequirements.length > 0 && (
+                <div style={{ marginBottom: "12px" }}>
+                  <div style={{ fontSize: "11px", color: "#A0A0B0", marginBottom: "4px", textTransform: "uppercase" }}>Key Requirements</div>
+                  {interviewPrep.roleRequirements.map((req, i) => (
+                    <div key={i} style={{ fontSize: "12px", color: "#F0F0F5", paddingLeft: "8px", marginBottom: "2px" }}>• {req}</div>
+                  ))}
+                </div>
+              )}
+
+              {/* Likely Questions */}
+              {interviewPrep.likelyQuestions.length > 0 && (
+                <div style={{ marginBottom: "12px" }}>
+                  <div style={{ fontSize: "11px", color: "#A0A0B0", marginBottom: "4px", textTransform: "uppercase" }}>Likely Questions</div>
+                  {interviewPrep.likelyQuestions.slice(0, 3).map((q, i) => (
+                    <div key={i} style={{ fontSize: "11px", color: "#8888A0", paddingLeft: "8px", marginBottom: "2px", fontStyle: "italic" }}>"{q}"</div>
+                  ))}
+                </div>
+              )}
+
+              {/* Your Strengths */}
+              {interviewPrep.strengths.length > 0 && (
+                <div style={{ marginBottom: "12px" }}>
+                  <div style={{ fontSize: "11px", color: "#A0A0B0", marginBottom: "4px", textTransform: "uppercase" }}>Your Strengths</div>
+                  {interviewPrep.strengths.map((s, i) => (
+                    <div key={i} style={{ fontSize: "12px", color: "#34D399", paddingLeft: "8px", marginBottom: "2px" }}>✓ {s}</div>
+                  ))}
+                </div>
+              )}
+
+              {/* Salary Target */}
+              {interviewPrep.salaryTarget && (
+                <div style={{ marginBottom: "12px" }}>
+                  <div style={{ fontSize: "11px", color: "#A0A0B0", marginBottom: "4px", textTransform: "uppercase" }}>Salary Target</div>
+                  <div style={{ fontSize: "13px", color: "#F59E0B", fontWeight: 600 }}>{interviewPrep.salaryTarget}</div>
+                </div>
+              )}
+
+              {/* Notes */}
+              {interviewPrep.notes && (
+                <div>
+                  <div style={{ fontSize: "11px", color: "#A0A0B0", marginBottom: "4px", textTransform: "uppercase" }}>Notes</div>
+                  <div style={{ fontSize: "12px", color: "#F0F0F5", lineHeight: 1.4 }}>{interviewPrep.notes}</div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Next Action */}
           {job.nextAction && (
