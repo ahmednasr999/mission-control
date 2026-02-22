@@ -40,6 +40,7 @@ export interface KanbanJob {
   salary: string | null;
   companyDomain: string | null;
   updatedAt: string | null;
+  link?: string | null;
 }
 
 function rowToKanbanJob(row: HRJobRow): KanbanJob {
@@ -56,6 +57,7 @@ function rowToKanbanJob(row: HRJobRow): KanbanJob {
     salary: row.salary,
     companyDomain: row.company_domain,
     updatedAt: row.updatedAt,
+    link: (row as any).link || null,
   };
 }
 

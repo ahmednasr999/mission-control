@@ -238,6 +238,71 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
             </div>
           )}
 
+          {/* Job Link Section */}
+          {job.link && (
+            <div
+              style={{
+                background: "#0D1220",
+                border: "1px solid #1E2D45",
+                borderRadius: "10px",
+                padding: "16px",
+                marginBottom: "16px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  marginBottom: "12px",
+                }}
+              >
+                <ExternalLink size={16} color="#4F8EF7" />
+                <span
+                  style={{
+                    fontSize: "13px",
+                    color: "#A0A0B0",
+                    fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                  }}
+                >
+                  Job Posting
+                </span>
+              </div>
+              <a
+                href={job.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "10px 14px",
+                  background: "rgba(79, 142, 247, 0.15)",
+                  border: "1px solid rgba(79, 142, 247, 0.3)",
+                  borderRadius: "6px",
+                  color: "#4F8EF7",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  textDecoration: "none",
+                  transition: "all 0.15s ease",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(79, 142, 247, 0.25)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(79, 142, 247, 0.15)";
+                }}
+              >
+                <ExternalLink size={14} />
+                {job.link.replace(/^https?:\/\//, "").substring(0, 40)}
+                {job.link.length > 40 ? "..." : ""}
+              </a>
+            </div>
+          )}
+
           {/* CV Section */}
           <div
             style={{

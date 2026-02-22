@@ -19,18 +19,37 @@ function findCVByCompany(company: string): CVInfo | null {
     if (!fs.existsSync(CVS_DIR)) return null;
 
     const files = fs.readdirSync(CVS_DIR);
-    const normalizedCompany = company.toLowerCase().replace(/[^a-z0-9]/g, "");
+    
+    // Clean company name for matching
+    const cleanCompany = company.toLowerCase()
+      .replace(/[^a-z0-9\s]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    
+    const companyWords = cleanCompany.split(" ").filter(w => w.length > 2);
 
     // Look for PDF files matching the company
     for (const file of files) {
       if (!file.endsWith(".pdf")) continue;
 
-      const normalizedFile = file.toLowerCase().replace(/[^a-z0-9]/g, "");
+      const cleanFile = file.toLowerCase()
+        .replace(/\.pdf$/, "")
+        .replace(/ahmed nasr - /g, "")
+        .replace(/[^a-z0-9\s]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
 
-      // Check if company name appears in filename
-      if (normalizedFile.includes(normalizedCompany) || 
-          normalizedCompany.includes(normalizedFile.replace(/ahmednasr/g, "").substring(0, 10))) {
-        
+      // Check if any significant company word appears in filename
+      const matchScore = companyWords.filter(word => 
+        cleanFile.includes(word)
+      ).length;
+      
+      // Require at least 1 word match or direct substring match
+      const isMatch = matchScore >= 1 || 
+        cleanFile.includes(cleanCompany.substring(0, 8)) ||
+        cleanCompany.includes(cleanFile.split(" ").pop() || "");
+
+      if (isMatch) {
         // Extract role from filename: "Ahmed Nasr - [Role] - [Company].pdf"
         const parts = file.replace(".pdf", "").split(" - ");
         const role = parts[1] || "";
@@ -39,7 +58,7 @@ function findCVByCompany(company: string): CVInfo | null {
         return {
           jobTitle: role,
           company: fileCompany || company,
-          atsScore: null, // Could be fetched from cv-history.md
+          atsScore: null,
           status: "Ready",
           date: new Date().toISOString().split("T")[0],
           filePath: path.join(CVS_DIR, file),

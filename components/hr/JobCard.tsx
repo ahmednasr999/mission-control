@@ -13,6 +13,7 @@ export interface Job {
   salary: string | null;
   companyDomain: string | null;
   updatedAt: string | null;
+  link?: string | null;
 }
 
 const COLUMN_COLORS: Record<string, string> = {

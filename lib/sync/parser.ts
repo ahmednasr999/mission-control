@@ -347,14 +347,24 @@ export function parseJobApplicationTracker(content: string): ParsedJobPipeline[]
         const company = get('company') || cols[1] || '';
         const role = get('role') || cols[2] || '';
         const location = get('location') || cols[3] || '';
+        const source = get('source') || '';
         const status = get('status') || '';
+        
+        // Extract link from markdown link format [text](url) or plain URL
+        let link = '';
+        const linkMatch = source.match(/\[([^\]]+)\]\(([^)]+)\)/);
+        if (linkMatch) {
+          link = linkMatch[2];
+        } else if (source.match(/^https?:\/\//)) {
+          link = source;
+        }
 
         if (company && company !== '—' && company !== '-' && company.toLowerCase() !== 'company') {
           jobs.push({
             company: stripMarkdown(company),
             role: stripMarkdown(role) || '—',
             location: stripMarkdown(location),
-            link: '',
+            link: link,
             jd_status: status ? 'Parsed' : '',
             cv_status: '',
             status: mapStatus(status || currentSection),
