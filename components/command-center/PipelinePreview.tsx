@@ -1,14 +1,13 @@
 "use client";
 
 /**
- * PipelinePreview — Phase 3: A+ Animations
- * - Staggered fade-in on mount
- * - Hover lift with company avatar glow
- * - Status badge pulse on high-priority
- * - Smooth transitions
+ * PipelinePreview — Phase 3: A+ Polish (SSR-safe)
+ * - CSS-only animations
+ * - Hover effects
+ * - SSR-safe (no mounted state)
  */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface Job {
   company: string;
@@ -36,8 +35,7 @@ function normalizeStatus(s: string): string {
 
 function AtsScoreBadge({ score }: { score: number | null }) {
   if (score == null) return null;
-  const color =
-    score >= 85 ? "#34D399" : score >= 70 ? "#FBBF24" : "#F87171";
+  const color = score >= 85 ? "#34D399" : score >= 70 ? "#FBBF24" : "#F87171";
   return (
     <span
       style={{
@@ -49,7 +47,6 @@ function AtsScoreBadge({ score }: { score: number | null }) {
         borderRadius: "4px",
         padding: "2px 6px",
         whiteSpace: "nowrap",
-        transition: "all 0.2s ease",
       }}
     >
       ATS {score}%
@@ -59,10 +56,7 @@ function AtsScoreBadge({ score }: { score: number | null }) {
 
 function StatusBadge({ status }: { status: string }) {
   const normalized = normalizeStatus(status);
-  const colors = STATUS_COLORS[normalized] || {
-    bg: "rgba(136, 136, 160, 0.15)",
-    text: "#8888A0",
-  };
+  const colors = STATUS_COLORS[normalized] || { bg: "rgba(136, 136, 160, 0.15)", text: "#8888A0" };
   return (
     <span
       style={{
@@ -74,7 +68,6 @@ function StatusBadge({ status }: { status: string }) {
         borderRadius: "4px",
         padding: "2px 7px",
         whiteSpace: "nowrap",
-        transition: "all 0.2s ease",
       }}
     >
       {normalized}
@@ -88,12 +81,9 @@ interface PipelinePreviewProps {
 }
 
 export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps) {
-  const [mounted, setMounted] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const displayJobs = (jobs || []).slice(0, 4);
 
   return (
     <div
@@ -104,29 +94,15 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        opacity: mounted ? 1 : 0,
-        transform: mounted ? "translateY(0)" : "translateY(12px)",
-        transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
       <style>{`
         @keyframes slideIn {
-          from { 
-            opacity: 0; 
-            transform: translateX(-10px);
-          }
-          to { 
-            opacity: 1; 
-            transform: translateX(0);
-          }
-        }
-        @keyframes avatarGlow {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(79, 142, 247, 0); }
-          50% { box-shadow: 0 0 0 4px rgba(79, 142, 247, 0.2); }
+          from { opacity: 0; transform: translateX(-10px); }
+          to { opacity: 1; transform: translateX(0); }
         }
         .job-item {
           animation: slideIn 0.3s ease forwards;
-          opacity: 0;
         }
       `}</style>
 
@@ -150,7 +126,7 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
         >
           Job Pipeline
         </span>
-        {!loading && jobs.length > 0 && (
+        {!loading && displayJobs.length > 0 && (
           <span
             style={{
               fontSize: "11px",
@@ -158,7 +134,7 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
             }}
           >
-            {jobs.length} active
+            {displayJobs.length} active
           </span>
         )}
       </div>
@@ -167,10 +143,10 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
       <div style={{ flex: 1 }}>
         {loading ? (
           <EmptyState message="Loading…" />
-        ) : !jobs || jobs.length === 0 ? (
+        ) : displayJobs.length === 0 ? (
           <EmptyState message="No active applications yet" />
         ) : (
-          jobs.slice(0, 4).map((job, i) => {
+          displayJobs.map((job, i) => {
             const isHovered = hoveredIdx === i;
             const normalizedStatus = normalizeStatus(job.status);
             const statusGlow = STATUS_COLORS[normalizedStatus]?.glow;
@@ -184,7 +160,7 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
                   alignItems: "center",
                   gap: "10px",
                   padding: "10px 16px",
-                  borderBottom: i < Math.min(jobs.length, 4) - 1 ? "1px solid #1E2D45" : "none",
+                  borderBottom: i < displayJobs.length - 1 ? "1px solid #1E2D45" : "none",
                   background: isHovered ? "rgba(79, 142, 247, 0.05)" : "transparent",
                   transform: isHovered ? "translateX(4px)" : "translateX(0)",
                   transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -280,15 +256,8 @@ function EmptyState({ message }: { message: string }) {
         color: "#A0A0B0",
         fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
         fontSize: "13px",
-        animation: "fadeIn 0.4s ease",
       }}
     >
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
       {message}
     </div>
   );

@@ -1,14 +1,13 @@
 "use client";
 
 /**
- * AlertBanner — Phase 3: A+ Animations
- * - Smooth slide-in from top on mount
- * - Pulse animation on red alerts
- * - Hover lift effect
- * - Dismissible with animation
+ * AlertBanner — Phase 3: A+ Polish (SSR-safe)
+ * - CSS-only animations
+ * - Dismissible
+ * - SSR-safe (no useEffect for initial state)
  */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface Alert {
   text: string;
@@ -21,23 +20,12 @@ interface AlertBannerProps {
 }
 
 export default function AlertBanner({ alerts }: AlertBannerProps) {
-  const [mounted, setMounted] = useState(false);
   const [dismissed, setDismissed] = useState(false);
-  const [visibleAlerts, setVisibleAlerts] = useState<Alert[]>([]);
-
-  useEffect(() => {
-    if (alerts && alerts.length > 0) {
-      setVisibleAlerts(alerts);
-      const timer = setTimeout(() => setMounted(true), 50);
-      return () => clearTimeout(timer);
-    }
-  }, [alerts]);
 
   if (!alerts || alerts.length === 0 || dismissed) return null;
 
-  const topAlert = visibleAlerts[0];
+  const topAlert = alerts[0];
 
-  // Color schemes per severity
   const colorSchemes = {
     red: {
       bg: "linear-gradient(135deg, rgba(220, 38, 38, 0.25), rgba(185, 28, 28, 0.15))",
@@ -77,28 +65,8 @@ export default function AlertBanner({ alerts }: AlertBannerProps) {
     <>
       <style>{`
         @keyframes slideDown {
-          from { 
-            opacity: 0; 
-            transform: translateY(-20px);
-            max-height: 0;
-          }
-          to { 
-            opacity: 1; 
-            transform: translateY(0);
-            max-height: 100px;
-          }
-        }
-        @keyframes slideUp {
-          from { 
-            opacity: 1; 
-            transform: translateY(0);
-            max-height: 100px;
-          }
-          to { 
-            opacity: 0; 
-            transform: translateY(-20px);
-            max-height: 0;
-          }
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         @keyframes pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
@@ -106,6 +74,7 @@ export default function AlertBanner({ alerts }: AlertBannerProps) {
         }
       `}</style>
       <div
+        onClick={() => setDismissed(true)}
         style={{
           background: colors.bg,
           border: `1px solid ${colors.border}`,
@@ -117,11 +86,9 @@ export default function AlertBanner({ alerts }: AlertBannerProps) {
           gap: "10px",
           position: "relative",
           overflow: "hidden",
-          opacity: mounted ? 1 : 0,
-          transform: mounted ? "translateY(0)" : "translateY(-20px)",
-          maxHeight: mounted ? "100px" : "0",
-          transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+          animation: "slideDown 0.4s ease",
           cursor: "pointer",
+          transition: "all 0.2s ease",
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = "translateY(-2px)";
@@ -131,7 +98,6 @@ export default function AlertBanner({ alerts }: AlertBannerProps) {
           e.currentTarget.style.transform = "translateY(0)";
           e.currentTarget.style.boxShadow = "none";
         }}
-        onClick={() => setDismissed(true)}
         title="Click to dismiss"
       >
         {/* Pulse dot */}
@@ -171,7 +137,7 @@ export default function AlertBanner({ alerts }: AlertBannerProps) {
             </span>
           </span>
 
-          {visibleAlerts.length > 1 && (
+          {alerts.length > 1 && (
             <span
               style={{
                 marginLeft: "12px",
@@ -180,7 +146,7 @@ export default function AlertBanner({ alerts }: AlertBannerProps) {
                 opacity: 0.7,
               }}
             >
-              +{visibleAlerts.length - 1} more deadline{visibleAlerts.length > 2 ? "s" : ""}
+              +{alerts.length - 1} more deadline{alerts.length > 2 ? "s" : ""}
             </span>
           )}
         </div>
@@ -197,17 +163,7 @@ export default function AlertBanner({ alerts }: AlertBannerProps) {
           {colors.label}
         </span>
 
-        {/* Dismiss hint */}
-        <span
-          style={{
-            fontSize: "10px",
-            color: colors.text,
-            opacity: 0.4,
-            marginLeft: "4px",
-          }}
-        >
-          ×
-        </span>
+        <span style={{ fontSize: "10px", color: colors.text, opacity: 0.4 }}>×</span>
       </div>
     </>
   );

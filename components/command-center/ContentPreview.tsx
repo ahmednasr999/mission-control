@@ -1,15 +1,13 @@
 "use client";
 
 /**
- * ContentPreview — Phase 3: A+ Animations
- * - Counter animation on numbers
- * - Staggered bubble entrance
- * - Arrow fade-in sequence
- * - Hover scale on bubbles
- * - Total count animation
+ * ContentPreview — Phase 3: A+ Polish (SSR-safe)
+ * - CSS-only animations
+ * - Hover effects
+ * - SSR-safe (no counters that start at 0)
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 
 interface ContentStages {
   ideas: number;
@@ -26,51 +24,8 @@ interface StageColumnProps {
   delay?: number;
 }
 
-// Animated counter hook - browser only
-function useAnimatedCounter(target: number, duration = 800, startOnMount = true) {
-  const [count, setCount] = useState(target);
-  const startTimeRef = useRef<number | null>(null);
-  const rafRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (!startOnMount) return;
-    
-    startTimeRef.current = null;
-    
-    const animate = (currentTime: number) => {
-      if (startTimeRef.current === null) {
-        startTimeRef.current = currentTime;
-      }
-      const elapsed = currentTime - startTimeRef.current;
-      const progress = Math.min(elapsed / duration, 1);
-      const easeOut = 1 - Math.pow(1 - progress, 4);
-      setCount(Math.floor(target * easeOut));
-
-      if (progress < 1) {
-        rafRef.current = requestAnimationFrame(animate);
-      }
-    };
-
-    rafRef.current = requestAnimationFrame(animate);
-    
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [target, duration, startOnMount]);
-
-  return count;
-}
-
-function StageColumn({ label, count, color, bg, delay = 0 }: StageColumnProps) {
-  const [mounted, setMounted] = useState(false);
+function StageColumn({ label, count, color, bg }: StageColumnProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const animatedCount = useAnimatedCounter(count);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), delay);
-    return () => clearTimeout(timer);
-  }, [delay]);
 
   return (
     <div
@@ -80,9 +35,6 @@ function StageColumn({ label, count, color, bg, delay = 0 }: StageColumnProps) {
         flexDirection: "column",
         alignItems: "center",
         gap: "8px",
-        opacity: mounted ? 1 : 0,
-        transform: mounted ? "translateY(0) scale(1)" : "translateY(20px) scale(0.8)",
-        transition: "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -94,7 +46,7 @@ function StageColumn({ label, count, color, bg, delay = 0 }: StageColumnProps) {
           height: "36px",
           borderRadius: "10px",
           background: isHovered ? bg.replace("0.12", "0.25") : bg,
-          border: `1.5px solid ${count > 0 ? (isHovered ? color : color) : "#1E2D45"}`,
+          border: `1.5px solid ${count > 0 ? color : "#1E2D45"}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -108,7 +60,7 @@ function StageColumn({ label, count, color, bg, delay = 0 }: StageColumnProps) {
           cursor: "pointer",
         }}
       >
-        {animatedCount}
+        {count}
       </div>
 
       {/* Label */}
@@ -135,40 +87,15 @@ interface ContentPreviewProps {
 }
 
 const STAGES = [
-  {
-    key: "ideas" as keyof ContentStages,
-    label: "Ideas",
-    color: "#8888A0",
-    bg: "rgba(136, 136, 160, 0.12)",
-  },
-  {
-    key: "draft" as keyof ContentStages,
-    label: "Draft",
-    color: "#D97706",
-    bg: "rgba(217, 119, 6, 0.12)",
-  },
-  {
-    key: "review" as keyof ContentStages,
-    label: "Review",
-    color: "#7C3AED",
-    bg: "rgba(124, 58, 237, 0.12)",
-  },
-  {
-    key: "published" as keyof ContentStages,
-    label: "Published",
-    color: "#059669",
-    bg: "rgba(5, 150, 105, 0.12)",
-  },
+  { key: "ideas" as keyof ContentStages, label: "Ideas", color: "#8888A0", bg: "rgba(136, 136, 160, 0.12)" },
+  { key: "draft" as keyof ContentStages, label: "Draft", color: "#D97706", bg: "rgba(217, 119, 6, 0.12)" },
+  { key: "review" as keyof ContentStages, label: "Review", color: "#7C3AED", bg: "rgba(124, 58, 237, 0.12)" },
+  { key: "published" as keyof ContentStages, label: "Published", color: "#059669", bg: "rgba(5, 150, 105, 0.12)" },
 ];
 
 export default function ContentPreview({ stages, loading }: ContentPreviewProps) {
-  const [mounted, setMounted] = useState(false);
   const data = stages || { ideas: 0, draft: 0, review: 0, published: 0 };
-  const totalAnimated = useAnimatedCounter(data.ideas + data.draft + data.review + data.published, 1000, mounted);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const total = data.ideas + data.draft + data.review + data.published;
 
   return (
     <div
@@ -177,18 +104,15 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
         border: "1px solid #1E2D45",
         borderRadius: "10px",
         overflow: "hidden",
-        opacity: mounted ? 1 : 0,
-        transform: mounted ? "translateY(0)" : "translateY(12px)",
-        transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
       <style>{`
-        @keyframes arrowFadeIn {
-          from { opacity: 0; transform: translateX(-5px); }
-          to { opacity: 1; transform: translateX(0); }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         .arrow-fade {
-          animation: arrowFadeIn 0.4s ease forwards;
+          animation: fadeIn 0.4s ease forwards;
           opacity: 0;
         }
       `}</style>
@@ -221,7 +145,7 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
             }}
           >
-            {stages.ideas + stages.draft + stages.review + stages.published} items
+            {total} items
           </span>
         )}
       </div>
@@ -259,7 +183,6 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
                     count={data[stage.key]}
                     color={stage.color}
                     bg={stage.bg}
-                    delay={i * 100}
                   />
                   {i < STAGES.length - 1 && (
                     <div
@@ -289,9 +212,6 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                opacity: mounted ? 1 : 0,
-                transform: mounted ? "translateY(0)" : "translateY(10px)",
-                transition: "all 0.4s ease 0.5s",
               }}
             >
               <span
@@ -312,7 +232,7 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
                   color: "#F0F0F5",
                 }}
               >
-                {totalAnimated}
+                {total}
               </span>
             </div>
           </>

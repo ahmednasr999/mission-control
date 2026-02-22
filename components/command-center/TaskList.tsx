@@ -1,14 +1,13 @@
 "use client";
 
 /**
- * TaskList — Phase 3: A+ Animations
- * - Staggered fade-in on mount
- * - Hover lift effect
- * - Smooth background transitions
- * - Checkbox animation on click
+ * TaskList — Phase 3: A+ Polish (SSR-safe)
+ * - CSS-only animations
+ * - Hover effects
+ * - SSR-safe (no mounted state)
  */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface Task {
   id: number;
@@ -61,18 +60,11 @@ interface TaskListProps {
 }
 
 export default function TaskList({ tasks, loading }: TaskListProps) {
-  const [mounted, setMounted] = useState(false);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
+  // Sort synchronously (SSR-safe)
   const sorted = [...(tasks || [])]
-    .sort(
-      (a, b) =>
-        (PRIORITY_ORDER[a.priority] ?? 1) - (PRIORITY_ORDER[b.priority] ?? 1)
-    )
+    .sort((a, b) => (PRIORITY_ORDER[a.priority] ?? 1) - (PRIORITY_ORDER[b.priority] ?? 1))
     .slice(0, 6);
 
   return (
@@ -85,25 +77,15 @@ export default function TaskList({ tasks, loading }: TaskListProps) {
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
-        opacity: mounted ? 1 : 0,
-        transform: mounted ? "translateY(0)" : "translateY(12px)",
-        transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
       <style>{`
         @keyframes slideIn {
-          from { 
-            opacity: 0; 
-            transform: translateX(-10px);
-          }
-          to { 
-            opacity: 1; 
-            transform: translateX(0);
-          }
+          from { opacity: 0; transform: translateX(-10px); }
+          to { opacity: 1; transform: translateX(0); }
         }
         .task-item {
           animation: slideIn 0.3s ease forwards;
-          opacity: 0;
         }
       `}</style>
 
@@ -228,15 +210,8 @@ function EmptyState({ message }: { message: string }) {
         color: "#A0A0B0",
         fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
         fontSize: "13px",
-        animation: "fadeIn 0.4s ease",
       }}
     >
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
       {message}
     </div>
   );
