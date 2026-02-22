@@ -74,26 +74,10 @@ export default function Topbar() {
         <button
           onClick={toggleSidebar}
           className="topbar-hamburger"
-          style={{
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-            color: "#8888A0",
-            display: "flex",
-            alignItems: "center",
-            padding: "4px",
-            borderRadius: "6px",
-          }}
           aria-label="Toggle sidebar"
         >
           <Menu size={20} />
         </button>
-        <style>{`
-          .topbar-hamburger { display: none; }
-          @media (max-width: 767px) {
-            .topbar-hamburger { display: flex; }
-          }
-        `}</style>
         <h1
           style={{
             fontFamily: "var(--font-syne, Syne, sans-serif)",
