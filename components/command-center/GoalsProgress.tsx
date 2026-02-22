@@ -20,32 +20,37 @@ interface Goal {
 
 // Animated progress hook - browser only
 function useAnimatedProgress(target: number, duration = 1000, delay = 0) {
-  const [progress, setProgress] = useState(0);
-  const hasStarted = useRef(false);
+  const [progress, setProgress] = useState(target);
+  const startTimeRef = useRef<number | null>(null);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (hasStarted.current) return;
 
     const startTimer = setTimeout(() => {
-      hasStarted.current = true;
-      const startTime = performance.now();
-
+      startTimeRef.current = null;
+      
       const animate = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
+        if (startTimeRef.current === null) {
+          startTimeRef.current = currentTime;
+        }
+        const elapsed = currentTime - startTimeRef.current;
         const p = Math.min(elapsed / duration, 1);
         const easeOut = 1 - Math.pow(1 - p, 3);
         setProgress(Math.floor(target * easeOut));
 
         if (p < 1) {
-          requestAnimationFrame(animate);
+          rafRef.current = requestAnimationFrame(animate);
         }
       };
 
-      requestAnimationFrame(animate);
+      rafRef.current = requestAnimationFrame(animate);
     }, delay);
 
-    return () => clearTimeout(startTimer);
+    return () => {
+      clearTimeout(startTimer);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, [target, duration, delay]);
 
   return progress;

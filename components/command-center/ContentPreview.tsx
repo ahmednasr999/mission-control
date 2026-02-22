@@ -28,28 +28,35 @@ interface StageColumnProps {
 
 // Animated counter hook - browser only
 function useAnimatedCounter(target: number, duration = 800, startOnMount = true) {
-  const [count, setCount] = useState(0);
-  const hasStarted = useRef(false);
+  const [count, setCount] = useState(target);
+  const startTimeRef = useRef<number | null>(null);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (!startOnMount || hasStarted.current) return;
-    hasStarted.current = true;
-
-    const startTime = performance.now();
-
+    if (!startOnMount) return;
+    
+    startTimeRef.current = null;
+    
     const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
+      if (startTimeRef.current === null) {
+        startTimeRef.current = currentTime;
+      }
+      const elapsed = currentTime - startTimeRef.current;
       const progress = Math.min(elapsed / duration, 1);
       const easeOut = 1 - Math.pow(1 - progress, 4);
       setCount(Math.floor(target * easeOut));
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        rafRef.current = requestAnimationFrame(animate);
       }
     };
 
-    requestAnimationFrame(animate);
+    rafRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, [target, duration, startOnMount]);
 
   return count;
