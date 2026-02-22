@@ -29,6 +29,7 @@ export function startWatcher(onFileChange: SyncCallback): FSWatcher {
     path.join(MEMORY_DIR, '**', '*.md'),
     path.join(ROOT_DIR, 'MEMORY.md'),
     path.join(ROOT_DIR, 'GOALS.md'),
+    path.join(ROOT_DIR, 'job-application-tracker.md'),
   ];
 
   watcher = chokidar.watch(watchPaths, {
