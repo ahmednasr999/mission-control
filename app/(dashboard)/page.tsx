@@ -165,7 +165,7 @@ function PriorityFocusCard({ tasks, loading }: { tasks: Task[]; loading: boolean
       </div>
 
       {loading ? (
-        <div style={{ color: "#555570", fontSize: "12px", fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)" }}>
+        <div style={{ color: "#A0A0B0", fontSize: "12px", fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)" }}>
           Loading…
         </div>
       ) : (

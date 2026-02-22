@@ -145,7 +145,7 @@ export default function MemoryIndex() {
                     style={{
                       fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                       fontSize: "10px",
-                      color: "#555570",
+                      color: "#A0A0B0",
                       marginLeft: "auto",
                     }}
                   >

@@ -59,7 +59,7 @@ export default function IntelligencePage() {
               padding: "2px 6px",
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
               fontSize: "11px",
-              color: "#555570",
+              color: "#A0A0B0",
             }}
           >
             ⌃K
@@ -98,7 +98,7 @@ export default function IntelligencePage() {
               style={{
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                 fontSize: "13px",
-                color: "#555570",
+                color: "#A0A0B0",
                 margin: "4px 0 0",
               }}
             >
@@ -127,7 +127,7 @@ export default function IntelligencePage() {
               style={{
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                 fontSize: "13px",
-                color: "#555570",
+                color: "#A0A0B0",
                 margin: "4px 0 0",
               }}
             >

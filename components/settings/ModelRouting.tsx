@@ -117,7 +117,7 @@ export default function ModelRouting() {
         {loading ? (
           <div
             style={{
-              color: "#555570",
+              color: "#A0A0B0",
               fontSize: "13px",
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               padding: "20px 0",
@@ -142,7 +142,7 @@ export default function ModelRouting() {
                           fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                           fontSize: "10px",
                           fontWeight: 600,
-                          color: "#555570",
+                          color: "#A0A0B0",
                           textTransform: "uppercase",
                           letterSpacing: "0.06em",
                           borderBottom: "1px solid #1E2D45",
@@ -301,7 +301,7 @@ export default function ModelRouting() {
                     </span>
                     <span
                       style={{
-                        color: "#555570",
+                        color: "#A0A0B0",
                         fontSize: "14px",
                         flexShrink: 0,
                       }}

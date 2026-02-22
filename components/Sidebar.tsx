@@ -95,7 +95,7 @@ export default function Sidebar() {
             fontWeight: 600,
             textTransform: "uppercase",
             letterSpacing: "0.08em",
-            color: "#555570",
+            color: "#A0A0B0",
             padding: "0 8px",
             marginBottom: "8px",
           }}

@@ -53,7 +53,7 @@ function EntryCard({ entry }: { entry: LessonEntry }) {
             padding: "2px 6px",
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
             fontSize: "9px",
-            color: "#555570",
+            color: "#A0A0B0",
             flexShrink: 0,
             marginTop: "2px",
             whiteSpace: "nowrap",
@@ -86,7 +86,7 @@ function EntryCard({ entry }: { entry: LessonEntry }) {
 
         {hasDetail && (
           <span style={{
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "11px",
             flexShrink: 0,
             transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
@@ -276,7 +276,7 @@ export default function LessonsLog() {
           <span style={{
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
             fontSize: "10px",
-            color: "#555570",
+            color: "#A0A0B0",
           }}>
             {filtered.length} / {data.entries.length} entries
           </span>
@@ -291,7 +291,7 @@ export default function LessonsLog() {
             left: "10px",
             top: "50%",
             transform: "translateY(-50%)",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "12px",
             pointerEvents: "none",
           }}>
@@ -328,7 +328,7 @@ export default function LessonsLog() {
                 transform: "translateY(-50%)",
                 background: "none",
                 border: "none",
-                color: "#555570",
+                color: "#A0A0B0",
                 cursor: "pointer",
                 fontSize: "12px",
                 padding: 0,
@@ -346,7 +346,7 @@ export default function LessonsLog() {
         {loading ? (
           <div style={{
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "13px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             padding: "24px 0",
@@ -356,7 +356,7 @@ export default function LessonsLog() {
         ) : filtered.length === 0 ? (
           <div style={{
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "13px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             padding: "24px 0",

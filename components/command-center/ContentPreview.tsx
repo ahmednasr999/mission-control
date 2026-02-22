@@ -39,7 +39,7 @@ function StageColumn({ label, count, color, bg }: StageColumnProps) {
           fontFamily: "var(--font-syne, Syne, sans-serif)",
           fontSize: "28px",
           fontWeight: 800,
-          color: count > 0 ? color : "#555570",
+          color: count > 0 ? color : "#A0A0B0",
           boxShadow: count > 0 ? `0 4px 16px ${color}30` : "none",
         }}
       >
@@ -148,7 +148,7 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
           <div
             style={{
               textAlign: "center",
-              color: "#555570",
+              color: "#A0A0B0",
               fontSize: "13px",
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             }}

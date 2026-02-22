@@ -94,7 +94,7 @@ export default function TaskList({ tasks, loading }: TaskListProps) {
         <span
           style={{
             fontSize: "11px",
-            color: "#555570",
+            color: "#A0A0B0",
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
           }}
         >
@@ -146,7 +146,7 @@ export default function TaskList({ tasks, loading }: TaskListProps) {
                     style={{
                       fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                       fontSize: "10px",
-                      color: overdue ? "#EF4444" : "#555570",
+                      color: overdue ? "#EF4444" : "#A0A0B0",
                       flexShrink: 0,
                       whiteSpace: "nowrap",
                     }}
@@ -169,7 +169,7 @@ function EmptyState({ message }: { message: string }) {
       style={{
         padding: "32px 20px",
         textAlign: "center",
-        color: "#555570",
+        color: "#A0A0B0",
         fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
         fontSize: "13px",
       }}

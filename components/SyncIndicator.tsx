@@ -139,7 +139,7 @@ export default function SyncIndicator() {
           </div>
           <div style={{ fontSize: "11px", color: "#8888A0" }}>
             Last sync: {formatLastSync(state.lastSync)}{" "}
-            <span style={{ color: "#555570" }}>(Cairo)</span>
+            <span style={{ color: "#A0A0B0" }}>(Cairo)</span>
           </div>
         </div>
       )}

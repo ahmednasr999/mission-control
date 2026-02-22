@@ -136,7 +136,7 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
     return (
       <div style={cardStyle}>
         <CardHeader title="Live Activity" icon={<Clock size={16} />} />
-        <div style={{ color: "#555570", fontSize: "13px", padding: "20px 0" }}>Loading activity...</div>
+        <div style={{ color: "#A0A0B0", fontSize: "13px", padding: "20px 0" }}>Loading activity...</div>
       </div>
     );
   }
@@ -191,7 +191,7 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
                   style={{
                     fontSize: "10px",
                     fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                    color: "#555570",
+                    color: "#A0A0B0",
                     marginTop: "4px",
                   }}
                 >
@@ -261,7 +261,7 @@ function EmptyState({ message, submessage }: { message: string; submessage: stri
       style={{
         textAlign: "center",
         padding: "32px 20px",
-        color: "#555570",
+        color: "#A0A0B0",
       }}
     >
       <div style={{ fontSize: "32px", marginBottom: "12px" }}>📭</div>
@@ -279,7 +279,7 @@ function EmptyState({ message, submessage }: { message: string; submessage: stri
       <div
         style={{
           fontSize: "12px",
-          color: "#555570",
+          color: "#A0A0B0",
         }}
       >
         {submessage}

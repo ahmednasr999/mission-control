@@ -90,7 +90,7 @@ export default function SearchBar() {
             left: "20px",
             top: "50%",
             transform: "translateY(-50%)",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "18px",
             pointerEvents: "none",
             lineHeight: 1,
@@ -126,7 +126,7 @@ export default function SearchBar() {
               top: "50%",
               transform: "translateY(-50%)",
               fontSize: "12px",
-              color: "#555570",
+              color: "#A0A0B0",
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
             }}
           >
@@ -145,7 +145,7 @@ export default function SearchBar() {
               background: "transparent",
               border: "none",
               cursor: "pointer",
-              color: "#555570",
+              color: "#A0A0B0",
               fontSize: "18px",
               padding: "4px",
               lineHeight: 1,
@@ -161,7 +161,7 @@ export default function SearchBar() {
         <div
           style={{
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "13px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             padding: "16px 0 0",

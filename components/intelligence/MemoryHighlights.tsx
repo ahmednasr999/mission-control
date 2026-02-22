@@ -77,7 +77,7 @@ export default function MemoryHighlights() {
           borderRadius: "10px",
           padding: "24px",
           textAlign: "center",
-          color: "#555570",
+          color: "#A0A0B0",
           fontSize: "13px",
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
         }}
@@ -94,7 +94,7 @@ export default function MemoryHighlights() {
       {/* Strategic Priorities */}
       <SectionCard title="🎯 Current Strategic Priorities">
         {data.priorities.length === 0 ? (
-          <span style={{ color: "#555570", fontSize: "13px" }}>No priorities found</span>
+          <span style={{ color: "#A0A0B0", fontSize: "13px" }}>No priorities found</span>
         ) : (
           <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "8px" }}>
             {data.priorities.map((p, i) => (
@@ -139,7 +139,7 @@ export default function MemoryHighlights() {
       {/* Who Ahmed Is */}
       <SectionCard title="🧠 Who Ahmed Is">
         {data.identity.length === 0 ? (
-          <span style={{ color: "#555570", fontSize: "13px" }}>No identity data found</span>
+          <span style={{ color: "#A0A0B0", fontSize: "13px" }}>No identity data found</span>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             {data.identity.map((fact, i) => (
@@ -170,7 +170,7 @@ export default function MemoryHighlights() {
       {/* AI Agent Registry */}
       <SectionCard title="🤖 AI Automation Ecosystem">
         {data.agents.length === 0 ? (
-          <span style={{ color: "#555570", fontSize: "13px" }}>No agents found</span>
+          <span style={{ color: "#A0A0B0", fontSize: "13px" }}>No agents found</span>
         ) : (
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
@@ -184,7 +184,7 @@ export default function MemoryHighlights() {
                       fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                       fontSize: "10px",
                       fontWeight: 600,
-                      color: "#555570",
+                      color: "#A0A0B0",
                       textTransform: "uppercase",
                       letterSpacing: "0.06em",
                       borderBottom: "1px solid #1E2D45",

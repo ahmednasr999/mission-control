@@ -49,7 +49,7 @@ function DataSourceBadge({ source, active }: { source: string; active: boolean }
         width: "7px",
         height: "7px",
         borderRadius: "50%",
-        background: active ? "#4F8EF7" : "#555570",
+        background: active ? "#4F8EF7" : "#A0A0B0",
         flexShrink: 0,
         boxShadow: active ? "0 0 6px #4F8EF799" : "none",
       }} />
@@ -58,13 +58,13 @@ function DataSourceBadge({ source, active }: { source: string; active: boolean }
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           fontSize: "12px",
           fontWeight: 700,
-          color: active ? "#F0F0F5" : "#555570",
+          color: active ? "#F0F0F5" : "#A0A0B0",
           marginBottom: "1px",
         }}>{source}</div>
         <div style={{
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           fontSize: "10px",
-          color: active ? "#4F8EF7" : "#555570",
+          color: active ? "#4F8EF7" : "#A0A0B0",
         }}>
           {active ? "ACTIVE" : "SUPPLEMENTAL"}
         </div>
@@ -173,7 +173,7 @@ export default function SyncControl() {
       <div style={{ padding: "20px" }}>
         {loading ? (
           <div style={{
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "13px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             padding: "20px 0",
@@ -188,7 +188,7 @@ export default function SyncControl() {
               <div style={{
                 fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                 fontSize: "10px",
-                color: "#555570",
+                color: "#A0A0B0",
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
                 marginBottom: "8px",
@@ -203,7 +203,7 @@ export default function SyncControl() {
                 marginTop: "8px",
                 fontSize: "11px",
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                color: "#555570",
+                color: "#A0A0B0",
               }}>
                 {dbHasData
                   ? "✅ DB in sync — markdown is canonical, DB provides enriched data"
@@ -224,7 +224,7 @@ export default function SyncControl() {
                   <span style={{
                     fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                     fontSize: "10px",
-                    color: "#555570",
+                    color: "#A0A0B0",
                     textTransform: "uppercase",
                     letterSpacing: "0.06em",
                     minWidth: "80px",
@@ -244,7 +244,7 @@ export default function SyncControl() {
                     <span style={{
                       fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                       fontSize: "10px",
-                      color: "#555570",
+                      color: "#A0A0B0",
                       textTransform: "uppercase",
                       letterSpacing: "0.06em",
                       minWidth: "80px",
@@ -315,7 +315,7 @@ export default function SyncControl() {
                 <div style={{
                   fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                   fontSize: "10px",
-                  color: "#555570",
+                  color: "#A0A0B0",
                   textTransform: "uppercase",
                   letterSpacing: "0.06em",
                   marginBottom: "8px",

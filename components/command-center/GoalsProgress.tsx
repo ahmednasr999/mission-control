@@ -17,7 +17,7 @@ function ProgressBar({ progress, status }: { progress: number; status: string })
       ? "linear-gradient(90deg, #4F8EF7, #7C3AED)"
       : clampedProgress >= 30
       ? "linear-gradient(90deg, #D97706, #FBBF24)"
-      : "linear-gradient(90deg, #555570, #8888A0)";
+      : "linear-gradient(90deg, #A0A0B0, #8888A0)";
 
   return (
     <div style={{ position: "relative" }}>
@@ -81,7 +81,7 @@ export default function GoalsProgress({ goals, loading }: GoalsProgressProps) {
         <span
           style={{
             fontSize: "11px",
-            color: "#555570",
+            color: "#A0A0B0",
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
           }}
         >
@@ -95,7 +95,7 @@ export default function GoalsProgress({ goals, loading }: GoalsProgressProps) {
           <div
             style={{
               textAlign: "center",
-              color: "#555570",
+              color: "#A0A0B0",
               fontSize: "13px",
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               padding: "16px 0",
@@ -107,7 +107,7 @@ export default function GoalsProgress({ goals, loading }: GoalsProgressProps) {
           <div
             style={{
               textAlign: "center",
-              color: "#555570",
+              color: "#A0A0B0",
               fontSize: "13px",
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               padding: "16px 0",
@@ -133,7 +133,7 @@ export default function GoalsProgress({ goals, loading }: GoalsProgressProps) {
                       style={{
                         fontSize: "10px",
                         fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                        color: "#555570",
+                        color: "#A0A0B0",
                         textTransform: "uppercase",
                         letterSpacing: "0.06em",
                         display: "block",

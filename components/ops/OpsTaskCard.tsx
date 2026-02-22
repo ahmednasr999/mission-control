@@ -255,7 +255,7 @@ export default function OpsTaskCard({ task, dimmed = false }: OpsTaskCardProps) 
             style={{
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
               fontSize: "11px",
-              color: overdue ? "#F87171" : "#555570",
+              color: overdue ? "#F87171" : "#A0A0B0",
             }}
           >
             {formatDate(task.dueDate)}

@@ -40,7 +40,7 @@ function renderContent(content: string): React.ReactNode {
                   style={{
                     textAlign: "left",
                     padding: "5px 8px",
-                    color: "#555570",
+                    color: "#A0A0B0",
                     fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                     fontSize: "10px",
                     fontWeight: 600,
@@ -127,7 +127,7 @@ function renderContent(content: string): React.ReactNode {
           fontFamily: "var(--font-syne, Syne, sans-serif)",
           fontSize: "11px",
           fontWeight: 700,
-          color: "#555570",
+          color: "#A0A0B0",
           marginTop: "6px",
           marginBottom: "2px",
         }}>
@@ -286,7 +286,7 @@ function IdeaCard({ section }: { section: Section }) {
             </h3>
             <span
               style={{
-                color: "#555570",
+                color: "#A0A0B0",
                 fontSize: "11px",
                 flexShrink: 0,
                 marginTop: "2px",
@@ -319,7 +319,7 @@ function IdeaCard({ section }: { section: Section }) {
               margin: "6px 0 0",
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               fontSize: "11px",
-              color: "#555570",
+              color: "#A0A0B0",
               lineHeight: 1.5,
             }}>
               {preview}{section.content.length > 120 ? "…" : ""}
@@ -350,7 +350,7 @@ function IdeaCard({ section }: { section: Section }) {
             cursor: "pointer",
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
             fontSize: "10px",
-            color: expanded ? "#555570" : "#4F8EF7",
+            color: expanded ? "#A0A0B0" : "#4F8EF7",
             padding: 0,
             letterSpacing: "0.04em",
           }}
@@ -405,7 +405,7 @@ export default function IdeasPanel() {
           <span style={{
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
             fontSize: "10px",
-            color: "#555570",
+            color: "#A0A0B0",
           }}>
             {data.sections.length} sections
           </span>
@@ -417,7 +417,7 @@ export default function IdeasPanel() {
         {loading ? (
           <div style={{
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "13px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             padding: "24px 0",
@@ -425,7 +425,7 @@ export default function IdeasPanel() {
             Loading knowledge base…
           </div>
         ) : !data || data.sections.length === 0 ? (
-          <div style={{ textAlign: "center", color: "#555570", fontSize: "13px", padding: "20px 0" }}>
+          <div style={{ textAlign: "center", color: "#A0A0B0", fontSize: "13px", padding: "20px 0" }}>
             No sections found in second_brain.md
           </div>
         ) : (

@@ -93,7 +93,7 @@ export default function AgentCard({
           width: "8px",
           height: "8px",
           borderRadius: "50%",
-          background: isActive ? "#34D399" : "#555570",
+          background: isActive ? "#34D399" : "#A0A0B0",
           boxShadow: isActive ? "0 0 6px #34D39980" : "none",
         }}
       />
@@ -151,7 +151,7 @@ export default function AgentCard({
             gap: "4px",
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
             fontSize: "10px",
-            color: isActive ? "#34D399" : "#555570",
+            color: isActive ? "#34D399" : "#A0A0B0",
           }}
         >
           <span
@@ -159,7 +159,7 @@ export default function AgentCard({
               width: "5px",
               height: "5px",
               borderRadius: "50%",
-              background: isActive ? "#34D399" : "#555570",
+              background: isActive ? "#34D399" : "#A0A0B0",
               flexShrink: 0,
             }}
           />
@@ -171,7 +171,7 @@ export default function AgentCard({
             style={{
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
               fontSize: "10px",
-              color: "#555570",
+              color: "#A0A0B0",
               background: "rgba(255,255,255,0.04)",
               border: "1px solid #1E2D45",
               borderRadius: "20px",

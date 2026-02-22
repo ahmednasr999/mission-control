@@ -106,7 +106,7 @@ export default function Topbar() {
             <span
               style={{
                 fontSize: "11px",
-                color: "#555570",
+                color: "#A0A0B0",
                 fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                 letterSpacing: "0.02em",
               }}

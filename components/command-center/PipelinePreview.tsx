@@ -110,7 +110,7 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
         <span
           style={{
             fontSize: "11px",
-            color: "#555570",
+            color: "#A0A0B0",
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
           }}
         >
@@ -204,7 +204,7 @@ function EmptyState({ message }: { message: string }) {
       style={{
         padding: "32px 20px",
         textAlign: "center",
-        color: "#555570",
+        color: "#A0A0B0",
         fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
         fontSize: "13px",
       }}

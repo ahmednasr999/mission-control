@@ -111,7 +111,7 @@ function CategoryCard({ category }: { category: Category }) {
               </span>
               <span
                 style={{
-                  color: "#555570",
+                  color: "#A0A0B0",
                   fontSize: "12px",
                   transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
                   transition: "transform 0.2s ease",
@@ -163,7 +163,7 @@ function CategoryCard({ category }: { category: Category }) {
                 style={{
                   fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                   fontSize: "13px",
-                  color: obj.done ? "#555570" : "#F0F0F5",
+                  color: obj.done ? "#A0A0B0" : "#F0F0F5",
                   textDecoration: obj.done ? "line-through" : "none",
                   lineHeight: 1.5,
                   flex: 1,
@@ -225,7 +225,7 @@ function MetricsTable({ metrics }: { metrics: Metric[] }) {
                     fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                     fontSize: "10px",
                     fontWeight: 600,
-                    color: "#555570",
+                    color: "#A0A0B0",
                     textTransform: "uppercase",
                     letterSpacing: "0.06em",
                     borderBottom: "1px solid #1E2D45",
@@ -330,7 +330,7 @@ export default function GoalsDashboard() {
           style={{
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             fontSize: "13px",
-            color: "#555570",
+            color: "#A0A0B0",
             margin: "4px 0 0",
           }}
         >
@@ -346,7 +346,7 @@ export default function GoalsDashboard() {
             borderRadius: "10px",
             padding: "24px",
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "13px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           }}
@@ -361,7 +361,7 @@ export default function GoalsDashboard() {
             borderRadius: "10px",
             padding: "24px",
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "13px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           }}

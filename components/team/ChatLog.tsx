@@ -116,7 +116,7 @@ export default function ChatLog({ agentId, agentName, agentEmoji }: ChatLogProps
             style={{
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               fontSize: "12px",
-              color: "#555570",
+              color: "#A0A0B0",
               marginLeft: "8px",
             }}
           >
@@ -129,7 +129,7 @@ export default function ChatLog({ agentId, agentName, agentEmoji }: ChatLogProps
               marginLeft: "auto",
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
               fontSize: "11px",
-              color: "#555570",
+              color: "#A0A0B0",
             }}
           >
             {total} messages
@@ -167,7 +167,7 @@ export default function ChatLog({ agentId, agentName, agentEmoji }: ChatLogProps
           <div
             style={{
               textAlign: "center",
-              color: "#555570",
+              color: "#A0A0B0",
               fontSize: "13px",
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               padding: "40px 0",
@@ -179,7 +179,7 @@ export default function ChatLog({ agentId, agentName, agentEmoji }: ChatLogProps
           <div
             style={{
               textAlign: "center",
-              color: "#555570",
+              color: "#A0A0B0",
               fontSize: "13px",
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               padding: "40px 0",
@@ -204,7 +204,7 @@ export default function ChatLog({ agentId, agentName, agentEmoji }: ChatLogProps
                   style={{
                     fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                     fontSize: "10px",
-                    color: "#555570",
+                    color: "#A0A0B0",
                   }}
                 >
                   {formatTimestamp(msg.timestamp)}

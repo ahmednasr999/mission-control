@@ -30,7 +30,7 @@ function DateBadge({ date }: { date?: string }) {
         padding: "1px 6px",
         fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
         fontSize: "10px",
-        color: "#555570",
+        color: "#A0A0B0",
         flexShrink: 0,
         whiteSpace: "nowrap",
       }}
@@ -122,7 +122,7 @@ function MistakeItem({ item }: { item: Mistake }) {
           {item.fix && !expanded && (
             <span style={{
               fontSize: "10px",
-              color: "#555570",
+              color: "#A0A0B0",
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
               marginTop: "3px",
               display: "block",
@@ -190,7 +190,7 @@ export default function InsightsPanel() {
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               fontSize: "11px",
               fontWeight: tab === "wins" ? 700 : 500,
-              color: tab === "wins" ? "#34D399" : "#555570",
+              color: tab === "wins" ? "#34D399" : "#A0A0B0",
               transition: "all 0.12s ease",
             }}
           >
@@ -207,7 +207,7 @@ export default function InsightsPanel() {
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               fontSize: "11px",
               fontWeight: tab === "mistakes" ? 700 : 500,
-              color: tab === "mistakes" ? "#F87171" : "#555570",
+              color: tab === "mistakes" ? "#F87171" : "#A0A0B0",
               transition: "all 0.12s ease",
             }}
           >
@@ -221,7 +221,7 @@ export default function InsightsPanel() {
         {loading ? (
           <div style={{
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "13px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             padding: "20px 0",
@@ -230,7 +230,7 @@ export default function InsightsPanel() {
           </div>
         ) : !data ? null : tab === "wins" ? (
           data.wins.length === 0 ? (
-            <div style={{ textAlign: "center", color: "#555570", fontSize: "13px", padding: "20px 0" }}>
+            <div style={{ textAlign: "center", color: "#A0A0B0", fontSize: "13px", padding: "20px 0" }}>
               No milestones found
             </div>
           ) : (
@@ -240,7 +240,7 @@ export default function InsightsPanel() {
           )
         ) : (
           data.mistakes.length === 0 ? (
-            <div style={{ textAlign: "center", color: "#555570", fontSize: "13px", padding: "20px 0" }}>
+            <div style={{ textAlign: "center", color: "#A0A0B0", fontSize: "13px", padding: "20px 0" }}>
               No lessons found
             </div>
           ) : (

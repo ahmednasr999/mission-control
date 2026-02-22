@@ -77,7 +77,7 @@ export default function ArchiveSection() {
         {/* Arrow */}
         <span
           style={{
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "12px",
             transition: "transform 0.2s ease",
             display: "inline-block",
@@ -122,7 +122,7 @@ export default function ArchiveSection() {
         <span
           style={{
             fontSize: "11px",
-            color: "#555570",
+            color: "#A0A0B0",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             marginLeft: "4px",
           }}
@@ -139,7 +139,7 @@ export default function ArchiveSection() {
               style={{
                 padding: "24px",
                 textAlign: "center",
-                color: "#555570",
+                color: "#A0A0B0",
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                 fontSize: "13px",
               }}
@@ -163,7 +163,7 @@ export default function ArchiveSection() {
               style={{
                 padding: "24px",
                 textAlign: "center",
-                color: "#555570",
+                color: "#A0A0B0",
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                 fontSize: "13px",
               }}

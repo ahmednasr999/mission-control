@@ -71,7 +71,7 @@ export default function OpsArchive() {
         {/* Arrow */}
         <span
           style={{
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "12px",
             display: "inline-block",
             transform: expanded ? "rotate(90deg)" : "rotate(0deg)",
@@ -116,7 +116,7 @@ export default function OpsArchive() {
         <span
           style={{
             fontSize: "11px",
-            color: "#555570",
+            color: "#A0A0B0",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             marginLeft: "4px",
           }}
@@ -133,7 +133,7 @@ export default function OpsArchive() {
               style={{
                 padding: "24px",
                 textAlign: "center",
-                color: "#555570",
+                color: "#A0A0B0",
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                 fontSize: "13px",
               }}
@@ -157,7 +157,7 @@ export default function OpsArchive() {
               style={{
                 padding: "24px",
                 textAlign: "center",
-                color: "#555570",
+                color: "#A0A0B0",
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                 fontSize: "13px",
               }}

@@ -137,7 +137,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
             borderBottom: "1px solid #1E2D45",
           }}
         >
-          <span style={{ fontSize: "18px", color: "#555570", marginRight: "12px", flexShrink: 0 }}>🔍</span>
+          <span style={{ fontSize: "18px", color: "#A0A0B0", marginRight: "12px", flexShrink: 0 }}>🔍</span>
           <input
             ref={inputRef}
             type="text"
@@ -160,7 +160,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
             <span
               style={{
                 fontSize: "11px",
-                color: "#555570",
+                color: "#A0A0B0",
                 fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                 flexShrink: 0,
                 marginLeft: "8px",
@@ -177,7 +177,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
               borderRadius: "6px",
               padding: "4px 8px",
               cursor: "pointer",
-              color: "#555570",
+              color: "#A0A0B0",
               fontSize: "11px",
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
               flexShrink: 0,
@@ -200,7 +200,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
             <div
               style={{
                 textAlign: "center",
-                color: "#555570",
+                color: "#A0A0B0",
                 fontSize: "13px",
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                 padding: "24px 0",
@@ -250,7 +250,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
               <span
                 style={{
                   fontSize: "11px",
-                  color: "#555570",
+                  color: "#A0A0B0",
                   fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                 }}
               >

@@ -56,7 +56,7 @@ function StatItem({ value, label, gradient }: StatItemProps) {
         style={{
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           fontSize: "11px",
-          color: "#555570",
+          color: "#A0A0B0",
           textTransform: "uppercase",
           letterSpacing: "0.05em",
           fontWeight: 500,
@@ -75,7 +75,7 @@ function FileGrowthChart({ trend }: { trend: string[] }) {
       <div style={{
         fontSize: "11px",
         fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-        color: "#555570",
+        color: "#A0A0B0",
       }}>
         Trend: N/A
       </div>
@@ -93,7 +93,7 @@ function FileGrowthChart({ trend }: { trend: string[] }) {
       <div style={{
         fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
         fontSize: "10px",
-        color: "#555570",
+        color: "#A0A0B0",
         textTransform: "uppercase",
         letterSpacing: "0.06em",
         marginBottom: "8px",
@@ -135,7 +135,7 @@ function FileGrowthChart({ trend }: { trend: string[] }) {
               <div style={{
                 fontSize: "8px",
                 fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                color: "#555570",
+                color: "#A0A0B0",
                 whiteSpace: "nowrap",
               }}>
                 {date}
@@ -234,7 +234,7 @@ export default function WorkspaceStats() {
         {loading ? (
           <div
             style={{
-              color: "#555570",
+              color: "#A0A0B0",
               fontSize: "13px",
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               padding: "20px 0",

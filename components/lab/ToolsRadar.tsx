@@ -119,7 +119,7 @@ function ToolItem({
           paddingLeft: "13px",
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           fontSize: "10px",
-          color: "#555570",
+          color: "#A0A0B0",
           lineHeight: 1.4,
         }}
       >
@@ -131,7 +131,7 @@ function ToolItem({
           paddingLeft: "13px",
           fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
           fontSize: "9px",
-          color: "#555570",
+          color: "#A0A0B0",
           opacity: 0.7,
         }}>
           Evaluated: {tool.evaluatedAt}
@@ -199,7 +199,7 @@ function ToolColumn({
           <div style={{
             padding: "16px 10px",
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "11px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           }}>
@@ -263,7 +263,7 @@ export default function ToolsRadar() {
         <span style={{
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           fontSize: "10px",
-          color: "#555570",
+          color: "#A0A0B0",
         }}>
           Adopt · Trial · Reject
         </span>
@@ -274,7 +274,7 @@ export default function ToolsRadar() {
         {loading ? (
           <div style={{
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "13px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             padding: "24px 0",

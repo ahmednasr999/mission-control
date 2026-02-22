@@ -31,7 +31,7 @@ function EmptyColumn() {
       style={{
         padding: "24px 8px",
         textAlign: "center",
-        color: "#555570",
+        color: "#A0A0B0",
         fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
         fontSize: "12px",
       }}
@@ -99,7 +99,7 @@ export default function HRKanban() {
             style={{
               marginLeft: "10px",
               fontSize: "11px",
-              color: "#555570",
+              color: "#A0A0B0",
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
             }}
           >
@@ -110,7 +110,7 @@ export default function HRKanban() {
           <span
             style={{
               fontSize: "11px",
-              color: "#555570",
+              color: "#A0A0B0",
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
             }}
           >
@@ -125,7 +125,7 @@ export default function HRKanban() {
           style={{
             padding: "40px",
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             fontSize: "13px",
           }}

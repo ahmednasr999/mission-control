@@ -189,7 +189,7 @@ export default function ContentCard({
           <span
             style={{
               fontSize: "11px",
-              color: "#555570",
+              color: "#A0A0B0",
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             }}
           >
@@ -201,7 +201,7 @@ export default function ContentCard({
           <span
             style={{
               fontSize: "11px",
-              color: "#555570",
+              color: "#A0A0B0",
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
               marginLeft: "auto",
             }}
@@ -235,7 +235,7 @@ export default function ContentCard({
           style={{
             marginTop: "6px",
             fontSize: "10px",
-            color: "#555570",
+            color: "#A0A0B0",
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
             overflow: "hidden",
             textOverflow: "ellipsis",

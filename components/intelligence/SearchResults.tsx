@@ -57,7 +57,7 @@ export default function SearchResults({
       <div
         style={{
           textAlign: "center",
-          color: "#555570",
+          color: "#A0A0B0",
           fontSize: "13px",
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           padding: "24px 0",
@@ -75,7 +75,7 @@ export default function SearchResults({
       <div
         style={{
           fontSize: "11px",
-          color: "#555570",
+          color: "#A0A0B0",
           fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
           paddingBottom: "4px",
         }}
@@ -108,7 +108,7 @@ export default function SearchResults({
             <span
               style={{
                 fontSize: "10px",
-                color: "#555570",
+                color: "#A0A0B0",
                 fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
               }}
             >
@@ -138,7 +138,7 @@ export default function SearchResults({
                   <div
                     style={{
                       fontSize: "10px",
-                      color: "#555570",
+                      color: "#A0A0B0",
                       fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                       marginBottom: "3px",
                     }}
@@ -167,7 +167,7 @@ export default function SearchResults({
                         borderTop: "1px solid #1E2D45",
                         fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                         fontSize: "11px",
-                        color: "#555570",
+                        color: "#A0A0B0",
                         whiteSpace: "pre-wrap",
                         wordBreak: "break-word",
                         lineHeight: 1.6,

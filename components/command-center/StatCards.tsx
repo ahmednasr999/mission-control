@@ -39,7 +39,7 @@ function TrendBadge({ trend }: { trend: TrendDirection }) {
       <span style={{
         fontSize: "9px",
         fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-        color: "#555570",
+        color: "#A0A0B0",
         letterSpacing: "0.05em",
       }}>
         Trend: N/A
@@ -50,7 +50,7 @@ function TrendBadge({ trend }: { trend: TrendDirection }) {
     up: { icon: "↑", color: "#34D399", label: "Up" },
     down: { icon: "↓", color: "#F87171", label: "Down" },
     flat: { icon: "→", color: "#FBBF24", label: "Stable" },
-    na: { icon: "—", color: "#555570", label: "N/A" },
+    na: { icon: "—", color: "#A0A0B0", label: "N/A" },
   };
   const { icon, color, label } = map[trend];
   return (
@@ -118,7 +118,7 @@ function StatCard({ value, label, color, glow, trend, showDetails, details }: St
           style={{
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             fontSize: "11px",
-            color: "#555570",
+            color: "#A0A0B0",
             fontWeight: 500,
             textTransform: "uppercase",
             letterSpacing: "0.06em",
@@ -137,7 +137,7 @@ function StatCard({ value, label, color, glow, trend, showDetails, details }: St
           borderTop: "1px solid #1E2D45",
           fontSize: "11px",
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-          color: "#555570",
+          color: "#A0A0B0",
           lineHeight: 1.5,
         }}>
           {details}
@@ -233,7 +233,7 @@ export default function StatCards({ stats, loading }: StatCardsProps) {
             padding: "3px 12px",
             fontSize: "11px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            color: "#555570",
+            color: "#A0A0B0",
             cursor: "pointer",
             transition: "all 0.12s ease",
           }}

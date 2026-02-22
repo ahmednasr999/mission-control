@@ -70,7 +70,7 @@ export default function AgentHierarchy({
           fontFamily: "var(--font-syne, Syne, sans-serif)",
           fontSize: "13px",
           fontWeight: 700,
-          color: "#555570",
+          color: "#A0A0B0",
           textTransform: "uppercase",
           letterSpacing: "0.08em",
           marginBottom: "24px",
@@ -157,7 +157,7 @@ export default function AgentHierarchy({
           marginTop: "16px",
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           fontSize: "11px",
-          color: "#555570",
+          color: "#A0A0B0",
           textAlign: "center",
         }}
       >

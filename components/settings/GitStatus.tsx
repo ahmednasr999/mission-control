@@ -105,7 +105,7 @@ export default function GitStatus() {
         {loading ? (
           <div
             style={{
-              color: "#555570",
+              color: "#A0A0B0",
               fontSize: "13px",
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               padding: "20px 0",
@@ -137,7 +137,7 @@ export default function GitStatus() {
                   style={{
                     fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                     fontSize: "10px",
-                    color: "#555570",
+                    color: "#A0A0B0",
                     textTransform: "uppercase",
                     letterSpacing: "0.06em",
                     marginBottom: "6px",
@@ -169,7 +169,7 @@ export default function GitStatus() {
                   style={{
                     fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                     fontSize: "10px",
-                    color: "#555570",
+                    color: "#A0A0B0",
                     textTransform: "uppercase",
                     letterSpacing: "0.06em",
                     marginBottom: "6px",
@@ -207,7 +207,7 @@ export default function GitStatus() {
                     style={{
                       fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                       fontSize: "12px",
-                      color: "#555570",
+                      color: "#A0A0B0",
                     }}
                   >
                     No commits
@@ -274,7 +274,7 @@ export default function GitStatus() {
                         style={{
                           fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                           fontSize: "10px",
-                          color: "#555570",
+                          color: "#A0A0B0",
                           flexShrink: 0,
                           whiteSpace: "nowrap",
                         }}
@@ -292,7 +292,7 @@ export default function GitStatus() {
                 style={{
                   textAlign: "center",
                   padding: "20px",
-                  color: "#555570",
+                  color: "#A0A0B0",
                   fontSize: "13px",
                   fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                 }}

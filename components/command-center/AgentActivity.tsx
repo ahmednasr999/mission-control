@@ -47,7 +47,7 @@ export default function AgentActivity({ agents, loading }: AgentActivityProps) {
         <span
           style={{
             fontSize: "11px",
-            color: "#555570",
+            color: "#A0A0B0",
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
           }}
         >
@@ -110,7 +110,7 @@ export default function AgentActivity({ agents, loading }: AgentActivityProps) {
                         fontFamily: "var(--font-syne, Syne, sans-serif)",
                         fontSize: "12px",
                         fontWeight: 700,
-                        color: hasActivity ? "#F0F0F5" : "#555570",
+                        color: hasActivity ? "#F0F0F5" : "#A0A0B0",
                         letterSpacing: "0.03em",
                       }}
                     >
@@ -121,7 +121,7 @@ export default function AgentActivity({ agents, loading }: AgentActivityProps) {
                         style={{
                           fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                           fontSize: "10px",
-                          color: "#555570",
+                          color: "#A0A0B0",
                         }}
                       >
                         {agent.timestamp}
@@ -132,7 +132,7 @@ export default function AgentActivity({ agents, loading }: AgentActivityProps) {
                     style={{
                       fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                       fontSize: "12px",
-                      color: hasActivity ? "#8888A0" : "#555570",
+                      color: hasActivity ? "#8888A0" : "#A0A0B0",
                       lineHeight: "1.4",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -170,7 +170,7 @@ function EmptyState({ message }: { message: string }) {
       style={{
         padding: "32px 20px",
         textAlign: "center",
-        color: "#555570",
+        color: "#A0A0B0",
         fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
         fontSize: "13px",
       }}

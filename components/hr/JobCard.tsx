@@ -38,7 +38,7 @@ function AtsScoreBadge({ score }: { score: number | null }) {
         style={{
           fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
           fontSize: "10px",
-          color: "#555570",
+          color: "#A0A0B0",
           background: "rgba(85,85,112,0.15)",
           border: "1px solid rgba(85,85,112,0.3)",
           borderRadius: "20px",
@@ -273,7 +273,7 @@ export default function JobCard({ job, dimmed = false }: JobCardProps) {
           style={{
             marginTop: "8px",
             fontSize: "11px",
-            color: "#555570",
+            color: "#A0A0B0",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             overflow: "hidden",
             textOverflow: "ellipsis",

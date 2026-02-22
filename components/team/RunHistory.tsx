@@ -146,7 +146,7 @@ export default function RunHistory() {
     fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
     fontSize: "10px",
     fontWeight: 600,
-    color: "#555570",
+    color: "#A0A0B0",
     textTransform: "uppercase",
     letterSpacing: "0.06em",
     padding: "8px 12px",
@@ -188,7 +188,7 @@ export default function RunHistory() {
             style={{
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
               fontSize: "11px",
-              color: "#555570",
+              color: "#A0A0B0",
             }}
           >
             {total} runs
@@ -218,7 +218,7 @@ export default function RunHistory() {
           style={{
             padding: "40px 20px",
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "13px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           }}
@@ -230,7 +230,7 @@ export default function RunHistory() {
           style={{
             padding: "40px 20px",
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontSize: "13px",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           }}
@@ -311,7 +311,7 @@ export default function RunHistory() {
                   padding: "0 12px",
                   fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                   fontSize: "11px",
-                  color: "#555570",
+                  color: "#A0A0B0",
                 }}
               >
                 {formatTime(run.startTime)}

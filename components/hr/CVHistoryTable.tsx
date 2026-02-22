@@ -37,7 +37,7 @@ function AtsCell({ score }: { score: number | null }) {
         style={{
           fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
           fontSize: "12px",
-          color: "#555570",
+          color: "#A0A0B0",
         }}
       >
         —
@@ -145,7 +145,7 @@ export default function CVHistoryTable() {
           <span
             style={{
               fontSize: "11px",
-              color: "#555570",
+              color: "#A0A0B0",
               fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
             }}
           >
@@ -160,7 +160,7 @@ export default function CVHistoryTable() {
           style={{
             padding: "40px",
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             fontSize: "13px",
           }}
@@ -184,7 +184,7 @@ export default function CVHistoryTable() {
           style={{
             padding: "40px",
             textAlign: "center",
-            color: "#555570",
+            color: "#A0A0B0",
             fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             fontSize: "13px",
           }}
@@ -217,7 +217,7 @@ export default function CVHistoryTable() {
                         textAlign: "left",
                         fontSize: "11px",
                         fontWeight: 600,
-                        color: "#555570",
+                        color: "#A0A0B0",
                         textTransform: "uppercase",
                         letterSpacing: "0.05em",
                         whiteSpace: "nowrap",
