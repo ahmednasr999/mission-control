@@ -152,10 +152,13 @@ function PriorityFocusCard({ tasks, loading }: { tasks: Task[]; loading: boolean
           🎯 Priority Focus
         </span>
         <span style={{
-          fontSize: "12px",
+          fontSize: "14px",
           fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
           color: "#4F8EF7",
-          fontWeight: 500,
+          fontWeight: 600,
+          background: "rgba(79, 142, 247, 0.15)",
+          padding: "4px 10px",
+          borderRadius: "6px",
         }}>
           TOP {focusTasks.length} TODAY
         </span>
@@ -177,7 +180,7 @@ function PriorityFocusCard({ tasks, loading }: { tasks: Task[]; loading: boolean
               borderRadius: "6px",
               border: "1px solid rgba(79,142,247,0.15)",
             }}>
-              <span style={{ fontSize: "12px", flexShrink: 0 }}>
+              <span style={{ fontSize: "18px", flexShrink: 0, lineHeight: 1 }}>
                 {PRIORITY_ICON[task.priority] ?? "⚪"}
               </span>
               <span style={{
@@ -193,14 +196,15 @@ function PriorityFocusCard({ tasks, loading }: { tasks: Task[]; loading: boolean
                 {task.title}
               </span>
               <span style={{
-                fontSize: "12px",
+                fontSize: "14px",
                 fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
                 color: "#4F8EF7",
-                fontWeight: 600,
+                fontWeight: 700,
                 flexShrink: 0,
-                background: "rgba(79,142,247,0.1)",
-                padding: "3px 8px",
-                borderRadius: "6px",
+                background: "rgba(79, 142, 247, 0.2)",
+                padding: "4px 10px",
+                borderRadius: "8px",
+                border: "1px solid rgba(79, 142, 247, 0.3)",
               }}>
                 #{i + 1}
               </span>

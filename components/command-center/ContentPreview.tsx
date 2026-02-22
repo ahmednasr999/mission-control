@@ -28,18 +28,19 @@ function StageColumn({ label, count, color, bg }: StageColumnProps) {
       {/* Count bubble */}
       <div
         style={{
-          width: "48px",
-          height: "48px",
-          borderRadius: "12px",
+          width: "64px",
+          height: "64px",
+          borderRadius: "16px",
           background: bg,
-          border: `1px solid ${color}30`,
+          border: `2px solid ${count > 0 ? color : "#1E2D45"}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           fontFamily: "var(--font-syne, Syne, sans-serif)",
-          fontSize: "20px",
-          fontWeight: 700,
+          fontSize: "28px",
+          fontWeight: 800,
           color: count > 0 ? color : "#555570",
+          boxShadow: count > 0 ? `0 4px 16px ${color}30` : "none",
         }}
       >
         {count}
@@ -49,10 +50,11 @@ function StageColumn({ label, count, color, bg }: StageColumnProps) {
       <div
         style={{
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-          fontSize: "13px",
+          fontSize: "15px",
           color: count > 0 ? "#F0F0F5" : "#8888A0",
-          fontWeight: 500,
+          fontWeight: 600,
           textAlign: "center",
+          marginTop: "4px",
         }}
       >
         {label}
@@ -127,10 +129,13 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
         </span>
         <span
           style={{
-            fontSize: "12px",
-            color: "#8888A0",
+            fontSize: "13px",
+            color: "#4F8EF7",
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-            fontWeight: 500,
+            fontWeight: 600,
+            background: "rgba(79, 142, 247, 0.1)",
+            padding: "4px 10px",
+            borderRadius: "6px",
           }}
         >
           KANBAN
@@ -138,7 +143,7 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
       </div>
 
       {/* Stages */}
-      <div style={{ padding: "24px 20px" }}>
+      <div style={{ padding: "28px 24px" }}>
         {loading ? (
           <div
             style={{
@@ -155,7 +160,8 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "0",
+              gap: "8px",
+              justifyContent: "space-between",
             }}
           >
             {STAGES.map((stage, i) => (
@@ -201,19 +207,20 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
           >
             <span
               style={{
-                fontSize: "13px",
+                fontSize: "15px",
                 color: "#8888A0",
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                fontWeight: 500,
               }}
             >
               Total pieces
             </span>
             <span
               style={{
-                fontSize: "13px",
-                fontWeight: 700,
+                fontSize: "18px",
+                fontWeight: 800,
                 fontFamily: "var(--font-syne, Syne, sans-serif)",
-                color: "#8888A0",
+                color: "#F0F0F5",
               }}
             >
               {data.ideas + data.draft + data.review + data.published}
