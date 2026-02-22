@@ -46,6 +46,7 @@ function initSchema(db: Database.Database): void {
       cv_status TEXT,
       status TEXT,
       ats_score INTEGER,
+      applied_date TEXT,
       updatedAt TEXT
     );
 
@@ -181,21 +182,21 @@ export function writeJobPipeline(jobs: ParsedJobPipeline[]): number {
 
   const existing = db.prepare(`SELECT id FROM job_pipeline WHERE company = ? AND role = ?`);
   const insert = db.prepare(`
-    INSERT INTO job_pipeline (company, role, location, link, jd_status, cv_status, status, ats_score, updatedAt)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO job_pipeline (company, role, location, link, jd_status, cv_status, status, ats_score, applied_date, updatedAt)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   const update = db.prepare(`
     UPDATE job_pipeline
-    SET location = ?, link = ?, jd_status = ?, cv_status = ?, status = ?, ats_score = ?, updatedAt = ?
+    SET location = ?, link = ?, jd_status = ?, cv_status = ?, status = ?, ats_score = ?, applied_date = ?, updatedAt = ?
     WHERE company = ? AND role = ?
   `);
 
   for (const job of jobs) {
     const found = existing.get(job.company, job.role) as any;
     if (found) {
-      update.run(job.location, job.link, job.jd_status, job.cv_status, job.status, job.ats_score, now, job.company, job.role);
+      update.run(job.location, job.link, job.jd_status, job.cv_status, job.status, job.ats_score, job.applied_date || null, now, job.company, job.role);
     } else {
-      insert.run(job.company, job.role, job.location, job.link, job.jd_status, job.cv_status, job.status, job.ats_score, now);
+      insert.run(job.company, job.role, job.location, job.link, job.jd_status, job.cv_status, job.status, job.ats_score, job.applied_date || null, now);
       count++;
     }
   }

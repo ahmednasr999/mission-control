@@ -14,6 +14,7 @@ export interface Job {
   companyDomain: string | null;
   updatedAt: string | null;
   link?: string | null;
+  appliedDate?: string | null;
 }
 
 const COLUMN_COLORS: Record<string, string> = {

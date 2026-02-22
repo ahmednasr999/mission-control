@@ -23,6 +23,7 @@ export interface ParsedJobPipeline {
   cv_status: string;
   status: string;
   ats_score: number | null;
+  applied_date?: string | null;
 }
 
 export interface ParsedContentPipeline {
@@ -350,13 +351,17 @@ export function parseJobApplicationTracker(content: string): ParsedJobPipeline[]
         const source = get('source') || '';
         const status = get('status') || '';
         
-        // Extract link from markdown link format [text](url) or plain URL
-        let link = '';
-        const linkMatch = source.match(/\[([^\]]+)\]\(([^)]+)\)/);
-        if (linkMatch) {
-          link = linkMatch[2];
-        } else if (source.match(/^https?:\/\//)) {
-          link = source;
+        // Extract link from dedicated "link" column OR from source column
+        let link = get('link') || '';
+        
+        // If no link column, try to extract from source column
+        if (!link) {
+          const linkMatch = source.match(/\[([^\]]+)\]\(([^)]+)\)/);
+          if (linkMatch) {
+            link = linkMatch[2];
+          } else if (source.match(/^https?:\/\//)) {
+            link = source;
+          }
         }
 
         if (company && company !== '—' && company !== '-' && company.toLowerCase() !== 'company') {
@@ -369,6 +374,7 @@ export function parseJobApplicationTracker(content: string): ParsedJobPipeline[]
             cv_status: '',
             status: mapStatus(status || currentSection),
             ats_score: null,
+            applied_date: date || null,
           });
         }
       }

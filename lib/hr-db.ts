@@ -22,7 +22,7 @@ function getDb(): Database.Database {
         company TEXT, role TEXT, location TEXT, link TEXT,
         jd_status TEXT, cv_status TEXT, status TEXT,
         ats_score INTEGER, next_action TEXT, salary TEXT, company_domain TEXT,
-        updatedAt TEXT
+        applied_date TEXT, updatedAt TEXT
       );
       CREATE TABLE IF NOT EXISTS cv_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,6 +55,7 @@ export interface HRJobRow {
   next_action: string | null;
   salary: string | null;
   company_domain: string | null;
+  applied_date: string | null;
   updatedAt: string | null;
 }
 
