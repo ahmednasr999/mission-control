@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import JobCard, { Job } from "./JobCard";
+import JobDetailPanel from "./JobDetailPanel";
 
 interface PipelineResponse {
   columns: {
@@ -45,6 +46,7 @@ export default function HRKanban() {
   const [data, setData] = useState<PipelineResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
   useEffect(() => {
     fetch("/api/hr/pipeline")
@@ -64,186 +66,200 @@ export default function HRKanban() {
     : 0;
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-        marginBottom: "20px",
-      }}
-    >
-      {/* Section header */}
+    <>
       <div
         style={{
-          padding: "16px 20px 14px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          background: "#0D1220",
+          border: "1px solid #1E2D45",
+          borderRadius: "10px",
+          overflow: "hidden",
+          marginBottom: "20px",
         }}
       >
-        <div>
-          <span
-            style={{
-              fontFamily: "var(--font-syne, Syne, sans-serif)",
-              fontSize: "15px",
-              fontWeight: 700,
-              color: "#F0F0F5",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Job Pipeline
-          </span>
-          <span
-            style={{
-              marginLeft: "10px",
-              fontSize: "11px",
-              color: "#A0A0B0",
-              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-            }}
-          >
-            Kanban
-          </span>
+        {/* Section header */}
+        <div
+          style={{
+            padding: "16px 20px 14px",
+            borderBottom: "1px solid #1E2D45",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <span
+              style={{
+                fontFamily: "var(--font-syne, Syne, sans-serif)",
+                fontSize: "15px",
+                fontWeight: 700,
+                color: "#F0F0F5",
+                letterSpacing: "-0.02em",
+              }}
+            >
+              Job Pipeline
+            </span>
+            <span
+              style={{
+                marginLeft: "10px",
+                fontSize: "11px",
+                color: "#A0A0B0",
+                fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+              }}
+            >
+              Kanban
+            </span>
+          </div>
+          {!loading && (
+            <span
+              style={{
+                fontSize: "11px",
+                color: "#A0A0B0",
+                fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+              }}
+            >
+              {totalJobs} total
+            </span>
+          )}
         </div>
-        {!loading && (
-          <span
+
+        {/* Kanban columns */}
+        {loading ? (
+          <div
             style={{
-              fontSize: "11px",
+              padding: "40px",
+              textAlign: "center",
               color: "#A0A0B0",
-              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+              fontSize: "13px",
             }}
           >
-            {totalJobs} total
-          </span>
+            Loading pipeline…
+          </div>
+        ) : error ? (
+          <div
+            style={{
+              padding: "40px",
+              textAlign: "center",
+              color: "#F87171",
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+              fontSize: "13px",
+            }}
+          >
+            Failed to load pipeline
+          </div>
+        ) : (
+          <div className="hr-kanban-grid" style={{ minHeight: "300px" }}>
+            <style>{`
+              .hr-kanban-grid {
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 0;
+              }
+              @media (max-width: 768px) {
+                .hr-kanban-grid {
+                  grid-template-columns: 1fr;
+                }
+                .hr-kanban-grid > div {
+                  border-right: none !important;
+                  border-bottom: 1px solid #1E2D45;
+                }
+              }
+            `}</style>
+            {COLUMNS.map((col, idx) => {
+              const jobs = data?.columns[col.key] ?? [];
+              return (
+                <div
+                  key={col.key}
+                  style={{
+                    borderRight:
+                      idx < COLUMNS.length - 1 ? "1px solid #1E2D45" : "none",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  {/* Column header */}
+                  <div
+                    style={{
+                      padding: "12px 14px 10px",
+                      borderBottom: "1px solid #1E2D45",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      background: "#080C16",
+                    }}
+                  >
+                    {/* Dot */}
+                    <div
+                      style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        background: col.dotColor,
+                        flexShrink: 0,
+                      }}
+                    />
+                    {/* Column name */}
+                    <span
+                      style={{
+                        fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        color: "#F0F0F5",
+                        flex: 1,
+                      }}
+                    >
+                      {col.label}
+                    </span>
+                    {/* Count badge */}
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                        color: col.dotColor,
+                        background: `${col.dotColor}18`,
+                        border: `1px solid ${col.dotColor}35`,
+                        borderRadius: "20px",
+                        padding: "1px 7px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {jobs.length}
+                    </span>
+                  </div>
+
+                  {/* Column body — scrollable */}
+                  <div
+                    style={{
+                      flex: 1,
+                      overflowY: "auto",
+                      padding: "12px 10px",
+                      maxHeight: "480px",
+                    }}
+                  >
+                    {jobs.length === 0 ? (
+                      <EmptyColumn />
+                    ) : (
+                      jobs.map((job) => (
+                        <JobCard 
+                          key={job.id} 
+                          job={job} 
+                          onClick={setSelectedJob}
+                        />
+                      ))
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
 
-      {/* Kanban columns */}
-      {loading ? (
-        <div
-          style={{
-            padding: "40px",
-            textAlign: "center",
-            color: "#A0A0B0",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            fontSize: "13px",
-          }}
-        >
-          Loading pipeline…
-        </div>
-      ) : error ? (
-        <div
-          style={{
-            padding: "40px",
-            textAlign: "center",
-            color: "#F87171",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            fontSize: "13px",
-          }}
-        >
-          Failed to load pipeline
-        </div>
-      ) : (
-        <div className="hr-kanban-grid" style={{ minHeight: "300px" }}>
-          <style>{`
-            .hr-kanban-grid {
-              display: grid;
-              grid-template-columns: repeat(5, 1fr);
-              gap: 0;
-            }
-            @media (max-width: 768px) {
-              .hr-kanban-grid {
-                grid-template-columns: 1fr;
-              }
-              .hr-kanban-grid > div {
-                border-right: none !important;
-                border-bottom: 1px solid #1E2D45;
-              }
-            }
-          `}</style>
-          {COLUMNS.map((col, idx) => {
-            const jobs = data?.columns[col.key] ?? [];
-            return (
-              <div
-                key={col.key}
-                style={{
-                  borderRight:
-                    idx < COLUMNS.length - 1 ? "1px solid #1E2D45" : "none",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                {/* Column header */}
-                <div
-                  style={{
-                    padding: "12px 14px 10px",
-                    borderBottom: "1px solid #1E2D45",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    background: "#080C16",
-                  }}
-                >
-                  {/* Dot */}
-                  <div
-                    style={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      background: col.dotColor,
-                      flexShrink: 0,
-                    }}
-                  />
-                  {/* Column name */}
-                  <span
-                    style={{
-                      fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                      fontSize: "12px",
-                      fontWeight: 600,
-                      color: "#F0F0F5",
-                      flex: 1,
-                    }}
-                  >
-                    {col.label}
-                  </span>
-                  {/* Count badge */}
-                  <span
-                    style={{
-                      fontSize: "11px",
-                      fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                      color: col.dotColor,
-                      background: `${col.dotColor}18`,
-                      border: `1px solid ${col.dotColor}35`,
-                      borderRadius: "20px",
-                      padding: "1px 7px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {jobs.length}
-                  </span>
-                </div>
-
-                {/* Column body — scrollable */}
-                <div
-                  style={{
-                    flex: 1,
-                    overflowY: "auto",
-                    padding: "12px 10px",
-                    maxHeight: "480px",
-                  }}
-                >
-                  {jobs.length === 0 ? (
-                    <EmptyColumn />
-                  ) : (
-                    jobs.map((job) => <JobCard key={job.id} job={job} />)
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+      {/* Job Detail Panel */}
+      <JobDetailPanel 
+        job={selectedJob} 
+        onClose={() => setSelectedJob(null)} 
+      />
+    </>
   );
 }

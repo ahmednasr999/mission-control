@@ -169,14 +169,16 @@ function CompanyLogo({
 interface JobCardProps {
   job: Job;
   dimmed?: boolean;
+  onClick?: (job: Job) => void;
 }
 
-export default function JobCard({ job, dimmed = false }: JobCardProps) {
+export default function JobCard({ job, dimmed = false, onClick }: JobCardProps) {
   const [hovered, setHovered] = useState(false);
   const colColor = COLUMN_COLORS[job.column] || "#64748B";
 
   return (
     <div
+      onClick={() => onClick?.(job)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -184,7 +186,7 @@ export default function JobCard({ job, dimmed = false }: JobCardProps) {
         border: `1px solid ${hovered ? colColor + "60" : "#1E2D45"}`,
         borderRadius: "10px",
         padding: "12px 14px",
-        cursor: "default",
+        cursor: onClick ? "pointer" : "default",
         transition: "all 0.15s ease",
         transform: hovered ? "translateY(-2px)" : "translateY(0)",
         boxShadow: hovered
