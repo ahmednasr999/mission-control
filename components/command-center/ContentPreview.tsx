@@ -1,5 +1,16 @@
 "use client";
 
+/**
+ * ContentPreview — Phase 3: A+ Animations
+ * - Counter animation on numbers
+ * - Staggered bubble entrance
+ * - Arrow fade-in sequence
+ * - Hover scale on bubbles
+ * - Total count animation
+ */
+
+import { useState, useEffect, useRef } from "react";
+
 interface ContentStages {
   ideas: number;
   draft: number;
@@ -12,9 +23,47 @@ interface StageColumnProps {
   count: number;
   color: string;
   bg: string;
+  delay?: number;
 }
 
-function StageColumn({ label, count, color, bg }: StageColumnProps) {
+// Animated counter hook
+function useAnimatedCounter(target: number, duration = 800, startOnMount = true) {
+  const [count, setCount] = useState(0);
+  const hasStarted = useRef(false);
+
+  useEffect(() => {
+    if (!startOnMount || hasStarted.current) return;
+    hasStarted.current = true;
+
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeOut = 1 - Math.pow(1 - progress, 4);
+      setCount(Math.floor(target * easeOut));
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [target, duration, startOnMount]);
+
+  return count;
+}
+
+function StageColumn({ label, count, color, bg, delay = 0 }: StageColumnProps) {
+  const [mounted, setMounted] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const animatedCount = useAnimatedCounter(count);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), delay);
+    return () => clearTimeout(timer);
+  }, [delay]);
+
   return (
     <div
       style={{
@@ -23,7 +72,12 @@ function StageColumn({ label, count, color, bg }: StageColumnProps) {
         flexDirection: "column",
         alignItems: "center",
         gap: "8px",
+        opacity: mounted ? 1 : 0,
+        transform: mounted ? "translateY(0) scale(1)" : "translateY(20px) scale(0.8)",
+        transition: "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Count bubble */}
       <div
@@ -31,8 +85,8 @@ function StageColumn({ label, count, color, bg }: StageColumnProps) {
           width: "36px",
           height: "36px",
           borderRadius: "10px",
-          background: bg,
-          border: `1.5px solid ${count > 0 ? color : "#1E2D45"}`,
+          background: isHovered ? bg.replace("0.12", "0.25") : bg,
+          border: `1.5px solid ${count > 0 ? (isHovered ? color : color) : "#1E2D45"}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -40,21 +94,25 @@ function StageColumn({ label, count, color, bg }: StageColumnProps) {
           fontSize: "16px",
           fontWeight: 600,
           color: count > 0 ? color : "#A0A0B0",
-          boxShadow: count > 0 ? `0 2px 8px ${color}20` : "none",
+          boxShadow: count > 0 ? `0 ${isHovered ? "8px" : "2px"} ${isHovered ? "20px" : "8px"} ${color}${isHovered ? "40" : "20"}` : "none",
+          transform: isHovered ? "scale(1.15)" : "scale(1)",
+          transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          cursor: "pointer",
         }}
       >
-        {count}
+        {animatedCount}
       </div>
 
       {/* Label */}
       <div
         style={{
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-          fontSize: "15px",
-          color: count > 0 ? "#F0F0F5" : "#8888A0",
+          fontSize: isHovered ? "16px" : "15px",
+          color: count > 0 ? (isHovered ? "#F0F0F5" : "#E0E0E5") : "#8888A0",
           fontWeight: 600,
           textAlign: "center",
           marginTop: "4px",
+          transition: "all 0.2s ease",
         }}
       >
         {label}
@@ -96,7 +154,13 @@ const STAGES = [
 ];
 
 export default function ContentPreview({ stages, loading }: ContentPreviewProps) {
+  const [mounted, setMounted] = useState(false);
   const data = stages || { ideas: 0, draft: 0, review: 0, published: 0 };
+  const totalAnimated = useAnimatedCounter(data.ideas + data.draft + data.review + data.published, 1000, mounted);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div
@@ -105,8 +169,22 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
         border: "1px solid #1E2D45",
         borderRadius: "10px",
         overflow: "hidden",
+        opacity: mounted ? 1 : 0,
+        transform: mounted ? "translateY(0)" : "translateY(12px)",
+        transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
+      <style>{`
+        @keyframes arrowFadeIn {
+          from { opacity: 0; transform: translateX(-5px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        .arrow-fade {
+          animation: arrowFadeIn 0.4s ease forwards;
+          opacity: 0;
+        }
+      `}</style>
+
       {/* Header */}
       <div
         style={{
@@ -154,76 +232,82 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
             Loading…
           </div>
         ) : (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              justifyContent: "space-between",
-            }}
-          >
-            {STAGES.map((stage, i) => (
-              <div
-                key={stage.key}
-                style={{ display: "flex", alignItems: "center", flex: 1 }}
-              >
-                <StageColumn
-                  label={stage.label}
-                  count={data[stage.key]}
-                  color={stage.color}
-                  bg={stage.bg}
-                />
-                {i < STAGES.length - 1 && (
-                  <div
-                    style={{
-                      fontSize: "16px",
-                      color: "#1E2D45",
-                      flexShrink: 0,
-                      margin: "0 -8px",
-                      paddingBottom: "24px",
-                    }}
-                  >
-                    →
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+          <>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                justifyContent: "space-between",
+              }}
+            >
+              {STAGES.map((stage, i) => (
+                <div
+                  key={stage.key}
+                  style={{ display: "flex", alignItems: "center", flex: 1 }}
+                >
+                  <StageColumn
+                    label={stage.label}
+                    count={data[stage.key]}
+                    color={stage.color}
+                    bg={stage.bg}
+                    delay={i * 100}
+                  />
+                  {i < STAGES.length - 1 && (
+                    <div
+                      className="arrow-fade"
+                      style={{
+                        fontSize: "16px",
+                        color: "#1E2D45",
+                        flexShrink: 0,
+                        margin: "0 -8px",
+                        paddingBottom: "24px",
+                        animationDelay: `${i * 100 + 200}ms`,
+                      }}
+                    >
+                      →
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
 
-        {/* Total note */}
-        {!loading && (
-          <div
-            style={{
-              marginTop: "16px",
-              paddingTop: "16px",
-              borderTop: "1px solid #1E2D45",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <span
+            {/* Total note */}
+            <div
               style={{
-                fontSize: "15px",
-                color: "#8888A0",
-                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                fontWeight: 500,
+                marginTop: "16px",
+                paddingTop: "16px",
+                borderTop: "1px solid #1E2D45",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                opacity: mounted ? 1 : 0,
+                transform: mounted ? "translateY(0)" : "translateY(10px)",
+                transition: "all 0.4s ease 0.5s",
               }}
             >
-              Total pieces
-            </span>
-            <span
-              style={{
-                fontSize: "18px",
-                fontWeight: 800,
-                fontFamily: "var(--font-syne, Syne, sans-serif)",
-                color: "#F0F0F5",
-              }}
-            >
-              {data.ideas + data.draft + data.review + data.published}
-            </span>
-          </div>
+              <span
+                style={{
+                  fontSize: "15px",
+                  color: "#8888A0",
+                  fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                  fontWeight: 500,
+                }}
+              >
+                Total pieces
+              </span>
+              <span
+                style={{
+                  fontSize: "18px",
+                  fontWeight: 800,
+                  fontFamily: "var(--font-syne, Syne, sans-serif)",
+                  color: "#F0F0F5",
+                }}
+              >
+                {totalAnimated}
+              </span>
+            </div>
+          </>
         )}
       </div>
     </div>

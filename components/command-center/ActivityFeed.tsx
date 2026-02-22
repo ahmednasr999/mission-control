@@ -1,9 +1,11 @@
 "use client";
 
 /**
- * ActivityFeed — Unified live activity feed
- * Phase 2 UX enhancement: Replaces AgentActivity with unified timeline
- * Shows: task updates, job changes, content moves, agent actions
+ * ActivityFeed — Phase 3: A+ Animations
+ * - Staggered slide-in on mount
+ * - Hover lift with icon pulse
+ * - Timestamp fade
+ * - Card entrance animation
  */
 
 import { useEffect, useState } from "react";
@@ -50,8 +52,11 @@ const TYPE_STYLES: Record<string, { bg: string; border: string; icon: string }> 
 
 export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityFeedProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [mounted, setMounted] = useState(false);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   useEffect(() => {
+    setMounted(true);
     const generated: Activity[] = [];
 
     // Add task activities
@@ -112,7 +117,33 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
   }
 
   return (
-    <div style={cardStyle}>
+    <div style={{
+      ...cardStyle,
+      opacity: mounted ? 1 : 0,
+      transform: mounted ? "translateY(0)" : "translateY(12px)",
+      transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+    }}>
+      <style>{`
+        @keyframes slideInRight {
+          from { 
+            opacity: 0; 
+            transform: translateX(10px);
+          }
+          to { 
+            opacity: 1; 
+            transform: translateX(0);
+          }
+        }
+        @keyframes iconPulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.15); }
+        }
+        .activity-item {
+          animation: slideInRight 0.3s ease forwards;
+          opacity: 0;
+        }
+      `}</style>
+
       <CardHeader title="Live Activity" icon={<Clock size={16} />} badge={activities.length} />
 
       {activities.length === 0 ? (
@@ -123,29 +154,38 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
         />
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          {activities.map((activity) => {
+          {activities.map((activity, i) => {
             const styles = TYPE_STYLES[activity.type];
+            const isHovered = hoveredId === activity.id;
+
             return (
               <div
                 key={activity.id}
+                className="activity-item"
                 style={{
                   display: "flex",
                   alignItems: "flex-start",
                   gap: "10px",
                   padding: "10px 12px",
-                  background: styles.bg,
-                  border: `1px solid ${styles.border}`,
+                  background: isHovered ? styles.bg.replace("0.08", "0.15") : styles.bg,
+                  border: `1px solid ${isHovered ? styles.border.replace("0.2", "0.4") : styles.border}`,
                   borderRadius: "8px",
-                  transition: "transform 0.15s ease",
+                  transform: isHovered ? "translateX(6px) scale(1.01)" : "translateX(0) scale(1)",
+                  transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                  cursor: "pointer",
+                  animationDelay: `${i * 50}ms`,
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateX(4px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateX(0)";
-                }}
+                onMouseEnter={() => setHoveredId(activity.id)}
+                onMouseLeave={() => setHoveredId(null)}
               >
-                <span style={{ color: styles.icon, flexShrink: 0, marginTop: "2px" }}>
+                <span style={{
+                  color: styles.icon,
+                  flexShrink: 0,
+                  marginTop: "2px",
+                  transform: isHovered ? "scale(1.2)" : "scale(1)",
+                  transition: "transform 0.2s ease",
+                  animation: isHovered ? "iconPulse 0.4s ease" : "none",
+                }}>
                   {activity.icon}
                 </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -153,13 +193,14 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
                     style={{
                       fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
                       fontSize: "12px",
-                      color: "#F0F0F5",
+                      color: isHovered ? "#F0F0F5" : "#E8E8ED",
                       lineHeight: 1.4,
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       display: "-webkit-box",
                       WebkitLineClamp: 2,
                       WebkitBoxOrient: "vertical",
+                      transition: "color 0.15s ease",
                     }}
                   >
                     {activity.message}
@@ -168,8 +209,9 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
                     style={{
                       fontSize: "10px",
                       fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                      color: "#A0A0B0",
+                      color: isHovered ? "#8888A0" : "#A0A0B0",
                       marginTop: "4px",
+                      transition: "color 0.15s ease",
                     }}
                   >
                     {activity.timeAgo}
@@ -236,8 +278,15 @@ function EmptyState({ message, submessage, action }: { message: string; submessa
         textAlign: "center",
         padding: "24px 16px",
         color: "#A0A0B0",
+        animation: "fadeIn 0.4s ease",
       }}
     >
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
       <div style={{ fontSize: "24px", marginBottom: "8px" }}>📭</div>
       <div
         style={{
