@@ -8,7 +8,8 @@ import Database from "better-sqlite3";
 import path from "path";
 import fs from "fs";
 
-const DB_PATH = path.join(process.cwd(), "mission-control.db");
+// Absolute path to ensure we always use the same DB file
+const DB_PATH = "/root/.openclaw/workspace/mission-control/mission-control.db";
 
 let _db: Database.Database | null = null;
 

@@ -9,7 +9,8 @@ import Database from "better-sqlite3";
 import fs from "fs";
 import path from "path";
 
-const DB_PATH = path.join(process.cwd(), "mission-control.db");
+// Absolute path to ensure we always use the same DB file
+const DB_PATH = "/root/.openclaw/workspace/mission-control/mission-control.db";
 const PIPELINE_MD = path.join(
   process.env.HOME || "/root",
   ".openclaw/workspace/memory/content-pipeline.md"
