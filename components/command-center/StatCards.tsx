@@ -36,29 +36,34 @@ interface StatCardProps {
 
 // Animated counter hook - browser only
 function useAnimatedCounter(target: number, duration = 600) {
-  const [count, setCount] = useState(0);
-  const prevTargetRef = useRef(target);
+  const [count, setCount] = useState(target);
+  const startTimeRef = useRef<number | null>(null);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (target === prevTargetRef.current) return;
-    prevTargetRef.current = target;
-
-    const start = 0;
-    const startTime = performance.now();
-
+    
+    startTimeRef.current = null;
+    
     const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
+      if (startTimeRef.current === null) {
+        startTimeRef.current = currentTime;
+      }
+      const elapsed = currentTime - startTimeRef.current;
       const progress = Math.min(elapsed / duration, 1);
       const easeOut = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(start + (target - start) * easeOut));
+      setCount(Math.floor(target * easeOut));
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        rafRef.current = requestAnimationFrame(animate);
       }
     };
 
-    requestAnimationFrame(animate);
+    rafRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, [target, duration]);
 
   return count;
