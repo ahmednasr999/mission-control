@@ -212,6 +212,35 @@ export default function OpsTaskCard({ task, dimmed = false }: OpsTaskCardProps) 
         <CategoryTag category={task.category} />
       </div>
 
+      {/* Blocker row — Phase 2 */}
+      {task.blocker && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "6px",
+            marginTop: "6px",
+            padding: "5px 8px",
+            background: "rgba(251, 146, 60, 0.08)",
+            border: "1px solid rgba(251, 146, 60, 0.3)",
+            borderRadius: "6px",
+          }}
+        >
+          <span style={{ fontSize: "10px", flexShrink: 0 }}>🚫</span>
+          <span
+            style={{
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+              fontSize: "11px",
+              color: "#FB923C",
+              fontWeight: 600,
+              lineHeight: 1.4,
+            }}
+          >
+            {task.blocker}
+          </span>
+        </div>
+      )}
+
       {/* Deadline row */}
       {task.dueDate && (
         <div

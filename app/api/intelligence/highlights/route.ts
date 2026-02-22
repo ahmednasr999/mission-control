@@ -1,3 +1,5 @@
+// DATA SOURCE: markdown (primary) — reads MEMORY.md directly
+// No SQLite dependency for this route; real-time markdown parse.
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";

@@ -1,41 +1,12 @@
-import Sidebar from "@/components/Sidebar";
-import Topbar from "@/components/Topbar";
+import DashboardShell from "@/components/DashboardShell";
+
+// Phase 2: DashboardShell handles mobile sidebar state (client-side).
+// Sidebar collapses to hamburger menu on screens < 768px.
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        height: "100vh",
-        overflow: "hidden",
-        background: "#080C16",
-      }}
-    >
-      <Sidebar />
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          minWidth: 0,
-        }}
-      >
-        <Topbar />
-        <main
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            background: "#080C16",
-          }}
-        >
-          {children}
-        </main>
-      </div>
-    </div>
-  );
+  return <DashboardShell>{children}</DashboardShell>;
 }

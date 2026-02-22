@@ -13,9 +13,13 @@ interface Alert {
   severity: "red" | "amber";
 }
 
+// DATA SOURCE: markdown (primary) — reads directly from GOALS.md
+// No SQLite dependency; runs on every request.
+
 /**
- * Parse GOALS.md for deadlines within 48 hours (Cairo time).
- * Looks for patterns like "Feb 23, 2026" or "2026-02-23" in table rows.
+ * Parse GOALS.md for deadlines within 7 days (Cairo time).
+ * Severity: red = < 24h, amber = < 48h, yellow = < 7 days.
+ * Phase 2: Expanded from 48h to 7-day window.
  */
 function parseAlerts(): Alert[] {
   try {
@@ -27,7 +31,8 @@ function parseAlerts(): Alert[] {
     const cairoNow = new Date(
       now.toLocaleString("en-US", { timeZone: "Africa/Cairo" })
     );
-    const in48h = new Date(cairoNow.getTime() + 48 * 60 * 60 * 1000);
+    // Phase 2: Expanded from 48h to 7 days
+    const in7Days = new Date(cairoNow.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     // Match table rows with pipe separators (Markdown tables)
     const tableRowRegex = /\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]*)\|/g;
@@ -56,7 +61,7 @@ function parseAlerts(): Alert[] {
         if (!deadline || isNaN(deadline.getTime())) continue;
 
         const diffMs = deadline.getTime() - cairoNow.getTime();
-        if (diffMs > 0 && deadline <= in48h) {
+        if (diffMs > 0 && deadline <= in7Days) {
           // Find descriptive text — use first non-empty, non-header cell
           const taskText =
             cells.find(
@@ -94,7 +99,7 @@ function parseAlerts(): Alert[] {
         if (isNaN(deadline.getTime())) continue;
 
         const diffMs = deadline.getTime() - cairoNow.getTime();
-        if (diffMs > 0 && deadline <= in48h) {
+        if (diffMs > 0 && deadline <= in7Days) {
           const hoursLeft = Math.round(diffMs / (1000 * 60 * 60));
           alerts.push({
             text: taskText,

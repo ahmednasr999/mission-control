@@ -6,6 +6,8 @@ interface Tool {
   name: string;
   description: string;
   category: string;
+  /** Phase 2: evaluation date stamp e.g. "Feb 2026" */
+  evaluatedAt?: string;
 }
 
 interface ToolsData {
@@ -123,6 +125,18 @@ function ToolItem({
       >
         {tool.description}
       </p>
+      {/* Phase 2: Evaluation timestamp */}
+      {tool.evaluatedAt && (
+        <div style={{
+          paddingLeft: "13px",
+          fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+          fontSize: "9px",
+          color: "#555570",
+          opacity: 0.7,
+        }}>
+          Evaluated: {tool.evaluatedAt}
+        </div>
+      )}
     </div>
   );
 }

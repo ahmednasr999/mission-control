@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * WorkspaceStats — Phase 2 updates:
+ * - Shows file growth trend over last 7 days
+ */
+
 import { useState, useEffect } from "react";
 
 interface StatsData {
@@ -9,6 +14,8 @@ interface StatsData {
   agentCount: string;
   dailyLogs: string;
   workspaceSize: string;
+  /** Phase 2: daily file count trend, format "MM-DD:count" */
+  fileGrowthTrend?: string[];
 }
 
 interface StatItemProps {
@@ -56,6 +63,86 @@ function StatItem({ value, label, gradient }: StatItemProps) {
         }}
       >
         {label}
+      </div>
+    </div>
+  );
+}
+
+/** Mini sparkline bar chart for the 7-day trend */
+function FileGrowthChart({ trend }: { trend: string[] }) {
+  if (!trend || trend.length === 0) {
+    return (
+      <div style={{
+        fontSize: "11px",
+        fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+        color: "#555570",
+      }}>
+        Trend: N/A
+      </div>
+    );
+  }
+
+  const parsed = trend.map((t) => {
+    const [date, countStr] = t.split(":");
+    return { date, count: parseInt(countStr || "0", 10) };
+  });
+  const maxVal = Math.max(...parsed.map((p) => p.count), 1);
+
+  return (
+    <div>
+      <div style={{
+        fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+        fontSize: "10px",
+        color: "#555570",
+        textTransform: "uppercase",
+        letterSpacing: "0.06em",
+        marginBottom: "8px",
+      }}>
+        Memory File Activity (7 days)
+      </div>
+      <div style={{
+        display: "flex",
+        alignItems: "flex-end",
+        gap: "4px",
+        height: "40px",
+      }}>
+        {parsed.map(({ date, count }) => {
+          const heightPct = maxVal > 0 ? (count / maxVal) * 100 : 0;
+          return (
+            <div
+              key={date}
+              title={`${date}: ${count} files`}
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "2px",
+                height: "100%",
+                justifyContent: "flex-end",
+              }}
+            >
+              <div style={{
+                width: "100%",
+                height: `${Math.max(heightPct, 4)}%`,
+                background: count > 0
+                  ? "linear-gradient(180deg, #4F8EF7, #7C3AED)"
+                  : "rgba(136,136,160,0.15)",
+                borderRadius: "2px",
+                transition: "height 0.3s ease",
+                minHeight: "3px",
+              }} />
+              <div style={{
+                fontSize: "8px",
+                fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                color: "#555570",
+                whiteSpace: "nowrap",
+              }}>
+                {date}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -157,22 +244,35 @@ export default function WorkspaceStats() {
             Gathering statistics…
           </div>
         ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "12px",
-            }}
-          >
-            {STAT_CONFIGS.map((cfg) => (
-              <StatItem
-                key={cfg.key}
-                value={stats?.[cfg.key] ?? "—"}
-                label={cfg.label}
-                gradient={cfg.gradient}
-              />
-            ))}
-          </div>
+          <>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: "12px",
+                marginBottom: "20px",
+              }}
+            >
+              {STAT_CONFIGS.map((cfg) => (
+                <StatItem
+                  key={cfg.key}
+                  value={stats?.[cfg.key] as string ?? "—"}
+                  label={cfg.label}
+                  gradient={cfg.gradient}
+                />
+              ))}
+            </div>
+
+            {/* Phase 2: File growth trend chart */}
+            <div style={{
+              padding: "16px",
+              background: "rgba(255,255,255,0.02)",
+              border: "1px solid #1E2D45",
+              borderRadius: "8px",
+            }}>
+              <FileGrowthChart trend={stats?.fileGrowthTrend ?? []} />
+            </div>
+          </>
         )}
       </div>
     </div>

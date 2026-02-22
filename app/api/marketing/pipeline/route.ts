@@ -1,3 +1,6 @@
+// DATA SOURCE: SQLite DB (primary), no markdown fallback
+// Canonical source: /workspace/memory/content-pipeline.md → synced to DB
+// Note: If DB is empty, all columns return empty. Run sync trigger to refresh.
 import { NextResponse } from "next/server";
 import { getPipelineColumns } from "@/lib/marketing-db";
 

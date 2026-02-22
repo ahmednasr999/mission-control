@@ -149,14 +149,23 @@ export default function MarketingKanban() {
           Failed to load pipeline — check API
         </div>
       ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(5, 1fr)",
-            gap: "0",
-            minHeight: "300px",
-          }}
-        >
+        <div className="marketing-kanban-grid" style={{ minHeight: "300px" }}>
+          <style>{`
+            .marketing-kanban-grid {
+              display: grid;
+              grid-template-columns: repeat(5, 1fr);
+              gap: 0;
+            }
+            @media (max-width: 768px) {
+              .marketing-kanban-grid {
+                grid-template-columns: 1fr;
+              }
+              .marketing-kanban-grid > div {
+                border-right: none !important;
+                border-bottom: 1px solid #1E2D45;
+              }
+            }
+          `}</style>
           {COLUMNS.map((col, idx) => {
             const items = data?.columns[col.key] ?? [];
             return (

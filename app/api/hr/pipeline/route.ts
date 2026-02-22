@@ -1,3 +1,6 @@
+// DATA SOURCE: SQLite DB (primary), markdown fallback (GOALS.md)
+// Canonical source: /workspace/GOALS.md "Active Job Pipeline" table
+// DB populated by sync engine; markdown fallback used when DB is empty
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";

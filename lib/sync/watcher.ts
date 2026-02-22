@@ -11,7 +11,7 @@ import os from 'os';
 const MEMORY_DIR = path.join(os.homedir(), '.openclaw', 'workspace', 'memory');
 const ROOT_DIR = path.join(os.homedir(), '.openclaw', 'workspace');
 
-const DEBOUNCE_MS = 30_000; // 30 seconds
+const DEBOUNCE_MS = 15_000; // 15 seconds (Phase 2: tightened from 30s)
 
 type SyncCallback = (filePath: string) => Promise<void> | void;
 

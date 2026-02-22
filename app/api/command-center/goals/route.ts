@@ -1,3 +1,6 @@
+// DATA SOURCE: SQLite DB (primary), markdown fallback (GOALS.md)
+// Canonical source: /workspace/GOALS.md → synced to DB by sync engine
+// Fallback: Direct parse of GOALS.md when DB is empty
 import { NextResponse } from "next/server";
 import { getAllGoals } from "@/lib/command-center-db";
 import fs from "fs";

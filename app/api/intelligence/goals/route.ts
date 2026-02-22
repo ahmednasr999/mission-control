@@ -1,3 +1,5 @@
+// DATA SOURCE: markdown (primary) — reads directly from GOALS.md
+// No SQLite dependency; parses markdown on every request.
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";

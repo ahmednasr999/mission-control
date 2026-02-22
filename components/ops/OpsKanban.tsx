@@ -44,6 +44,11 @@ function filterTask(task: OpsTask, filters: FilterState): boolean {
     if (!taskCat.includes(filterCat)) return false;
   }
 
+  // Phase 2: Blockers Only filter
+  if (filters.blockersOnly) {
+    if (!task.blocker || task.blocker.trim() === "") return false;
+  }
+
   return true;
 }
 
@@ -183,13 +188,22 @@ export default function OpsKanban({ filters }: OpsKanbanProps) {
           Failed to load tasks
         </div>
       ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            minHeight: "320px",
-          }}
-        >
+        <div className="ops-kanban-grid" style={{ minHeight: "320px" }}>
+          <style>{`
+            .ops-kanban-grid {
+              display: grid;
+              grid-template-columns: repeat(4, 1fr);
+            }
+            @media (max-width: 768px) {
+              .ops-kanban-grid {
+                grid-template-columns: 1fr;
+              }
+              .ops-kanban-grid > div {
+                border-right: none !important;
+                border-bottom: 1px solid #1E2D45;
+              }
+            }
+          `}</style>
           {COLUMNS.map((col, idx) => {
             const tasks = filteredColumns[col.key];
             return (

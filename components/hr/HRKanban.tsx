@@ -145,14 +145,23 @@ export default function HRKanban() {
           Failed to load pipeline
         </div>
       ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(5, 1fr)",
-            gap: "0",
-            minHeight: "300px",
-          }}
-        >
+        <div className="hr-kanban-grid" style={{ minHeight: "300px" }}>
+          <style>{`
+            .hr-kanban-grid {
+              display: grid;
+              grid-template-columns: repeat(5, 1fr);
+              gap: 0;
+            }
+            @media (max-width: 768px) {
+              .hr-kanban-grid {
+                grid-template-columns: 1fr;
+              }
+              .hr-kanban-grid > div {
+                border-right: none !important;
+                border-bottom: 1px solid #1E2D45;
+              }
+            }
+          `}</style>
           {COLUMNS.map((col, idx) => {
             const jobs = data?.columns[col.key] ?? [];
             return (

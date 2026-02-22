@@ -48,13 +48,13 @@ export default function SettingsPage() {
         <ModelRouting />
 
         {/* 2. GitHub Backup + Sync Engine — side by side on wider screens */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "16px",
-          }}
-        >
+        <div className="settings-2col" style={{ gap: "16px" }}>
+          <style>{`
+            .settings-2col { display: grid; grid-template-columns: 1fr 1fr; }
+            @media (max-width: 768px) {
+              .settings-2col { grid-template-columns: 1fr; }
+            }
+          `}</style>
           <GitStatus />
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <SyncControl />

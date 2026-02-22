@@ -1,3 +1,7 @@
+// DATA SOURCE: hardcoded list (primary) + markdown scan (secondary)
+// Hardcoded tools are in HARDCODED_ADOPT/TRIAL/REJECT arrays below.
+// Secondary: scans /workspace/memory/second_brain.md for additional tools.
+// No SQLite dependency.
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -10,28 +14,30 @@ interface Tool {
   name: string;
   description: string;
   category: string;
+  /** Phase 2: evaluation date string e.g. "Feb 2026" */
+  evaluatedAt?: string;
 }
 
 const HARDCODED_ADOPT: Tool[] = [
-  { name: "Himalaya", description: "Email client — Gmail fully automated via CLI", category: "Communication" },
-  { name: "GitHub CLI", description: "Version control & workspace backup (2 repos)", category: "DevOps" },
-  { name: "Brave Search", description: "Primary web search — fast, privacy-first", category: "Research" },
-  { name: "Memory System", description: "Markdown-based long-term memory with semantic search", category: "AI" },
-  { name: "ATS Engine (ADHAM)", description: "5-step CV optimizer — 90+ ATS scores proven", category: "HR" },
-  { name: "better-sqlite3", description: "Local SQLite — fast, zero-config persistent storage", category: "Database" },
+  { name: "Himalaya", description: "Email client — Gmail fully automated via CLI", category: "Communication", evaluatedAt: "Feb 2026" },
+  { name: "GitHub CLI", description: "Version control & workspace backup (2 repos)", category: "DevOps", evaluatedAt: "Jan 2026" },
+  { name: "Brave Search", description: "Primary web search — fast, privacy-first", category: "Research", evaluatedAt: "Feb 2026" },
+  { name: "Memory System", description: "Markdown-based long-term memory with semantic search", category: "AI", evaluatedAt: "Feb 2026" },
+  { name: "ATS Engine (ADHAM)", description: "5-step CV optimizer — 90+ ATS scores proven", category: "HR", evaluatedAt: "Feb 2026" },
+  { name: "better-sqlite3", description: "Local SQLite — fast, zero-config persistent storage", category: "Database", evaluatedAt: "Feb 2026" },
 ];
 
 const HARDCODED_TRIAL: Tool[] = [
-  { name: "MCP Servers", description: "Model Context Protocol — testing for tool integration", category: "AI" },
-  { name: "Notion API", description: "Evaluating as structured knowledge base alternative", category: "Productivity" },
-  { name: "LinkedIn Automation", description: "LOTFI-driven post scheduling — 2-3x/week cadence", category: "Marketing" },
-  { name: "Todoist", description: "Testing as task frontend for active-tasks.md", category: "Productivity" },
-  { name: "Google Analytics", description: "Web profile tracking — early evaluation stage", category: "Analytics" },
+  { name: "MCP Servers", description: "Model Context Protocol — testing for tool integration", category: "AI", evaluatedAt: "Feb 2026" },
+  { name: "Notion API", description: "Evaluating as structured knowledge base alternative", category: "Productivity", evaluatedAt: "Jan 2026" },
+  { name: "LinkedIn Automation", description: "LOTFI-driven post scheduling — 2-3x/week cadence", category: "Marketing", evaluatedAt: "Feb 2026" },
+  { name: "Todoist", description: "Testing as task frontend for active-tasks.md", category: "Productivity", evaluatedAt: "Jan 2026" },
+  { name: "Google Analytics", description: "Web profile tracking — early evaluation stage", category: "Analytics", evaluatedAt: "Feb 2026" },
 ];
 
 const HARDCODED_REJECT: Tool[] = [
-  { name: "M2.1 Models", description: "Deprecated — superseded by M2.5 at same cost tier", category: "AI" },
-  { name: "airllm.md", description: "Removed — dense keywords polluted memory_search results", category: "AI" },
+  { name: "M2.1 Models", description: "Deprecated — superseded by M2.5 at same cost tier", category: "AI", evaluatedAt: "Feb 2026" },
+  { name: "airllm.md", description: "Removed — dense keywords polluted memory_search results", category: "AI", evaluatedAt: "Feb 2026" },
 ];
 
 function scanForExtraTools(content: string): { adopt: Tool[]; trial: Tool[]; reject: Tool[] } {

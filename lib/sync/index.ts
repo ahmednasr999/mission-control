@@ -2,9 +2,13 @@
  * lib/sync/index.ts — Main sync orchestrator
  *
  * - On startup: full sync of all known memory files
- * - File watcher: incremental sync on file change (30s debounce)
+ * - File watcher: incremental sync on file change (15s debounce)
  * - Cron fallback: every 5 minutes via setInterval
  * - Exports: syncAll(), syncFile(path), getSyncStatus()
+ *
+ * Phase 2 additions:
+ * - Sync failure logging → /workspace/memory/sync-failures.log
+ * - Telegram alert stub for sync failures > 5min
  */
 
 import fs from 'fs';
@@ -37,6 +41,77 @@ import { startWatcher, stopWatcher, MEMORY_DIR, ROOT_DIR } from './watcher';
 // ---- Constants ----
 
 const CRON_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+const SYNC_FAILURE_ALERT_MS = 5 * 60 * 1000; // alert if no sync for 5 minutes
+
+// ---- Sync Failure Logging ----
+
+const SYNC_FAILURES_LOG = path.join(
+  os.homedir(),
+  '.openclaw', 'workspace', 'memory', 'sync-failures.log'
+);
+
+/**
+ * Log a sync failure to the dedicated sync-failures.log file.
+ * Phase 2: Provides a dedicated audit trail for sync issues.
+ */
+function logSyncFailure(message: string): void {
+  try {
+    const timestamp = new Date().toLocaleString('en-GB', {
+      timeZone: 'Africa/Cairo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+    const logEntry = `[${timestamp} CAI] ${message}\n`;
+    fs.appendFileSync(SYNC_FAILURES_LOG, logEntry, 'utf-8');
+  } catch (err) {
+    // Don't let log failure cascade
+    console.error('[sync] Failed to write sync-failures.log:', err);
+  }
+}
+
+/**
+ * Telegram alert stub — fires when sync has been failing for > 5 minutes.
+ * Phase 2: Logs alert to memory file; actual Telegram send to be wired by NASR.
+ *
+ * To activate: replace the fs.appendFile call below with an actual Telegram API call.
+ */
+function sendTelegramAlertStub(message: string): void {
+  try {
+    const alertPath = path.join(
+      os.homedir(),
+      '.openclaw', 'workspace', 'memory', 'sync-telegram-alerts.log'
+    );
+    const timestamp = new Date().toLocaleString('en-GB', {
+      timeZone: 'Africa/Cairo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    fs.appendFileSync(
+      alertPath,
+      `[${timestamp} CAI] TELEGRAM_ALERT_PENDING: ${message}\n`,
+      'utf-8'
+    );
+    console.warn(`[sync] Telegram alert stub fired: ${message}`);
+    // TODO (NASR): Replace the appendFileSync above with:
+    //   await fetch('https://api.telegram.org/bot${BOT_TOKEN}/sendMessage', {
+    //     method: 'POST',
+    //     body: JSON.stringify({ chat_id: CHAT_ID, text: message }),
+    //     headers: { 'Content-Type': 'application/json' },
+    //   });
+  } catch {
+    // swallow
+  }
+}
+
+// Track last successful sync time for Telegram alert checks
+let lastSuccessfulSyncTime: number = Date.now();
 
 // Known static files to sync
 const STATIC_FILES = [
@@ -175,6 +250,7 @@ export async function syncFile(filePath: string): Promise<number> {
     const errMsg = err?.message || String(err);
     console.error(`[sync] Error syncing ${fileName}:`, errMsg);
     logSync(fileName, 'error', 0, errMsg);
+    logSyncFailure(`syncFile error — ${fileName}: ${errMsg}`);
     return 0;
   }
 }
@@ -213,7 +289,12 @@ export async function syncAll(): Promise<{ totalRows: number; filesProcessed: nu
   }
 
   lastFullSync = cairoNow();
+  lastSuccessfulSyncTime = Date.now();
   console.log(`[sync] Full sync complete — ${filesProcessed} files, ${totalRows} rows, ${errors.length} errors`);
+
+  if (errors.length > 0) {
+    logSyncFailure(`syncAll completed with ${errors.length} error(s): ${errors.join(' | ')}`);
+  }
 
   return { totalRows, filesProcessed, errors };
 }
@@ -268,6 +349,16 @@ export async function initSync(): Promise<void> {
   // 3. Cron fallback — every 5 minutes
   cronTimer = setInterval(async () => {
     console.log('[sync] Cron sync triggered');
+
+    // Phase 2: Check if sync has been failing for > 5 minutes
+    const msSinceLastSync = Date.now() - lastSuccessfulSyncTime;
+    if (msSinceLastSync > SYNC_FAILURE_ALERT_MS) {
+      const minutesAgo = Math.round(msSinceLastSync / 60_000);
+      const alertMsg = `Sync stale — last successful sync was ${minutesAgo} minute(s) ago`;
+      logSyncFailure(alertMsg);
+      sendTelegramAlertStub(`⚠️ Mission Control sync alert: ${alertMsg}`);
+    }
+
     await syncAll();
   }, CRON_INTERVAL_MS);
 

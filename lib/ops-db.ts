@@ -32,6 +32,8 @@ function getDb(): Database.Database {
         createdAt TEXT NOT NULL
       );
     `);
+    // Phase 2: Ensure blocker column exists (idempotent)
+    try { _db.exec(`ALTER TABLE tasks ADD COLUMN blocker TEXT`); } catch { /* already exists */ }
   }
   return _db;
 }
@@ -48,6 +50,8 @@ export interface OpsTask {
   dueDate?: string;
   completedDate?: string;
   createdAt: string;
+  /** Phase 2: Optional blocker context — why this task is stuck */
+  blocker?: string;
 }
 
 export interface OpsColumns {
@@ -91,6 +95,7 @@ function rowToTask(row: any): OpsTask {
     dueDate: row.dueDate || undefined,
     completedDate: row.completedDate || undefined,
     createdAt: row.createdAt || new Date().toISOString(),
+    blocker: row.blocker || undefined,
   };
 }
 
@@ -101,7 +106,7 @@ export function getAllTaskColumns(): OpsColumns {
     const rows = db
       .prepare(
         `SELECT id, title, description, assignee, status, priority, category,
-                dueDate, completedDate, createdAt
+                dueDate, completedDate, createdAt, blocker
          FROM tasks
          ORDER BY createdAt DESC`
       )
@@ -129,7 +134,7 @@ export function getArchivedTasks(): OpsTask[] {
     const rows = db
       .prepare(
         `SELECT id, title, description, assignee, status, priority, category,
-                dueDate, completedDate, createdAt
+                dueDate, completedDate, createdAt, blocker
          FROM tasks
          WHERE LOWER(status) IN ('completed', 'done', 'review')
            AND completedDate IS NOT NULL

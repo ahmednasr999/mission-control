@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import SyncIndicator from "./SyncIndicator";
+import { useSidebar } from "@/lib/sidebar-context";
+import { Menu } from "lucide-react";
 
 const ROUTE_TITLES: Record<string, string> = {
   "/": "Command Center",
@@ -51,6 +53,7 @@ export default function Topbar() {
   const pathname = usePathname();
   const title = getPageTitle(pathname);
   const time = useCairoClock();
+  const { toggleSidebar } = useSidebar();
 
   return (
     <header
@@ -61,23 +64,49 @@ export default function Topbar() {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 24px",
+        padding: "0 16px 0 20px",
         flexShrink: 0,
       }}
     >
-      {/* Left: Page title */}
-      <h1
-        style={{
-          fontFamily: "var(--font-syne, Syne, sans-serif)",
-          fontSize: "17px",
-          fontWeight: 700,
-          color: "#F0F0F5",
-          letterSpacing: "-0.02em",
-          margin: 0,
-        }}
-      >
-        {title}
-      </h1>
+      {/* Left: Hamburger (mobile) + Page title */}
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        {/* Hamburger button — only visible on mobile via CSS */}
+        <button
+          onClick={toggleSidebar}
+          className="topbar-hamburger"
+          style={{
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            color: "#8888A0",
+            display: "flex",
+            alignItems: "center",
+            padding: "4px",
+            borderRadius: "6px",
+          }}
+          aria-label="Toggle sidebar"
+        >
+          <Menu size={20} />
+        </button>
+        <style>{`
+          .topbar-hamburger { display: none; }
+          @media (max-width: 767px) {
+            .topbar-hamburger { display: flex; }
+          }
+        `}</style>
+        <h1
+          style={{
+            fontFamily: "var(--font-syne, Syne, sans-serif)",
+            fontSize: "17px",
+            fontWeight: 700,
+            color: "#F0F0F5",
+            letterSpacing: "-0.02em",
+            margin: 0,
+          }}
+        >
+          {title}
+        </h1>
+      </div>
 
       {/* Right: Clock + Sync indicator */}
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>

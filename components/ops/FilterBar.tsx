@@ -30,6 +30,8 @@ export interface FilterState {
   assignee: AssigneeFilter;
   priority: PriorityFilter;
   category: CategoryFilter;
+  /** Phase 2: Show only tasks with blockers set */
+  blockersOnly: boolean;
 }
 
 interface FilterBarProps {
@@ -245,6 +247,17 @@ export default function FilterBar({ filters, onChange }: FilterBarProps) {
             onChange={(val) => onChange({ ...filters, category: val as CategoryFilter })}
           />
         </div>
+
+        {/* Divider */}
+        <div style={{ width: "1px", height: "24px", background: "#1E2D45", flexShrink: 0 }} />
+
+        {/* Blockers Only toggle — Phase 2 */}
+        <Pill
+          label="🚫 Blockers Only"
+          active={filters.blockersOnly}
+          onClick={() => onChange({ ...filters, blockersOnly: !filters.blockersOnly })}
+          color="#FB923C"
+        />
       </div>
     </div>
   );
