@@ -22,37 +22,38 @@ function StageColumn({ label, count, color, bg }: StageColumnProps) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: "8px",
+        gap: "10px",
       }}
     >
-      {/* Count bubble */}
+      {/* Count bubble - larger and clearer */}
       <div
         style={{
-          width: "48px",
-          height: "48px",
-          borderRadius: "12px",
+          width: "56px",
+          height: "56px",
+          borderRadius: "14px",
           background: bg,
-          border: `1px solid ${color}30`,
+          border: `2px solid ${count > 0 ? color : "#1E2D45"}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           fontFamily: "var(--font-syne, Syne, sans-serif)",
-          fontSize: "20px",
-          fontWeight: 700,
+          fontSize: "22px",
+          fontWeight: 800,
           color: count > 0 ? color : "#555570",
+          boxShadow: count > 0 ? `0 4px 12px ${color}20` : "none",
         }}
       >
         {count}
       </div>
 
-      {/* Arrow connector (not for last item) */}
+      {/* Label */}
       <div
         style={{
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-          fontSize: "10px",
-          color: "#555570",
+          fontSize: "11px",
+          color: count > 0 ? "#8888A0" : "#555570",
           textTransform: "uppercase",
-          letterSpacing: "0.05em",
+          letterSpacing: "0.08em",
           fontWeight: 600,
           textAlign: "center",
         }}
@@ -173,11 +174,12 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
                 {i < STAGES.length - 1 && (
                   <div
                     style={{
-                      fontSize: "16px",
-                      color: "#1E2D45",
+                      fontSize: "20px",
+                      color: "#2a3f5f",
                       flexShrink: 0,
-                      margin: "0 -8px",
-                      paddingBottom: "24px",
+                      margin: "0 -4px",
+                      paddingBottom: "28px",
+                      opacity: 0.6,
                     }}
                   >
                     →

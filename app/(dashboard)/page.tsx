@@ -183,12 +183,10 @@ function PriorityFocusCard({ tasks, loading }: { tasks: Task[]; loading: boolean
               <span style={{
                 flex: 1,
                 fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                fontSize: "13px",
-                fontWeight: 600,
+                fontSize: "14px",
+                fontWeight: 500,
                 color: "#F0F0F5",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
+                lineHeight: 1.4,
               }}>
                 {task.title}
               </span>
