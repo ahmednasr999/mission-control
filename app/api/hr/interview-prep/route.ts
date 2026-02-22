@@ -23,29 +23,41 @@ const INTERVIEW_PREP_DATA: Record<string, {
     company: "Delphi Consulting",
     role: "Senior AI Project Manager",
     atsScore: 91,
-    companyResearch: "Mid-size consultancy, UAE/GCC focus. Data, Analytics, AI, Cloud, Security, App Modernization. Enterprise clients on digital transformation.",
+    companyResearch: "UAE-based consultancy specializing in Data, Advanced Analytics & AI, Infrastructure, Cloud Security, and Application Modernization. Hybrid work model, digital-first mindset, serves clients across UAE/GCC.",
     roleRequirements: [
-      "8+ years PM in UAE/GCC",
-      "Digital transformation, AI/ML",
-      "Agile/Scrum, Power Platform",
-      "$25M+ portfolio"
+      "8+ years PM in UAE/GCC markets",
+      "End-to-end digital transformation delivery",
+      "AI/ML solutions hands-on experience",
+      "Power Platform (Power Apps, Power Automate)",
+      ".NET & Web Applications",
+      "Custom app development lifecycle",
+      "SharePoint-based solutions",
+      "Agile/Scrum methodologies",
+      "C-level stakeholder management",
+      "Budget & P&L ownership",
+      "Risk management & RAID logs",
+      "Government entity experience (preferred)"
     ],
     likelyQuestions: [
-      "Tell me about a digital transformation you led",
-      "How do you manage scope creep?",
-      "Describe your approach to stakeholder management",
-      "What's your experience with AI/ML projects?",
-      "How do you handle conflicting priorities?"
+      "Tell me about a digital transformation you led from inception to go-live",
+      "How do you manage scope creep in enterprise projects?",
+      "Describe your experience with AI/ML project delivery",
+      "How do you handle conflicting priorities across stakeholders?",
+      "Walk me through your approach to risk management",
+      "How do you ensure budget and profitability on projects?",
+      "Tell me about a time you delivered under a tight deadline"
     ],
     strengths: [
-      "Scaled Talabat 30K→7M orders",
-      "$50M PMO at TopMed",
-      "PMP, CSM, CSPO (cert match)",
+      "Scaled Talabat 30K→7M orders (233x growth)",
+      "$50M PMO at TopMed (current)",
+      "$25M+ portfolio management experience",
+      "PMP, CSM, CSPO, CBAP certified (exact JD match)",
       "Arabic/English bilingual",
-      "FinTech + HealthTech + e-commerce breadth"
+      "15-hospital network transformation",
+      "Power Platform implementation (40% efficiency gains)"
     ],
     salaryTarget: "50,000-55,000 AED/month",
-    notes: "Interview with Kritika Chhabra. Emphasize $50M transformation, 15-hospital network, Talabat scale story."
+    notes: "Interview with Kritika Chhabra. JD emphasizes: end-to-end delivery, AI/ML hands-on, Power Platform, C-level stakeholder management, budget ownership. CV highlights: $50M transformation, Talabat scale story, PMP/CSM/CSPO certs, Power Platform efficiency gains."
   }
 };
 
