@@ -5,8 +5,7 @@
  * Phase 2: Collapsible sidebar on all screen sizes.
  * - Hamburger always visible
  * - Sidebar collapsed by default, toggle to open
- * - Mobile: slides over with backdrop
- * - Desktop: slides beside content
+ * - Content stretches to fill available space when sidebar is hidden
  */
 
 import { useState, useEffect, useCallback } from "react";
@@ -19,6 +18,8 @@ import { SidebarContext } from "@/lib/sidebar-context";
 interface DashboardShellProps {
   children: React.ReactNode;
 }
+
+const SIDEBAR_WIDTH = 220;
 
 export default function DashboardShell({ children }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -55,13 +56,23 @@ export default function DashboardShell({ children }: DashboardShellProps) {
             top: 0,
             left: 0,
             height: "100vh",
+            width: sidebarOpen ? SIDEBAR_WIDTH : 0,
             zIndex: isMobile ? 50 : "auto",
-            transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
-            transition: "transform 0.25s ease",
+            transition: "width 0.25s ease",
             flexShrink: 0,
+            overflow: "hidden",
           }}
         >
-          <Sidebar />
+          <div
+            style={{
+              width: SIDEBAR_WIDTH,
+              height: "100vh",
+              transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
+              transition: "transform 0.25s ease",
+            }}
+          >
+            <Sidebar />
+          </div>
         </div>
 
         {/* Overlay backdrop — mobile only */}
@@ -77,7 +88,7 @@ export default function DashboardShell({ children }: DashboardShellProps) {
           />
         )}
 
-        {/* Main content area */}
+        {/* Main content area — stretches to fill when sidebar hidden */}
         <div
           style={{
             flex: 1,
