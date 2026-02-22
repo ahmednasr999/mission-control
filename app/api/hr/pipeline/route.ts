@@ -4,12 +4,30 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import Database from "better-sqlite3";
 import { getAllPipelineJobs, mapStatusToColumn, HRJobRow } from "@/lib/hr-db";
 
 const GOALS_PATH = path.join(
   process.env.HOME || "/root",
   ".openclaw/workspace/GOALS.md"
 );
+
+const DB_PATH = "/root/.openclaw/workspace/mission-control/mission-control.db";
+
+/** Lookup ATS score from cv_history table as fallback */
+function getAtsFromCvHistory(company: string): number | null {
+  try {
+    const db = new Database(DB_PATH, { readonly: true });
+    // Search by jobTitle column (which stores company name due to parser swap)
+    const row = db
+      .prepare("SELECT atsScore FROM cv_history WHERE jobTitle = ? LIMIT 1")
+      .get(company) as { atsScore: number | null } | undefined;
+    db.close();
+    return row?.atsScore ?? null;
+  } catch {
+    return null;
+  }
+}
 
 export interface KanbanJob {
   id: number;
@@ -25,13 +43,15 @@ export interface KanbanJob {
 }
 
 function rowToKanbanJob(row: HRJobRow): KanbanJob {
+  // Fallback to cv_history if ats_score is null in job_pipeline
+  const atsScore = row.ats_score ?? getAtsFromCvHistory(row.company || "");
   return {
     id: row.id,
     company: row.company || "Unknown",
     role: row.role || "Unknown Role",
     status: row.status || "identified",
     column: mapStatusToColumn(row.status),
-    atsScore: row.ats_score,
+    atsScore,
     nextAction: row.next_action,
     salary: row.salary,
     companyDomain: row.company_domain,

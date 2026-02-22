@@ -85,13 +85,27 @@ export function getActiveJobCount(): number {
 export function getAvgAtsScore(): number | null {
   try {
     const db = getDb();
+    // First try job_pipeline table
     const row = db
       .prepare(
         `SELECT AVG(ats_score) as avg FROM job_pipeline
          WHERE ats_score IS NOT NULL AND LOWER(status) != 'closed'`
       )
       .get() as { avg: number | null };
-    return row?.avg != null ? Math.round(row.avg) : null;
+    if (row?.avg != null) {
+      return Math.round(row.avg);
+    }
+    // Fallback: try cv_history table for active jobs
+    const cvRow = db
+      .prepare(
+        `SELECT AVG(atsScore) as avg FROM cv_history
+         WHERE atsScore IS NOT NULL`
+      )
+      .get() as { avg: number | null };
+    if (cvRow?.avg != null) {
+      return Math.round(cvRow.avg);
+    }
+    return null;
   } catch {
     return null;
   }

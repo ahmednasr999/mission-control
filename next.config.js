@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  turbopack: {
-    root: __dirname,
-  },
+  // Turbopack config removed — using standard webpack for now
 }
 
 module.exports = nextConfig
