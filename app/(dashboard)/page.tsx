@@ -5,9 +5,10 @@ import AlertBanner from "@/components/command-center/AlertBanner";
 import StatCards from "@/components/command-center/StatCards";
 import TaskList from "@/components/command-center/TaskList";
 import PipelinePreview from "@/components/command-center/PipelinePreview";
-import AgentActivity from "@/components/command-center/AgentActivity";
+import ActivityFeed from "@/components/command-center/ActivityFeed";
 import ContentPreview from "@/components/command-center/ContentPreview";
 import GoalsProgress from "@/components/command-center/GoalsProgress";
+import QuickActionsBar from "@/components/command-center/QuickActionsBar";
 
 // ---- Types ----
 
@@ -333,6 +334,9 @@ export default function CommandCenterPage() {
         </p>
       </div>
 
+      {/* Quick Actions Bar */}
+      <QuickActionsBar />
+
       {/* Alert Banner */}
       <AlertBanner alerts={data.alerts} />
 
@@ -346,7 +350,7 @@ export default function CommandCenterPage() {
       <div className="cc-grid-3">
         <TaskList tasks={data.tasks} loading={loading} />
         <PipelinePreview jobs={data.jobs} loading={loading} />
-        <AgentActivity agents={data.agents} loading={loading} />
+        <ActivityFeed tasks={data.tasks} jobs={data.jobs} agents={data.agents} loading={loading} />
       </div>
 
       {/* 2-Column bottom grid */}
