@@ -61,7 +61,7 @@ export default function GoalsProgress({ goals, loading }: GoalsProgressProps) {
       {/* Header */}
       <div
         style={{
-          padding: "16px 20px 14px",
+          padding: "12px 16px 10px",
           borderBottom: "1px solid #1E2D45",
           display: "flex",
           alignItems: "center",
@@ -78,19 +78,21 @@ export default function GoalsProgress({ goals, loading }: GoalsProgressProps) {
         >
           Q1 Goals
         </span>
-        <span
-          style={{
-            fontSize: "11px",
-            color: "#A0A0B0",
-            fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-          }}
-        >
-          2026
-        </span>
+        {!loading && goals.length > 0 && (
+          <span
+            style={{
+              fontSize: "11px",
+              color: "#A0A0B0",
+              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+            }}
+          >
+            {goals.filter(g => g.status === "complete").length}/{goals.length} done
+          </span>
+        )}
       </div>
 
       {/* Goals list */}
-      <div style={{ padding: "16px 20px" }}>
+      <div style={{ padding: "12px 16px" }}>
         {loading ? (
           <div
             style={{

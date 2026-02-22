@@ -73,7 +73,7 @@ export default function TaskList({ tasks, loading }: TaskListProps) {
       {/* Header */}
       <div
         style={{
-          padding: "16px 20px 14px",
+          padding: "12px 16px 10px",
           borderBottom: "1px solid #1E2D45",
           display: "flex",
           alignItems: "center",
@@ -91,15 +91,17 @@ export default function TaskList({ tasks, loading }: TaskListProps) {
         >
           My Tasks
         </span>
-        <span
-          style={{
-            fontSize: "11px",
-            color: "#A0A0B0",
-            fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-          }}
-        >
-          AHMED
-        </span>
+        {!loading && sorted.length > 0 && (
+          <span
+            style={{
+              fontSize: "11px",
+              color: "#A0A0B0",
+              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+            }}
+          >
+            {sorted.length} open
+          </span>
+        )}
       </div>
 
       {/* Task list */}
@@ -120,7 +122,7 @@ export default function TaskList({ tasks, loading }: TaskListProps) {
                   display: "flex",
                   alignItems: "center",
                   gap: "10px",
-                  padding: "11px 20px",
+                  padding: "10px 16px",
                   borderBottom: i < sorted.length - 1 ? "1px solid #1E2D45" : "none",
                   transition: "background 0.12s",
                 }}

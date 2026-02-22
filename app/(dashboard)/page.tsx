@@ -14,7 +14,7 @@ import GoalsProgress from "@/components/command-center/GoalsProgress";
 interface Alert {
   text: string;
   deadline: string;
-  severity: "red" | "amber";
+  severity: "red" | "amber" | "yellow";
 }
 
 interface Stats {
@@ -61,29 +61,6 @@ interface Goal {
   status: string;
 }
 
-// ---- Priority Focus helpers ----
-
-const PRIORITY_ORDER: Record<string, number> = { High: 0, high: 0, Medium: 1, medium: 1, Low: 2, low: 2 };
-
-function isUrgent(task: Task): boolean {
-  if (task.priority === "High" || task.priority === "high") return true;
-  if (!task.dueDate) return false;
-  try {
-    const due = new Date(task.dueDate);
-    const diff = due.getTime() - Date.now();
-    return diff > 0 && diff < 48 * 60 * 60 * 1000; // within 48h
-  } catch {
-    return false;
-  }
-}
-
-function getPriorityFocus(tasks: Task[]): Task[] {
-  return [...tasks]
-    .filter((t) => isUrgent(t))
-    .sort((a, b) => (PRIORITY_ORDER[a.priority] ?? 1) - (PRIORITY_ORDER[b.priority] ?? 1))
-    .slice(0, 3);
-}
-
 // ---- Data fetcher ----
 
 async function safeFetch<T>(url: string, fallback: T): Promise<T> {
@@ -117,104 +94,6 @@ const INITIAL: DashboardData = {
   stages: null,
   goals: [],
 };
-
-// ---- Priority Focus Card ----
-
-function PriorityFocusCard({ tasks, loading }: { tasks: Task[]; loading: boolean }) {
-  const focusTasks = getPriorityFocus(tasks);
-
-  if (!loading && focusTasks.length === 0) return null;
-
-  const PRIORITY_ICON: Record<string, string> = { High: "🔴", high: "🔴", Medium: "🟡", medium: "🟡", Low: "🟢", low: "🟢" };
-
-  return (
-    <div
-      style={{
-        background: "linear-gradient(135deg, rgba(79,142,247,0.06), rgba(124,58,237,0.06))",
-        border: "1px solid rgba(79,142,247,0.25)",
-        borderRadius: "10px",
-        padding: "14px 20px",
-        marginBottom: "20px",
-      }}
-    >
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginBottom: "12px",
-      }}>
-        <span style={{
-          fontFamily: "var(--font-syne, Syne, sans-serif)",
-          fontSize: "13px",
-          fontWeight: 700,
-          color: "#F0F0F5",
-        }}>
-          🎯 Priority Focus
-        </span>
-        <span style={{
-          fontSize: "14px",
-          fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-          color: "#4F8EF7",
-          fontWeight: 600,
-          background: "rgba(79, 142, 247, 0.15)",
-          padding: "4px 10px",
-          borderRadius: "6px",
-        }}>
-          TOP {focusTasks.length} TODAY
-        </span>
-      </div>
-
-      {loading ? (
-        <div style={{ color: "#A0A0B0", fontSize: "12px", fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)" }}>
-          Loading…
-        </div>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          {focusTasks.map((task, i) => (
-            <div key={task.id} style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "7px 10px",
-              background: "rgba(255,255,255,0.03)",
-              borderRadius: "6px",
-              border: "1px solid rgba(79,142,247,0.15)",
-            }}>
-              <span style={{ fontSize: "18px", flexShrink: 0, lineHeight: 1 }}>
-                {PRIORITY_ICON[task.priority] ?? "⚪"}
-              </span>
-              <span style={{
-                flex: 1,
-                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                fontSize: "13px",
-                fontWeight: 600,
-                color: "#F0F0F5",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}>
-                {task.title}
-              </span>
-              <span style={{
-                fontSize: "14px",
-                fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                color: "#4F8EF7",
-                fontWeight: 700,
-                flexShrink: 0,
-                background: "rgba(79, 142, 247, 0.2)",
-                padding: "4px 10px",
-                borderRadius: "8px",
-                border: "1px solid rgba(79, 142, 247, 0.3)",
-              }}>
-                #{i + 1}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // ---- Component ----
 
@@ -270,8 +149,9 @@ export default function CommandCenterPage() {
 
   return (
     <div
+      data-cc-page
       style={{
-        padding: "24px",
+        padding: "20px",
         display: "flex",
         flexDirection: "column",
         gap: "0",
@@ -279,35 +159,35 @@ export default function CommandCenterPage() {
         boxSizing: "border-box",
       }}
     >
-      {/* Phase 2: Mobile-responsive styles */}
+      {/* Mobile-responsive styles */}
       <style>{`
         .cc-grid-3 {
           display: grid;
           grid-template-columns: 1fr 1fr 1fr;
-          gap: 16px;
-          margin-bottom: 16px;
+          gap: 12px;
+          margin-bottom: 12px;
         }
         .cc-grid-2 {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 16px;
+          gap: 12px;
         }
-        @media (max-width: 900px) {
+        @media (max-width: 1024px) {
           .cc-grid-3 {
             grid-template-columns: 1fr 1fr;
           }
         }
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
           .cc-grid-3 {
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 10px;
           }
           .cc-grid-2 {
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 10px;
           }
           div[data-cc-page] {
-            padding: 16px !important;
+            padding: 12px !important;
           }
         }
       `}</style>
@@ -315,10 +195,7 @@ export default function CommandCenterPage() {
       {/* Alert Banner */}
       <AlertBanner alerts={data.alerts} />
 
-      {/* Phase 2: Priority Focus — shows top 3 urgent items */}
-      <PriorityFocusCard tasks={data.tasks} loading={loading} />
-
-      {/* Stat Cards */}
+      {/* Stat Cards — collapsible */}
       <StatCards stats={data.stats} loading={loading} />
 
       {/* 3-Column grid */}

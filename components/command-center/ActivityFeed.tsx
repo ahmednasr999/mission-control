@@ -99,36 +99,6 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
     // Sort by timestamp (newest first)
     generated.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
-    // Add demo activities if empty
-    if (generated.length === 0 && !loading) {
-      generated.push(
-        {
-          id: "demo-1",
-          type: "task",
-          icon: <CheckCircle2 size={14} />,
-          message: "Task 'Delphi interview prep' moved to In Progress",
-          timestamp: new Date(Date.now() - 5 * 60000).toISOString(),
-          timeAgo: "5m ago",
-        },
-        {
-          id: "demo-2",
-          type: "job",
-          icon: <Briefcase size={14} />,
-          message: "CV generated for Delphi Consulting (91% ATS)",
-          timestamp: new Date(Date.now() - 30 * 60000).toISOString(),
-          timeAgo: "30m ago",
-        },
-        {
-          id: "demo-3",
-          type: "agent",
-          icon: <Zap size={14} />,
-          message: "🎯 NASR: Updated Mission Control dashboard",
-          timestamp: new Date(Date.now() - 2 * 3600000).toISOString(),
-          timeAgo: "2h ago",
-        }
-      );
-    }
-
     setActivities(generated.slice(0, 6));
   }, [tasks, jobs, agents, loading]);
 
@@ -144,67 +114,71 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
   return (
     <div style={cardStyle}>
       <CardHeader title="Live Activity" icon={<Clock size={16} />} badge={activities.length} />
-      
-      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        {activities.map((activity) => {
-          const styles = TYPE_STYLES[activity.type];
-          return (
-            <div
-              key={activity.id}
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "10px",
-                padding: "10px 12px",
-                background: styles.bg,
-                border: `1px solid ${styles.border}`,
-                borderRadius: "8px",
-                transition: "transform 0.15s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateX(4px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateX(0)";
-              }}
-            >
-              <span style={{ color: styles.icon, flexShrink: 0, marginTop: "2px" }}>
-                {activity.icon}
-              </span>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                    fontSize: "12px",
-                    color: "#F0F0F5",
-                    lineHeight: 1.4,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                  }}
-                >
-                  {activity.message}
-                </div>
-                <div
-                  style={{
-                    fontSize: "10px",
-                    fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                    color: "#A0A0B0",
-                    marginTop: "4px",
-                  }}
-                >
-                  {activity.timeAgo}
+
+      {activities.length === 0 ? (
+        <EmptyState
+          message="No recent activity"
+          submessage="Start working — actions will appear here"
+          action="View Team page →"
+        />
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {activities.map((activity) => {
+            const styles = TYPE_STYLES[activity.type];
+            return (
+              <div
+                key={activity.id}
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "10px",
+                  padding: "10px 12px",
+                  background: styles.bg,
+                  border: `1px solid ${styles.border}`,
+                  borderRadius: "8px",
+                  transition: "transform 0.15s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateX(4px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateX(0)";
+                }}
+              >
+                <span style={{ color: styles.icon, flexShrink: 0, marginTop: "2px" }}>
+                  {activity.icon}
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                      fontSize: "12px",
+                      color: "#F0F0F5",
+                      lineHeight: 1.4,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                    }}
+                  >
+                    {activity.message}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "10px",
+                      fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                      color: "#A0A0B0",
+                      marginTop: "4px",
+                    }}
+                  >
+                    {activity.timeAgo}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {activities.length === 0 && (
-        <EmptyState message="No recent activity" submessage="Actions will appear here as you work" />
+            );
+          })}
+        </div>
       )}
     </div>
   );
@@ -219,8 +193,8 @@ function CardHeader({ title, icon, badge }: { title: string; icon: React.ReactNo
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: "16px",
-        paddingBottom: "12px",
+        marginBottom: "12px",
+        paddingBottom: "10px",
         borderBottom: "1px solid rgba(30, 45, 69, 0.5)",
       }}
     >
@@ -229,7 +203,7 @@ function CardHeader({ title, icon, badge }: { title: string; icon: React.ReactNo
         <span
           style={{
             fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "14px",
+            fontSize: "13px",
             fontWeight: 700,
             color: "#F0F0F5",
           }}
@@ -255,20 +229,20 @@ function CardHeader({ title, icon, badge }: { title: string; icon: React.ReactNo
   );
 }
 
-function EmptyState({ message, submessage }: { message: string; submessage: string }) {
+function EmptyState({ message, submessage, action }: { message: string; submessage: string; action?: string }) {
   return (
     <div
       style={{
         textAlign: "center",
-        padding: "32px 20px",
+        padding: "24px 16px",
         color: "#A0A0B0",
       }}
     >
-      <div style={{ fontSize: "32px", marginBottom: "12px" }}>📭</div>
+      <div style={{ fontSize: "24px", marginBottom: "8px" }}>📭</div>
       <div
         style={{
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-          fontSize: "14px",
+          fontSize: "13px",
           fontWeight: 600,
           color: "#8888A0",
           marginBottom: "4px",
@@ -278,12 +252,25 @@ function EmptyState({ message, submessage }: { message: string; submessage: stri
       </div>
       <div
         style={{
-          fontSize: "12px",
+          fontSize: "11px",
           color: "#A0A0B0",
+          marginBottom: action ? "8px" : 0,
         }}
       >
         {submessage}
       </div>
+      {action && (
+        <a
+          href="/team"
+          style={{
+            fontSize: "11px",
+            color: "#4F8EF7",
+            textDecoration: "none",
+          }}
+        >
+          {action}
+        </a>
+      )}
     </div>
   );
 }
@@ -292,7 +279,7 @@ const cardStyle: React.CSSProperties = {
   background: "#0D1220",
   border: "1px solid #1E2D45",
   borderRadius: "10px",
-  padding: "16px",
+  padding: "12px",
   height: "100%",
   display: "flex",
   flexDirection: "column",

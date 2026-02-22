@@ -161,6 +161,7 @@ function calcTrend(current: number | null | undefined, prev: number | null | und
 
 export default function StatCards({ stats, loading }: StatCardsProps) {
   const [showDetails, setShowDetails] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   const cards = [
     {
@@ -198,49 +199,109 @@ export default function StatCards({ stats, loading }: StatCardsProps) {
   ];
 
   return (
-    <div style={{ marginBottom: "20px" }}>
-      {/* Cards row */}
-      <div className="stat-cards-grid" style={{ marginBottom: "8px" }}>
-        <style>{`
-          .stat-cards-grid {
-            display: flex;
-            gap: 16px;
-          }
-          @media (max-width: 600px) {
-            .stat-cards-grid {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 10px;
-            }
-            .stat-card {
-              padding: 14px 12px !important;
-            }
-          }
-        `}</style>
-        {cards.map((card) => (
-          <StatCard key={card.label} {...card} showDetails={showDetails} />
-        ))}
-      </div>
-
-      {/* Toggle expand/collapse */}
-      <div style={{ textAlign: "right" }}>
-        <button
-          onClick={() => setShowDetails((s) => !s)}
+    <div style={{ marginBottom: "16px" }}>
+      {/* Collapsed header view */}
+      {collapsed ? (
+        <div
+          onClick={() => setCollapsed(false)}
           style={{
-            background: "transparent",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "10px 14px",
+            background: "#0D1220",
             border: "1px solid #1E2D45",
-            borderRadius: "20px",
-            padding: "3px 12px",
-            fontSize: "11px",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            color: "#A0A0B0",
+            borderRadius: "8px",
             cursor: "pointer",
-            transition: "all 0.12s ease",
+            transition: "all 0.15s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "#2a3f5f";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "#1E2D45";
           }}
         >
-          {showDetails ? "▲ Hide details" : "▼ Show details"}
-        </button>
-      </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <span style={{ fontSize: "13px" }}>📊</span>
+            <span style={{
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+              fontSize: "13px",
+              color: "#F0F0F5",
+              fontWeight: 500,
+            }}>
+              Dashboard Stats
+            </span>
+            <span style={{
+              fontSize: "11px",
+              color: "#A0A0B0",
+              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+            }}>
+              {loading ? "—" : `${stats?.activeJobs ?? 0} jobs · ${stats?.openTasks ?? 0} tasks · ${stats?.avgAts ?? 0}% ATS`}
+            </span>
+          </div>
+          <span style={{ fontSize: "11px", color: "#4F8EF7" }}>▼ Expand</span>
+        </div>
+      ) : (
+        <>
+          {/* Cards row */}
+          <div className="stat-cards-grid" style={{ marginBottom: "8px" }}>
+            <style>{`
+              .stat-cards-grid {
+                display: flex;
+                gap: 12px;
+              }
+              @media (max-width: 600px) {
+                .stat-cards-grid {
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 8px;
+                }
+                .stat-card {
+                  padding: 12px 10px !important;
+                }
+              }
+            `}</style>
+            {cards.map((card) => (
+              <StatCard key={card.label} {...card} showDetails={showDetails} />
+            ))}
+          </div>
+
+          {/* Toggle controls */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <button
+              onClick={() => setCollapsed(true)}
+              style={{
+                background: "transparent",
+                border: "none",
+                padding: "4px 8px",
+                fontSize: "11px",
+                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                color: "#4F8EF7",
+                cursor: "pointer",
+              }}
+            >
+              ▲ Collapse
+            </button>
+            <button
+              onClick={() => setShowDetails((s) => !s)}
+              style={{
+                background: "transparent",
+                border: "1px solid #1E2D45",
+                borderRadius: "20px",
+                padding: "3px 12px",
+                fontSize: "11px",
+                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                color: "#A0A0B0",
+                cursor: "pointer",
+                transition: "all 0.12s ease",
+              }}
+            >
+              {showDetails ? "▲ Hide details" : "▼ Show details"}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

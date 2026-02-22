@@ -90,7 +90,7 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
       {/* Header */}
       <div
         style={{
-          padding: "16px 20px 14px",
+          padding: "12px 16px 10px",
           borderBottom: "1px solid #1E2D45",
           display: "flex",
           alignItems: "center",
@@ -107,15 +107,17 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
         >
           Job Pipeline
         </span>
-        <span
-          style={{
-            fontSize: "11px",
-            color: "#A0A0B0",
-            fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-          }}
-        >
-          TOP 4
-        </span>
+        {!loading && jobs.length > 0 && (
+          <span
+            style={{
+              fontSize: "11px",
+              color: "#A0A0B0",
+              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+            }}
+          >
+            {jobs.length} active
+          </span>
+        )}
       </div>
 
       {/* Jobs list */}
@@ -132,7 +134,7 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
                 display: "flex",
                 alignItems: "center",
                 gap: "10px",
-                padding: "11px 20px",
+                padding: "10px 16px",
                 borderBottom: i < Math.min(jobs.length, 4) - 1 ? "1px solid #1E2D45" : "none",
               }}
             >

@@ -28,19 +28,19 @@ function StageColumn({ label, count, color, bg }: StageColumnProps) {
       {/* Count bubble */}
       <div
         style={{
-          width: "64px",
-          height: "64px",
-          borderRadius: "16px",
+          width: "36px",
+          height: "36px",
+          borderRadius: "10px",
           background: bg,
-          border: `2px solid ${count > 0 ? color : "#1E2D45"}`,
+          border: `1.5px solid ${count > 0 ? color : "#1E2D45"}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           fontFamily: "var(--font-syne, Syne, sans-serif)",
-          fontSize: "28px",
-          fontWeight: 800,
+          fontSize: "16px",
+          fontWeight: 600,
           color: count > 0 ? color : "#A0A0B0",
-          boxShadow: count > 0 ? `0 4px 16px ${color}30` : "none",
+          boxShadow: count > 0 ? `0 2px 8px ${color}20` : "none",
         }}
       >
         {count}
@@ -110,7 +110,7 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
       {/* Header */}
       <div
         style={{
-          padding: "16px 20px 14px",
+          padding: "12px 16px 10px",
           borderBottom: "1px solid #1E2D45",
           display: "flex",
           alignItems: "center",
@@ -127,23 +127,21 @@ export default function ContentPreview({ stages, loading }: ContentPreviewProps)
         >
           Content Pipeline
         </span>
-        <span
-          style={{
-            fontSize: "13px",
-            color: "#4F8EF7",
-            fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-            fontWeight: 600,
-            background: "rgba(79, 142, 247, 0.1)",
-            padding: "4px 10px",
-            borderRadius: "6px",
-          }}
-        >
-          KANBAN
-        </span>
+        {!loading && stages && (
+          <span
+            style={{
+              fontSize: "11px",
+              color: "#A0A0B0",
+              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+            }}
+          >
+            {stages.ideas + stages.draft + stages.review + stages.published} items
+          </span>
+        )}
       </div>
 
       {/* Stages */}
-      <div style={{ padding: "28px 24px" }}>
+      <div style={{ padding: "20px 16px" }}>
         {loading ? (
           <div
             style={{

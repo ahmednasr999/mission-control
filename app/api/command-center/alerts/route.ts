@@ -10,7 +10,7 @@ const GOALS_PATH = path.join(
 interface Alert {
   text: string;
   deadline: string;
-  severity: "red" | "amber";
+  severity: "red" | "amber" | "yellow";
 }
 
 // DATA SOURCE: markdown (primary) — reads directly from GOALS.md
@@ -73,6 +73,10 @@ function parseAlerts(): Alert[] {
             ) || "Deadline";
 
           const hoursLeft = Math.round(diffMs / (1000 * 60 * 60));
+          let severity: "red" | "amber" | "yellow" = "yellow";
+          if (hoursLeft <= 24) severity = "red";
+          else if (hoursLeft <= 48) severity = "amber";
+
           alerts.push({
             text: taskText,
             deadline: deadline.toLocaleDateString("en-GB", {
@@ -81,7 +85,7 @@ function parseAlerts(): Alert[] {
               month: "short",
               year: "numeric",
             }),
-            severity: hoursLeft <= 24 ? "red" : "amber",
+            severity,
           });
         }
       }
@@ -101,6 +105,10 @@ function parseAlerts(): Alert[] {
         const diffMs = deadline.getTime() - cairoNow.getTime();
         if (diffMs > 0 && deadline <= in7Days) {
           const hoursLeft = Math.round(diffMs / (1000 * 60 * 60));
+          let severity: "red" | "amber" | "yellow" = "yellow";
+          if (hoursLeft <= 24) severity = "red";
+          else if (hoursLeft <= 48) severity = "amber";
+
           alerts.push({
             text: taskText,
             deadline: deadline.toLocaleDateString("en-GB", {
@@ -109,7 +117,7 @@ function parseAlerts(): Alert[] {
               month: "short",
               year: "numeric",
             }),
-            severity: hoursLeft <= 24 ? "red" : "amber",
+            severity,
           });
         }
       } catch {
