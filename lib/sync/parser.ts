@@ -280,6 +280,95 @@ function mapStageToStatus(stage: string): string {
 }
 
 /**
+ * Parse job-application-tracker.md → job_pipeline records
+ * Consolidated tracker with multiple sections: Interview, Applied, Identified
+ */
+export function parseJobApplicationTracker(content: string): ParsedJobPipeline[] {
+  const jobs: ParsedJobPipeline[] = [];
+  const lines = content.split('\n');
+
+  let currentSection = '';
+  let inTable = false;
+  let headerParsed = false;
+  let headers: string[] = [];
+
+  const mapStatus = (status: string): string => {
+    const s = status.toLowerCase();
+    if (s.includes('🎤') || s.includes('interview')) return 'Interview';
+    if (s.includes('✅') || s.includes('applied') || s.includes('⏳')) return 'Applied';
+    if (s.includes('💰') || s.includes('offer')) return 'Offer';
+    if (s.includes('❌') || s.includes('reject')) return 'Rejected';
+    if (s.includes('🆕') || s.includes('new')) return 'Identified';
+    return 'Applied';
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    // Section headers
+    if (trimmed.startsWith('## ')) {
+      const sectionLower = trimmed.toLowerCase();
+      if (sectionLower.includes('interview')) currentSection = 'Interview';
+      else if (sectionLower.includes('applied') || sectionLower.includes('active')) currentSection = 'Applied';
+      else if (sectionLower.includes('identif') || sectionLower.includes('research')) currentSection = 'Identified';
+      else currentSection = '';
+      inTable = false;
+      headerParsed = false;
+      continue;
+    }
+
+    // Table row
+    if (currentSection && trimmed.startsWith('|')) {
+      const cols = trimmed
+        .split('|')
+        .map(c => c.trim())
+        .filter((_, i, arr) => i > 0 && i < arr.length - 1);
+
+      // Skip separator
+      if (cols.every(c => /^[-:]+$/.test(c) || c === '')) {
+        headerParsed = true;
+        continue;
+      }
+
+      // Header row
+      if (!headerParsed && cols.some(c => /company|date/i.test(c))) {
+        headers = cols.map(h => h.toLowerCase());
+        continue;
+      }
+
+      // Data row
+      if (headerParsed && cols.length >= 2) {
+        const get = (name: string) => {
+          const idx = headers.indexOf(name);
+          return idx >= 0 ? (cols[idx] || '').trim() : '';
+        };
+
+        const date = get('date') || cols[0] || '';
+        const company = get('company') || cols[1] || '';
+        const role = get('role') || cols[2] || '';
+        const location = get('location') || cols[3] || '';
+        const status = get('status') || '';
+
+        if (company && company !== '—' && company !== '-' && company.toLowerCase() !== 'company') {
+          jobs.push({
+            company: stripMarkdown(company),
+            role: stripMarkdown(role) || '—',
+            location: stripMarkdown(location),
+            link: '',
+            jd_status: status ? 'Parsed' : '',
+            cv_status: '',
+            status: mapStatus(status || currentSection),
+            ats_score: null,
+          });
+        }
+      }
+    }
+  }
+
+  return jobs;
+}
+
+/**
  * Parse content-pipeline.md → content_pipeline records
  * Multiple tables: Ideas, In Draft, In Review, Scheduled, Published
  */

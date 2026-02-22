@@ -17,6 +17,7 @@ import os from 'os';
 import {
   parseActiveTasks,
   parseJobPipeline,
+  parseJobApplicationTracker,
   parseContentPipeline,
   parseGoals,
   parseMemoryHighlights,
@@ -119,6 +120,7 @@ let lastSuccessfulSyncTime: number = Date.now();
 const STATIC_FILES = [
   path.join(ROOT_DIR, 'MEMORY.md'),
   path.join(ROOT_DIR, 'GOALS.md'),
+  path.join(ROOT_DIR, 'job-application-tracker.md'),
   path.join(MEMORY_DIR, 'active-tasks.md'),
   path.join(MEMORY_DIR, 'content-pipeline.md'),
   path.join(MEMORY_DIR, 'cv-history.md'),
@@ -203,6 +205,14 @@ export async function syncFile(filePath: string): Promise<number> {
     if (fileName === 'cv-history.md') {
       const parsed = parseCVHistory(content);
       rows = writeCVHistory(parsed);
+      logSync(fileName, 'ok', rows);
+      return rows;
+    }
+
+    // job-application-tracker.md → job_pipeline (consolidated tracker)
+    if (fileName === 'job-application-tracker.md') {
+      const parsed = parseJobApplicationTracker(content);
+      rows = writeJobPipeline(parsed);
       logSync(fileName, 'ok', rows);
       return rows;
     }
