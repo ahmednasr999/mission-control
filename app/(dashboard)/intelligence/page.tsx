@@ -25,75 +25,46 @@ export default function IntelligencePage() {
 
   return (
     <div style={{ padding: "32px", maxWidth: "100%" }}>
-      {/* Page header */}
-      <div style={{ marginBottom: "28px" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
-          <div>
-            <h2
-              style={{
-                fontFamily: "var(--font-syne, Syne, sans-serif)",
-                fontSize: "28px",
-                fontWeight: 700,
-                color: "#F0F0F5",
-                letterSpacing: "-0.03em",
-                margin: 0,
-              }}
-            >
-              INTELLIGENCE
-            </h2>
-            <p
-              style={{
-                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                fontSize: "13px",
-                color: "#555570",
-                marginTop: "6px",
-                marginBottom: 0,
-              }}
-            >
-              Search, insights, and strategic intelligence
-            </p>
-          </div>
-
-          {/* Ctrl+K hint */}
-          <button
-            onClick={() => setModalOpen(true)}
+      {/* Ctrl+K hint */}
+      <div style={{ marginBottom: "20px" }}>
+        <button
+          onClick={() => setModalOpen(true)}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            background: "#0D1220",
+            border: "1px solid #1E2D45",
+            borderRadius: "8px",
+            padding: "8px 14px",
+            cursor: "pointer",
+            transition: "border-color 0.2s ease",
+          }}
+        >
+          <span style={{ fontSize: "14px" }}>🔍</span>
+          <span
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              background: "#0D1220",
-              border: "1px solid #1E2D45",
-              borderRadius: "8px",
-              padding: "8px 14px",
-              cursor: "pointer",
-              transition: "border-color 0.2s ease",
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+              fontSize: "13px",
+              color: "#8888A0",
             }}
           >
-            <span style={{ fontSize: "14px" }}>🔍</span>
-            <span
-              style={{
-                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                fontSize: "13px",
-                color: "#8888A0",
-              }}
-            >
-              Quick search
-            </span>
-            <kbd
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid #1E2D45",
-                borderRadius: "4px",
-                padding: "2px 6px",
-                fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                fontSize: "11px",
-                color: "#555570",
-              }}
-            >
-              ⌃K
-            </kbd>
-          </button>
-        </div>
+            Quick search
+          </span>
+          <kbd
+            style={{
+              background: "rgba(255,255,255,0.05)",
+              border: "1px solid #1E2D45",
+              borderRadius: "4px",
+              padding: "2px 6px",
+              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+              fontSize: "11px",
+              color: "#555570",
+            }}
+          >
+            ⌃K
+          </kbd>
+        </button>
       </div>
 
       {/* 1. Full-width Search Bar */}

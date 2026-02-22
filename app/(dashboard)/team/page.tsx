@@ -20,33 +20,6 @@ export default function TeamPage() {
 
   return (
     <div style={{ padding: "32px", maxWidth: "100%" }}>
-      {/* Page header */}
-      <div style={{ marginBottom: "28px" }}>
-        <h2
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "28px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-            letterSpacing: "-0.03em",
-            margin: 0,
-          }}
-        >
-          TEAM
-        </h2>
-        <p
-          style={{
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            fontSize: "13px",
-            color: "#555570",
-            marginTop: "6px",
-            marginBottom: 0,
-          }}
-        >
-          Agent hierarchy, sessions, and sub-agent runs
-        </p>
-      </div>
-
       {/* 1. Agent Hierarchy Diagram */}
       <AgentHierarchy
         selectedAgent={selectedAgent}

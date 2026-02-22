@@ -15,33 +15,6 @@ export default function SettingsPage() {
         minHeight: "100vh",
       }}
     >
-      {/* Page Header */}
-      <div style={{ marginBottom: "24px" }}>
-        <h2
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "28px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-            letterSpacing: "-0.03em",
-            marginBottom: "6px",
-            margin: 0,
-          }}
-        >
-          Settings
-        </h2>
-        <p
-          style={{
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            fontSize: "13px",
-            color: "#555570",
-            margin: "6px 0 0",
-          }}
-        >
-          System configuration, backups, and diagnostics
-        </p>
-      </div>
-
       {/* Sections */}
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         {/* 1. Model Routing — full width */}

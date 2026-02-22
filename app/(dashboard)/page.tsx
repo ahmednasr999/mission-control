@@ -307,32 +307,6 @@ export default function CommandCenterPage() {
         }
       `}</style>
 
-      {/* Page heading */}
-      <div style={{ marginBottom: "20px" }}>
-        <h2
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "22px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-            letterSpacing: "-0.03em",
-            margin: "0 0 4px 0",
-          }}
-        >
-          Command Center
-        </h2>
-        <p
-          style={{
-            color: "#555570",
-            fontSize: "12px",
-            margin: 0,
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-          }}
-        >
-          Mission overview — live data pipeline
-        </p>
-      </div>
-
       {/* Alert Banner */}
       <AlertBanner alerts={data.alerts} />
 
