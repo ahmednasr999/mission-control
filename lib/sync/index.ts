@@ -263,6 +263,10 @@ export async function syncFile(filePath: string): Promise<number> {
  */
 export async function syncAll(): Promise<{ totalRows: number; filesProcessed: number; errors: string[] }> {
   console.log('[sync] Starting full sync...');
+  
+  // Update timestamp at START to prevent false alerts during sync
+  lastSuccessfulSyncTime = Date.now();
+  
   const errors: string[] = [];
   let totalRows = 0;
   let filesProcessed = 0;
