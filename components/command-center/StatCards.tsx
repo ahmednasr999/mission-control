@@ -1,14 +1,7 @@
 "use client";
 
-/**
- * StatCards — Phase 3: A+ Polish (SSR-safe)
- * - CSS-only animations
- * - Hover effects
- * - Collapsible
- * - SSR-safe (no mounted state)
- */
-
 import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Stats {
   activeJobs: number;
@@ -72,96 +65,68 @@ function StatCard({ value, label, color, glow, trend, showDetails, details }: St
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div
-      className="stat-card"
+    <Card
+      className={`bg-slate-900/60 border-slate-700/50 hover:border-slate-600 transition-all`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
-        flex: 1,
-        minWidth: 0,
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        padding: "20px 20px 18px",
-        position: "relative",
-        overflow: "hidden",
-        transform: isHovered ? "translateY(-4px)" : "translateY(0)",
-        boxShadow: isHovered ? "0 12px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(79, 142, 247, 0.1)" : "none",
-        borderColor: isHovered ? "#2a3f5f" : "#1E2D45",
-        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-        cursor: "pointer",
+        borderColor: isHovered ? `${color}60` : undefined,
       }}
     >
-      {/* Subtle glow blob */}
-      <div
-        style={{
-          position: "absolute",
-          top: "-20px",
-          right: "-20px",
-          width: "80px",
-          height: "80px",
-          borderRadius: "50%",
-          background: glow,
-          filter: "blur(30px)",
-          opacity: isHovered ? 0.5 : 0.35,
-          pointerEvents: "none",
-          transition: "opacity 0.3s ease",
-        }}
-      />
-
-      <div
-        style={{
-          fontFamily: "var(--font-syne, Syne, sans-serif)",
-          fontSize: "28px",
-          fontWeight: 700,
-          background: color,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-          lineHeight: 1.1,
-          marginBottom: "4px",
-          letterSpacing: "-0.03em",
-        }}
-      >
-        {value}
-      </div>
-
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
-        <div
-          style={{
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            fontSize: "11px",
-            color: "#A0A0B0",
-            fontWeight: 500,
-            textTransform: "uppercase",
-            letterSpacing: "0.06em",
-          }}
-        >
+      <CardContent className="p-4">
+        <style>{`
+          @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+          }
+          .stat-card-value {
+            animation: slideDown 0.3s ease forwards;
+          }
+        `}</style>
+        
+        {/* Label */}
+        <div style={{
+          fontSize: "11px",
+          fontWeight: 600,
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+          color: "#A0A0B0",
+          marginBottom: "8px",
+        }}>
           {label}
         </div>
-        <TrendBadge trend={trend} />
-      </div>
 
-      {/* Secondary details — shown when expanded */}
-      <div style={{
-        maxHeight: showDetails && details ? "60px" : "0",
-        opacity: showDetails && details ? 1 : 0,
-        overflow: "hidden",
-        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-      }}>
-        <div style={{
-          marginTop: "8px",
-          paddingTop: "8px",
-          borderTop: "1px solid #1E2D45",
-          fontSize: "11px",
-          fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-          color: "#A0A0B0",
-          lineHeight: 1.5,
+        {/* Value */}
+        <div className="stat-card-value" style={{
+          fontSize: "32px",
+          fontWeight: 700,
+          color: color,
+          fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+          marginBottom: "6px",
+          textShadow: `0 0 20px ${glow}`,
         }}>
-          {details}
+          {value}
         </div>
-      </div>
-    </div>
+
+        {/* Trend indicator */}
+        {showDetails && (
+          <div style={{
+            fontSize: "10px",
+            color: "#A0A0B0",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+          }}>
+            <TrendBadge trend={trend} />
+            {details && <span>{details}</span>}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -170,171 +135,109 @@ interface StatCardsProps {
   loading?: boolean;
 }
 
-function calcTrend(current: number | null | undefined, prev: number | null | undefined): TrendDirection {
-  if (current == null || prev == null) return "na";
-  if (current > prev) return "up";
-  if (current < prev) return "down";
-  return "flat";
-}
-
-export default function StatCards({ stats, loading }: StatCardsProps) {
-  const [showDetails, setShowDetails] = useState(false);
-  const [collapsed, setCollapsed] = useState(true);
-
-  const cards = [
+export default function StatCards({ stats }: StatCardsProps) {
+  if (!stats) {
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+        {[1,2,3,4].map(i => (
+          <Card key={i} className="bg-slate-900/60 border-slate-700/50 animate-pulse">
+            <CardContent className="p-4">
+              <div className="h-3 w-20 bg-slate-700 rounded mb-2"></div>
+              <div className="h-8 w-16 bg-slate-700 rounded"></div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+  
+  const statItems = [
     {
-      value: loading ? "—" : stats?.activeJobs ?? 0,
-      label: "Active Applications",
-      color: "linear-gradient(135deg, #4F8EF7, #60A5FA)",
-      glow: "#4F8EF7",
-      trend: calcTrend(stats?.activeJobs, stats?.prevActiveJobs),
-      details: "Applications in Identified, Applied, or Interview stages",
+      value: stats.activeJobs,
+      label: "Active Job Leads",
+      color: "#4F8EF7",
+      glow: "rgba(79, 142, 247, 0.5)",
+      trend: stats.prevActiveJobs !== null && stats.prevActiveJobs !== undefined
+        ? stats.activeJobs > stats.prevActiveJobs
+          ? "up"
+          : stats.activeJobs < stats.prevActiveJobs
+          ? "down"
+          : "flat"
+        : "na",
+      details: stats.prevActiveJobs !== null && stats.prevActiveJobs !== undefined
+        ? `${Math.abs(stats.activeJobs - stats.prevActiveJobs)} vs last check`
+        : undefined,
     },
     {
-      value: loading ? "—" : stats?.radarJobs ?? 0,
-      label: "Job Radar",
-      color: "linear-gradient(135deg, #EC4899, #F472B6)",
-      glow: "#EC4899",
-      trend: calcTrend(stats?.radarJobs ?? null, stats?.prevRadarJobs ?? null),
-      details: "High-potential roles parked in Radar. Review via HR → Focus: Job Radar.",
-    },
-    {
-      value: loading ? "—" : stats?.avgAts != null ? `${stats.avgAts}%` : "N/A",
+      value: stats.avgAts !== null ? `${stats.avgAts}%` : "—",
       label: "Avg ATS Score",
-      color: "linear-gradient(135deg, #7C3AED, #A78BFA)",
-      glow: "#7C3AED",
-      trend: calcTrend(stats?.avgAts, stats?.prevAvgAts),
-      details: "Average ATS score across active CVs",
+      color: "#34D399",
+      glow: "rgba(52, 211, 153, 0.5)",
+      trend: stats.prevAvgAts !== null && stats.prevAvgAts !== undefined
+        ? stats.avgAts && stats.avgAts > stats.prevAvgAts
+          ? "up"
+          : stats.avgAts && stats.avgAts < stats.prevAvgAts
+          ? "down"
+          : "flat"
+        : "na",
+      details: stats.prevAvgAts !== null && stats.prevAvgAts !== undefined && stats.avgAts
+        ? `${Math.abs(stats.avgAts - stats.prevAvgAts).toFixed(1)}pp vs last check`
+        : undefined,
     },
     {
-      value: loading ? "—" : stats?.contentDue ?? 0,
-      label: "Content Due",
-      color: "linear-gradient(135deg, #D97706, #FBBF24)",
-      glow: "#D97706",
-      trend: calcTrend(stats?.contentDue, stats?.prevContentDue),
-      details: "Content items in Draft or Review stage",
+      value: stats.contentDue,
+      label: "Content Due This Week",
+      color: "#F59E0B",
+      glow: "rgba(245, 158, 11, 0.5)",
+      trend: stats.prevContentDue !== null && stats.prevContentDue !== undefined
+        ? stats.contentDue > stats.prevContentDue
+          ? "up"
+          : stats.contentDue < stats.prevContentDue
+          ? "down"
+          : "flat"
+        : "na",
+      details: stats.prevContentDue !== null && stats.prevContentDue !== undefined
+        ? `${Math.abs(stats.contentDue - stats.prevContentDue)} vs last check`
+        : undefined,
     },
     {
-      value: loading ? "—" : stats?.openTasks ?? 0,
+      value: stats.openTasks,
       label: "Open Tasks",
-      color: "linear-gradient(135deg, #059669, #34D399)",
-      glow: "#059669",
-      trend: calcTrend(stats?.openTasks, stats?.prevOpenTasks),
-      details: "Tasks not yet completed across all assignees",
+      color: "#EC4899",
+      glow: "rgba(236, 72, 153, 0.5)",
+      trend: stats.prevOpenTasks !== null && stats.prevOpenTasks !== undefined
+        ? stats.openTasks > stats.prevOpenTasks
+          ? "up"
+          : stats.openTasks < stats.prevOpenTasks
+          ? "down"
+          : "flat"
+        : "na",
+      details: stats.prevOpenTasks !== null && stats.prevOpenTasks !== undefined
+        ? `${Math.abs(stats.openTasks - stats.prevOpenTasks)} vs last check`
+        : undefined,
     },
   ];
 
   return (
-    <div style={{ marginBottom: "16px" }}>
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .stat-cards-grid {
-          display: flex;
-          gap: 12px;
-          animation: fadeIn 0.4s ease;
-        }
-        @media (max-width: 600px) {
-          .stat-cards-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-          }
-          .stat-card {
-            padding: 12px 10px !important;
-          }
-        }
-      `}</style>
-
-      {/* Collapsed header view */}
-      {collapsed ? (
-        <div
-          onClick={() => setCollapsed(false)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "10px 14px",
-            background: "#0D1220",
-            border: "1px solid #1E2D45",
-            borderRadius: "8px",
-            cursor: "pointer",
-            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = "#2a3f5f";
-            e.currentTarget.style.transform = "translateY(-1px)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "#1E2D45";
-            e.currentTarget.style.transform = "translateY(0)";
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <span style={{ fontSize: "13px" }}>📊</span>
-            <span style={{
-              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-              fontSize: "13px",
-              color: "#F0F0F5",
-              fontWeight: 500,
-            }}>
-              Dashboard Stats
-            </span>
-            <span style={{
-              fontSize: "11px",
-              color: "#A0A0B0",
-              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-            }}>
-              {loading ? "—" : `${stats?.activeJobs ?? 0} jobs · ${stats?.openTasks ?? 0} tasks · ${stats?.avgAts ?? 0}% ATS`}
-            </span>
-          </div>
-          <span style={{ fontSize: "11px", color: "#4F8EF7" }}>▼ Expand</span>
-        </div>
-      ) : (
-        <>
-          {/* Cards row */}
-          <div className="stat-cards-grid" style={{ marginBottom: "8px" }}>
-            {cards.map((card) => (
-              <StatCard key={card.label} {...card} showDetails={showDetails} />
-            ))}
-          </div>
-
-          {/* Toggle controls */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <button
-              onClick={() => setCollapsed(true)}
-              style={{
-                background: "transparent",
-                border: "none",
-                padding: "4px 8px",
-                fontSize: "11px",
-                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                color: "#4F8EF7",
-                cursor: "pointer",
-              }}
-            >
-              ▲ Collapse
-            </button>
-            <button
-              onClick={() => setShowDetails((s) => !s)}
-              style={{
-                background: "transparent",
-                border: "1px solid #1E2D45",
-                borderRadius: "20px",
-                padding: "3px 12px",
-                fontSize: "11px",
-                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                color: "#A0A0B0",
-                cursor: "pointer",
-              }}
-            >
-              {showDetails ? "▲ Hide details" : "▼ Show details"}
-            </button>
-          </div>
-        </>
-      )}
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+      gap: "16px",
+      marginBottom: "24px",
+    }}>
+      {statItems.map((item, idx) => (
+        <StatCard
+          key={idx}
+          value={item.value}
+          label={item.label}
+          color={item.color}
+          glow={item.glow}
+          trend={item.trend}
+          showDetails={true}
+          details={item.details}
+          delay={idx * 0.1}
+        />
+      ))}
     </div>
   );
 }

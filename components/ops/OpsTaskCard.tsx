@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import type { OpsTask } from "@/lib/ops-db";
-
-// ---- Constants ----
 
 const PRIORITY_COLORS: Record<string, string> = {
   high: "#F87171",
@@ -26,12 +25,6 @@ function getAssigneeColor(name: string): { text: string; bg: string } {
     if (key.includes(k)) return v;
   }
   return { text: "#64748B", bg: "rgba(100,116,139,0.15)" };
-}
-
-// Cairo timezone offset (UTC+2 standard, UTC+3 DST; approximate: use UTC+2)
-function toCairoDate(isoString: string): Date {
-  const d = new Date(isoString);
-  return new Date(d.getTime() + 2 * 60 * 60 * 1000); // EET UTC+2
 }
 
 function formatDate(isoString?: string): string {
@@ -59,8 +52,6 @@ function isOverdue(dueDate?: string): boolean {
     return false;
   }
 }
-
-// ---- Sub-components ----
 
 function PriorityDot({ priority }: { priority: string }) {
   const color = PRIORITY_COLORS[priority] ?? "#8888A0";
@@ -142,8 +133,6 @@ function CategoryTag({ category }: { category: string }) {
   );
 }
 
-// ---- Main card ----
-
 interface OpsTaskCardProps {
   task: OpsTask;
   dimmed?: boolean;
@@ -153,132 +142,75 @@ export default function OpsTaskCard({ task, dimmed = false }: OpsTaskCardProps) 
   const [hovered, setHovered] = useState(false);
   const overdue = isOverdue(task.dueDate);
   const priorityColor = PRIORITY_COLORS[task.priority] ?? "#8888A0";
-  const assigneeColor = getAssigneeColor(task.assignee).text;
 
   return (
-    <div
+    <Card
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      className={`bg-slate-900/60 border-slate-700/50 hover:border-slate-600 transition-all mb-2 ${dimmed ? "opacity-60" : ""}`}
       style={{
-        background: "#0D1220",
-        border: `1px solid ${hovered ? priorityColor + "50" : "#1E2D45"}`,
-        borderRadius: "10px",
-        padding: "10px 12px",
-        cursor: "default",
-        transition: "all 0.15s ease",
+        borderColor: hovered ? `${priorityColor}50` : undefined,
         transform: hovered ? "translateY(-2px)" : "translateY(0)",
         boxShadow: hovered
           ? `0 4px 16px ${priorityColor}18, 0 0 0 1px ${priorityColor}22`
           : "none",
-        opacity: dimmed ? 0.6 : 1,
-        marginBottom: "8px",
       }}
     >
-      {/* Title row */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "8px",
-          marginBottom: "8px",
-        }}
-      >
-        <PriorityDot priority={task.priority} />
-        <span
-          style={{
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            fontSize: "14px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-            lineHeight: 1.3,
-            flex: 1,
-          }}
-        >
-          {task.title}
-        </span>
-      </div>
-
-      {/* Badges row: assignee + category */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          flexWrap: "wrap",
-          marginBottom: task.dueDate ? "8px" : "0",
-        }}
-      >
-        <AssigneeBadge name={task.assignee} />
-        <CategoryTag category={task.category} />
-      </div>
-
-      {/* Blocker row — Phase 2 */}
-      {task.blocker && (
+      <CardContent className="p-3">
+        {/* Title row */}
         <div
           style={{
             display: "flex",
             alignItems: "flex-start",
-            gap: "6px",
-            marginTop: "6px",
-            padding: "5px 8px",
-            background: "rgba(251, 146, 60, 0.08)",
-            border: "1px solid rgba(251, 146, 60, 0.3)",
-            borderRadius: "6px",
+            gap: "8px",
+            marginBottom: "8px",
           }}
         >
-          <span style={{ fontSize: "10px", flexShrink: 0 }}>🚫</span>
+          <PriorityDot priority={task.priority} />
           <span
             style={{
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-              fontSize: "11px",
-              color: "#FB923C",
-              fontWeight: 600,
-              lineHeight: 1.4,
+              fontSize: "14px",
+              fontWeight: 700,
+              color: "#F0F0F5",
+              lineHeight: 1.3,
+              flex: 1,
             }}
           >
-            {task.blocker}
+            {task.title}
           </span>
         </div>
-      )}
 
-      {/* Deadline row */}
-      {task.dueDate && (
+        {/* Badges & metadata row */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             gap: "6px",
-            marginTop: "4px",
+            marginBottom: "8px",
+            flexWrap: "wrap",
           }}
         >
-          <span
-            style={{
-              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-              fontSize: "11px",
-              color: overdue ? "#F87171" : "#A0A0B0",
-            }}
-          >
-            {formatDate(task.dueDate)}
-          </span>
-          {overdue && (
+          <CategoryTag category={task.category} />
+          {task.dueDate && (
             <span
               style={{
-                fontSize: "9px",
-                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                fontWeight: 700,
-                color: "#F87171",
-                background: "rgba(248,113,113,0.12)",
-                border: "1px solid rgba(248,113,113,0.3)",
-                borderRadius: "20px",
-                padding: "1px 6px",
-                letterSpacing: "0.03em",
+                fontSize: "10px",
+                color: overdue ? "#F87171" : "#A0A0B0",
+                fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                fontWeight: overdue ? 700 : 400,
               }}
             >
-              OVERDUE
+              {overdue ? "⚠" : "📅"} {formatDate(task.dueDate)}
             </span>
           )}
         </div>
-      )}
-    </div>
+
+        {/* Assignee row */}
+        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <AssigneeBadge name={task.assignee} />
+        </div>
+      </CardContent>
+    </Card>
   );
 }

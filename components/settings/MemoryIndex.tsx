@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface ReindexResult {
   success: boolean;
@@ -45,66 +48,20 @@ export default function MemoryIndex() {
   }
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          padding: "14px 20px",
-          borderBottom: "1px solid #1E2D45",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "16px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-          }}
-        >
+    <Card className="bg-slate-900/60 border-slate-700/50 overflow-hidden">
+      <CardHeader className="p-4 border-b border-slate-700/50">
+        <CardTitle className="text-base font-bold text-slate-100" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>
           Memory Index
-        </span>
-      </div>
+        </CardTitle>
+      </CardHeader>
 
-      <div style={{ padding: "20px" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
-            gap: "20px",
-            flexWrap: "wrap",
-          }}
-        >
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between gap-5 flex-wrap">
           {/* Status area */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
-            <p
-              style={{
-                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                fontSize: "13px",
-                color: "#8888A0",
-                margin: 0,
-                lineHeight: 1.5,
-              }}
-            >
+          <div className="flex-1 flex flex-col gap-2">
+            <p className="text-sm text-slate-400 m-0 leading-relaxed">
               Re-indexes the memory vector store so recent files are searchable via{" "}
-              <code
-                style={{
-                  fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                  fontSize: "11px",
-                  background: "rgba(79,142,247,0.1)",
-                  border: "1px solid rgba(79,142,247,0.2)",
-                  borderRadius: "4px",
-                  padding: "1px 6px",
-                  color: "#4F8EF7",
-                }}
-              >
+              <code className="font-mono text-[11px] bg-blue-500/10 border border-blue-500/20 rounded px-1.5 py-0.5 text-blue-400">
                 openclaw memory search
               </code>
               .
@@ -112,59 +69,25 @@ export default function MemoryIndex() {
 
             {result && timestamp && (
               <div
-                style={{
-                  background: result.success
-                    ? "rgba(52,211,153,0.06)"
-                    : "rgba(248,113,113,0.06)",
-                  border: `1px solid ${result.success ? "rgba(52,211,153,0.2)" : "rgba(248,113,113,0.2)"}`,
-                  borderRadius: "6px",
-                  padding: "10px 14px",
-                  marginTop: "4px",
-                }}
+                className={`rounded-md p-2.5 px-3.5 mt-1 border ${
+                  result.success
+                    ? "bg-emerald-500/[0.06] border-emerald-500/20"
+                    : "bg-red-500/[0.06] border-red-500/20"
+                }`}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    marginBottom: result.output || result.error ? "6px" : 0,
-                  }}
-                >
-                  <span style={{ fontSize: "14px" }}>{result.success ? "✅" : "❌"}</span>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                      fontSize: "12px",
-                      fontWeight: 600,
-                      color: result.success ? "#34D399" : "#F87171",
-                    }}
-                  >
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm">{result.success ? "✅" : "❌"}</span>
+                  <span className={`text-xs font-semibold ${result.success ? "text-emerald-400" : "text-red-400"}`}>
                     {result.success ? "Re-index complete" : "Re-index failed"}
                   </span>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                      fontSize: "10px",
-                      color: "#A0A0B0",
-                      marginLeft: "auto",
-                    }}
-                  >
+                  <span className="font-mono text-[10px] text-slate-500 ml-auto">
                     {formatDate(timestamp)}
                   </span>
                 </div>
                 {(result.output || result.error) && (
-                  <pre
-                    style={{
-                      fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                      fontSize: "11px",
-                      color: result.success ? "#8888A0" : "#F87171",
-                      margin: 0,
-                      whiteSpace: "pre-wrap",
-                      wordBreak: "break-all",
-                      maxHeight: "120px",
-                      overflowY: "auto",
-                    }}
-                  >
+                  <pre className={`font-mono text-[11px] m-0 whitespace-pre-wrap break-all max-h-[120px] overflow-y-auto ${
+                    result.success ? "text-slate-400" : "text-red-400"
+                  }`}>
                     {result.output || result.error}
                   </pre>
                 )}
@@ -173,53 +96,27 @@ export default function MemoryIndex() {
           </div>
 
           {/* Button */}
-          <button
+          <Button
             onClick={handleReindex}
             disabled={indexing}
+            className="shrink-0 self-start"
             style={{
               background: indexing
                 ? "rgba(79,142,247,0.15)"
                 : "linear-gradient(135deg, #4F8EF7, #7C3AED)",
-              border: "none",
-              borderRadius: "8px",
-              padding: "10px 20px",
-              fontFamily: "var(--font-syne, Syne, sans-serif)",
-              fontSize: "13px",
-              fontWeight: 700,
-              color: "#fff",
-              cursor: indexing ? "not-allowed" : "pointer",
-              opacity: indexing ? 0.7 : 1,
-              transition: "opacity 0.2s",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              flexShrink: 0,
-              alignSelf: "flex-start",
             }}
           >
             {indexing ? (
               <>
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: "10px",
-                    height: "10px",
-                    border: "2px solid rgba(255,255,255,0.4)",
-                    borderTopColor: "#fff",
-                    borderRadius: "50%",
-                    animation: "spin 0.7s linear infinite",
-                  }}
-                />
+                <span className="animate-spin mr-2">⟳</span>
                 Indexing…
               </>
             ) : (
-              "⟳ Re-index Memory"
+              <>🔄 Re-index Memory</>
             )}
-          </button>
+          </Button>
         </div>
-      </div>
-
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

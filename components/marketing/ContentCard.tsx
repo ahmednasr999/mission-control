@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ContentItem } from "@/lib/marketing-db";
+import { Card } from "@/components/ui/card";
 
 // ---- Pillar colors ----
 

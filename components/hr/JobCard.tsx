@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export interface Job {
   id: number;
@@ -36,49 +38,24 @@ const COLUMN_LABELS: Record<string, string> = {
 function AtsScoreBadge({ score }: { score: number | null }) {
   if (score == null) {
     return (
-      <span
-        style={{
-          fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-          fontSize: "10px",
-          color: "#A0A0B0",
-          background: "rgba(85,85,112,0.15)",
-          border: "1px solid rgba(85,85,112,0.3)",
-          borderRadius: "20px",
-          padding: "2px 7px",
-          whiteSpace: "nowrap",
-        }}
-      >
+      <Badge variant="outline" className="text-slate-500 border-slate-700 bg-slate-900/50 font-mono text-xs">
         No ATS
-      </span>
+      </Badge>
     );
   }
 
-  const color =
-    score >= 85 ? "#34D399" : score >= 70 ? "#F59E0B" : "#F87171";
-
+  const variant = score >= 85 ? "default" : score >= 70 ? "secondary" : "destructive";
+  
   return (
-    <span
-      style={{
-        fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-        fontSize: "10px",
-        color,
-        background: `${color}20`,
-        border: `1px solid ${color}50`,
-        borderRadius: "20px",
-        padding: "2px 7px",
-        whiteSpace: "nowrap",
-        fontWeight: 600,
-      }}
-    >
+    <Badge variant={variant as "default" | "secondary" | "destructive"} className="font-mono text-xs">
       {score}%
-    </span>
+    </Badge>
   );
 }
 
 function SalaryIndicator({ salary }: { salary: string | null }) {
   if (!salary) return null;
 
-  // Try to extract numeric value from salary string
   const match = salary.match(/[\d,]+/);
   if (!match) return null;
   const num = parseInt(match[0].replace(/,/g, ""), 10);
@@ -108,7 +85,6 @@ function CompanyLogo({
   const [imgError, setImgError] = useState(false);
   const firstLetter = (company || "?")[0].toUpperCase();
 
-  // Generate a deterministic color from company name
   let hash = 0;
   for (let i = 0; i < company.length; i++) {
     hash = company.charCodeAt(i) + ((hash << 5) - hash);
@@ -132,7 +108,6 @@ function CompanyLogo({
           flexShrink: 0,
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={`https://www.google.com/s2/favicons?domain=${domain}&sz=32`}
           alt={company}
@@ -180,140 +155,131 @@ export default function JobCard({ job, dimmed = false, onClick }: JobCardProps) 
   const isHighMatchRadar = job.column === "radar" && (job.atsScore ?? 0) >= 85;
 
   return (
-    <div
+    <Card
       onClick={() => onClick?.(job)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      className={`bg-slate-900/60 border-slate-700/50 hover:border-slate-600 cursor-pointer transition-all mb-2 ${
+        isHighMatchRadar ? "border-pink-500/60 hover:border-pink-500" : ""
+      } ${dimmed ? "opacity-60" : ""}`}
       style={{
-        background: "#0D1220",
-        border: isHighMatchRadar
-          ? `1px solid rgba(244, 114, 182, ${hovered ? 0.9 : 0.6})`
-          : `1px solid ${hovered ? colColor + "60" : "#1E2D45"}`,
-        borderRadius: "10px",
-        padding: "12px 14px",
-        cursor: onClick ? "pointer" : "default",
-        transition: "all 0.15s ease",
         transform: hovered ? "translateY(-2px)" : "translateY(0)",
         boxShadow: hovered
           ? `0 4px 20px ${colColor}25, 0 0 0 1px ${colColor}30`
           : "none",
-        opacity: dimmed ? 0.6 : 1,
-        marginBottom: "8px",
       }}
     >
-      {/* Top: Logo + Company + Role */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
-        <CompanyLogo company={job.company} domain={job.companyDomain} />
+      <CardContent className="p-3">
+        {/* Top: Logo + Company + Role */}
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+          <CompanyLogo company={job.company} domain={job.companyDomain} />
 
-        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{
+                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                fontSize: "14px",
+                fontWeight: 700,
+                color: "#F0F0F5",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                lineHeight: 1.3,
+              }}
+            >
+              {job.company}
+            </div>
+            <div
+              style={{
+                fontSize: "13px",
+                color: "#8888A0",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                marginTop: "2px",
+                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+              }}
+            >
+              {job.role}
+            </div>
+          </div>
+        </div>
+
+        {/* Badges row */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            marginTop: "10px",
+            flexWrap: "wrap",
+          }}
+        >
+          {/* Status badge */}
+          <Badge
+            style={{
+              fontSize: "10px",
+              color: colColor,
+              background: `${colColor}18`,
+              border: `1px solid ${colColor}40`,
+            }}
+            variant="outline"
+          >
+            {COLUMN_LABELS[job.column] || job.status}
+          </Badge>
+
+          {/* ATS score badge */}
+          <AtsScoreBadge score={job.atsScore} />
+        </div>
+
+        {/* Salary indicator */}
+        {job.salary && (
+          <div style={{ marginTop: "8px" }}>
+            <SalaryIndicator salary={job.salary} />
+          </div>
+        )}
+
+        {/* Interview Highlight - Only for interview column */}
+        {job.column === "interview" && job.nextAction && (
           <div
             style={{
-              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-              fontSize: "14px",
+              marginTop: "8px",
+              padding: "8px 10px",
+              background: "rgba(245, 158, 11, 0.18)",
+              border: "1px solid rgba(245, 158, 11, 0.4)",
+              borderRadius: "8px",
+              fontSize: "11px",
+              color: "#FBBF24",
+              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
               fontWeight: 700,
-              color: "#F0F0F5",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              lineHeight: 1.3,
+              textAlign: "center",
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
             }}
           >
-            {job.company}
+            🎯 Next Interview: {job.nextAction}
           </div>
+        )}
+
+        {/* Next action */}
+        {job.nextAction && (
           <div
             style={{
-              fontSize: "13px",
-              color: "#8888A0",
+              marginTop: "8px",
+              fontSize: "11px",
+              color: "#A0A0B0",
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
-              marginTop: "2px",
-              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+              lineHeight: 1.4,
             }}
+            title={job.nextAction}
           >
-            {job.role}
+            → {job.nextAction}
           </div>
-        </div>
-      </div>
-
-      {/* Badges row */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          marginTop: "10px",
-          flexWrap: "wrap",
-        }}
-      >
-        {/* Status badge */}
-        <span
-          style={{
-            fontSize: "10px",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            fontWeight: 600,
-            color: colColor,
-            background: `${colColor}18`,
-            border: `1px solid ${colColor}40`,
-            borderRadius: "20px",
-            padding: "2px 8px",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {COLUMN_LABELS[job.column] || job.status}
-        </span>
-
-        {/* ATS score badge */}
-        <AtsScoreBadge score={job.atsScore} />
-      </div>
-
-      {/* Salary indicator */}
-      {job.salary && (
-        <div style={{ marginTop: "8px" }}>
-          <SalaryIndicator salary={job.salary} />
-        </div>
-      )}
-
-      {/* Interview Highlight - Only for interview column */}
-      {job.column === "interview" && job.nextAction && (
-        <div
-          style={{
-            marginTop: "8px",
-            padding: "8px 10px",
-            background: "rgba(245, 158, 11, 0.18)",
-            border: "1px solid rgba(245, 158, 11, 0.4)",
-            borderRadius: "8px",
-            fontSize: "11px",
-            color: "#FBBF24",
-            fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-            fontWeight: 700,
-            textAlign: "center",
-            textTransform: "uppercase",
-            letterSpacing: "0.06em",
-          }}
-        >
-          🎯 Next Interview: {job.nextAction}
-        </div>
-      )}
-
-      {/* Next action */}
-      {job.nextAction && (
-        <div
-          style={{
-            marginTop: "8px",
-            fontSize: "11px",
-            color: "#A0A0B0",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            lineHeight: 1.4,
-          }}
-          title={job.nextAction}
-        >
-          → {job.nextAction}
-        </div>
-      )}
-    </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

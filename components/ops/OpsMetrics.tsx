@@ -1,19 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 
 interface Task {
   id: string;
   title: string;
-  description?: string;
   assignee?: string;
   priority?: string;
   category?: string;
   due_date?: string;
-  subtasks?: string;
-  blockers?: string;
   time_spent?: number;
-  comments?: string;
   status: string;
   createdAt: string;
 }
@@ -34,136 +32,131 @@ export default function OpsMetrics() {
   useEffect(() => {
     fetch("/api/ops/tasks")
       .then((r) => r.json())
-      .then((d) => {
-        setData(d);
-        setLoading(false);
-      })
+      .then((d) => { setData(d); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
   if (loading) {
-    return <div style={{ padding: "40px", textAlign: "center", color: "#A0A0B0" }}>Loading metrics...</div>;
+    return <div className="p-10 text-center text-slate-500 text-sm">Loading metrics...</div>;
   }
 
   const todo = data?.columns.todo || [];
   const inProgress = data?.columns.inProgress || [];
   const blocked = data?.columns.blocked || [];
   const done = data?.columns.done || [];
-
   const total = todo.length + inProgress.length + blocked.length + done.length;
-  
-  // Priority breakdown
+
   const highPriority = [...todo, ...inProgress, ...blocked].filter(t => t.priority === "high").length;
   const mediumPriority = [...todo, ...inProgress, ...blocked].filter(t => t.priority === "medium").length;
   const lowPriority = [...todo, ...inProgress, ...blocked].filter(t => t.priority === "low").length;
+  const totalTimeSpent = [...todo, ...inProgress, ...blocked, ...done].reduce((sum, t) => sum + (t.time_spent || 0), 0);
 
-  // Category breakdown
   const categories = [...todo, ...inProgress, ...blocked].reduce((acc, t) => {
     const cat = t.category || "Uncategorized";
     acc[cat] = (acc[cat] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
-  // Time spent
-  const totalTimeSpent = [...todo, ...inProgress, ...blocked, ...done].reduce((sum, t) => sum + (t.time_spent || 0), 0);
-
-  // Blockers
-  const tasksWithBlockers = blocked.length;
-
-  // Assignees
   const assignees = [...todo, ...inProgress, ...blocked].reduce((acc, t) => {
     const a = t.assignee || "Unassigned";
     acc[a] = (acc[a] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
+  const statItems = [
+    { label: "Total Tasks", value: total, color: "text-blue-400" },
+    { label: "Blocked", value: blocked.length, color: "text-red-400" },
+    { label: "Completed", value: done.length, color: "text-emerald-400" },
+    { label: "Time Spent", value: `${totalTimeSpent}m`, color: "text-amber-400" },
+  ];
+
   return (
     <div>
       {/* Top Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "24px" }}>
-        <div style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "20px", textAlign: "center" }}>
-          <div style={{ fontSize: "32px", fontWeight: 700, color: "#4F8EF7" }}>{total}</div>
-          <div style={{ fontSize: "12px", color: "#A0A0B0", textTransform: "uppercase" }}>Total Tasks</div>
-        </div>
-        <div style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "20px", textAlign: "center" }}>
-          <div style={{ fontSize: "32px", fontWeight: 700, color: "#F87171" }}>{tasksWithBlockers}</div>
-          <div style={{ fontSize: "12px", color: "#A0A0B0", textTransform: "uppercase" }}>Blocked</div>
-        </div>
-        <div style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "20px", textAlign: "center" }}>
-          <div style={{ fontSize: "32px", fontWeight: 700, color: "#34D399" }}>{done.length}</div>
-          <div style={{ fontSize: "12px", color: "#A0A0B0", textTransform: "uppercase" }}>Completed</div>
-        </div>
-        <div style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "20px", textAlign: "center" }}>
-          <div style={{ fontSize: "32px", fontWeight: 700, color: "#F59E0B" }}>{totalTimeSpent}m</div>
-          <div style={{ fontSize: "12px", color: "#A0A0B0", textTransform: "uppercase" }}>Time Spent</div>
-        </div>
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        {statItems.map((s) => (
+          <Card key={s.label} className="bg-slate-900/60 border-slate-700/50 text-center">
+            <CardContent className="p-5">
+              <div className={`text-3xl font-bold font-mono ${s.color}`}>{s.value}</div>
+              <div className="text-xs text-slate-500 uppercase tracking-wide mt-1">{s.label}</div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Priority & Category Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginBottom: "24px" }}>
-        {/* Priority Breakdown */}
-        <div style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "20px" }}>
-          <h3 style={{ fontSize: "14px", fontWeight: 600, color: "#F0F0F5", marginBottom: "16px" }}>Priority Breakdown</h3>
-          {[
-            { label: "High", count: highPriority, color: "#F87171" },
-            { label: "Medium", count: mediumPriority, color: "#F59E0B" },
-            { label: "Low", count: lowPriority, color: "#34D399" },
-          ].map(p => (
-            <div key={p.label} style={{ marginBottom: "12px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", marginBottom: "4px" }}>
-                <span style={{ color: "#A0A0B0" }}>{p.label}</span>
-                <span style={{ color: "#F0F0F5" }}>{p.count}</span>
+      <div className="grid grid-cols-2 gap-6 mb-6">
+        <Card className="bg-slate-900/60 border-slate-700/50">
+          <CardHeader className="p-5 pb-2">
+            <CardTitle className="text-sm font-semibold text-slate-200">Priority Breakdown</CardTitle>
+          </CardHeader>
+          <CardContent className="p-5 pt-2">
+            {[
+              { label: "High", count: highPriority, color: "bg-red-400" },
+              { label: "Medium", count: mediumPriority, color: "bg-amber-400" },
+              { label: "Low", count: lowPriority, color: "bg-emerald-400" },
+            ].map((p) => (
+              <div key={p.label} className="mb-3">
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-slate-400">{p.label}</span>
+                  <span className="text-slate-200">{p.count}</span>
+                </div>
+                <Progress value={total > 0 ? (p.count / total) * 100 : 0} className="h-1.5" />
               </div>
-              <div style={{ height: "6px", background: "#1E2D45", borderRadius: "3px", overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${total > 0 ? (p.count / total) * 100 : 0}%`, background: p.color, borderRadius: "3px" }} />
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </CardContent>
+        </Card>
 
-        {/* Category Breakdown */}
-        <div style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "20px" }}>
-          <h3 style={{ fontSize: "14px", fontWeight: 600, color: "#F0F0F5", marginBottom: "16px" }}>By Category</h3>
-          {Object.entries(categories).map(([cat, count]) => (
-            <div key={cat} style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", marginBottom: "8px" }}>
-              <span style={{ color: "#A0A0B0" }}>{cat}</span>
-              <span style={{ color: "#4F8EF7", fontWeight: 600 }}>{count}</span>
-            </div>
-          ))}
-        </div>
+        <Card className="bg-slate-900/60 border-slate-700/50">
+          <CardHeader className="p-5 pb-2">
+            <CardTitle className="text-sm font-semibold text-slate-200">By Category</CardTitle>
+          </CardHeader>
+          <CardContent className="p-5 pt-2">
+            {Object.entries(categories).map(([cat, count]) => (
+              <div key={cat} className="flex justify-between text-xs mb-2">
+                <span className="text-slate-400">{cat}</span>
+                <span className="text-blue-400 font-semibold">{count}</span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Assignees & Progress */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
-        {/* By Assignee */}
-        <div style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "20px" }}>
-          <h3 style={{ fontSize: "14px", fontWeight: 600, color: "#F0F0F5", marginBottom: "16px" }}>By Assignee</h3>
-          {Object.entries(assignees).map(([a, count]) => (
-            <div key={a} style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", marginBottom: "8px" }}>
-              <span style={{ color: "#A0A0B0" }}>{a}</span>
-              <span style={{ color: "#4F8EF7", fontWeight: 600 }}>{count}</span>
-            </div>
-          ))}
-        </div>
+      {/* Assignees & Pipeline Funnel */}
+      <div className="grid grid-cols-2 gap-6">
+        <Card className="bg-slate-900/60 border-slate-700/50">
+          <CardHeader className="p-5 pb-2">
+            <CardTitle className="text-sm font-semibold text-slate-200">By Assignee</CardTitle>
+          </CardHeader>
+          <CardContent className="p-5 pt-2">
+            {Object.entries(assignees).map(([a, count]) => (
+              <div key={a} className="flex justify-between text-xs mb-2">
+                <span className="text-slate-400">{a}</span>
+                <span className="text-blue-400 font-semibold">{count}</span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
-        {/* Funnel */}
-        <div style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "20px" }}>
-          <h3 style={{ fontSize: "14px", fontWeight: 600, color: "#F0F0F5", marginBottom: "16px" }}>Pipeline Funnel</h3>
-          {[
-            { label: "Todo → In Progress", from: todo.length, to: inProgress.length },
-            { label: "In Progress → Done", from: inProgress.length, to: done.length },
-          ].map(f => (
-            <div key={f.label} style={{ marginBottom: "12px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "4px" }}>
-                <span style={{ color: "#A0A0B0" }}>{f.label}</span>
-                <span style={{ color: "#F0F0F5" }}>{f.from > 0 ? Math.round((f.to / f.from) * 100) : 0}%</span>
+        <Card className="bg-slate-900/60 border-slate-700/50">
+          <CardHeader className="p-5 pb-2">
+            <CardTitle className="text-sm font-semibold text-slate-200">Pipeline Funnel</CardTitle>
+          </CardHeader>
+          <CardContent className="p-5 pt-2">
+            {[
+              { label: "Todo → In Progress", from: todo.length, to: inProgress.length },
+              { label: "In Progress → Done", from: inProgress.length, to: done.length },
+            ].map((f) => (
+              <div key={f.label} className="mb-3">
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-slate-400">{f.label}</span>
+                  <span className="text-slate-200">{f.from > 0 ? Math.round((f.to / f.from) * 100) : 0}%</span>
+                </div>
+                <Progress value={f.from > 0 ? (f.to / f.from) * 100 : 0} className="h-1.5" />
               </div>
-              <div style={{ height: "6px", background: "#1E2D45", borderRadius: "3px", overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${f.from > 0 ? (f.to / f.from) * 100 : 0}%`, background: "linear-gradient(90deg, #4F8EF7, #34D399)", borderRadius: "3px" }} />
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface Commit {
   hash: string;
@@ -45,242 +47,66 @@ export default function GitStatus() {
   const latest = data?.commits?.[0];
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          padding: "14px 20px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "16px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-          }}
-        >
+    <Card className="bg-slate-900/60 border-slate-700/50 overflow-hidden">
+      <CardHeader className="p-4 border-b border-slate-700/50 flex flex-row items-center justify-between">
+        <CardTitle className="text-base font-bold text-slate-100" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>
           GitHub Backup
-        </span>
+        </CardTitle>
         {!loading && (
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-              fontSize: "12px",
-              color: data?.connected ? "#34D399" : "#F87171",
-            }}
-          >
+          <Badge variant={data?.connected ? "default" : "destructive"} className="text-xs">
             <span
-              style={{
-                width: "7px",
-                height: "7px",
-                borderRadius: "50%",
-                background: data?.connected ? "#34D399" : "#F87171",
-                boxShadow: data?.connected
-                  ? "0 0 6px rgba(52,211,153,0.6)"
-                  : "0 0 6px rgba(248,113,113,0.6)",
-                flexShrink: 0,
-              }}
+              className={`w-1.5 h-1.5 rounded-full mr-1.5 ${data?.connected ? "bg-emerald-400" : "bg-red-400"}`}
+              style={{ boxShadow: data?.connected ? "0 0 6px rgba(52,211,153,0.6)" : "0 0 6px rgba(248,113,113,0.6)" }}
             />
             {data?.connected ? "Connected" : "Not configured"}
-          </span>
+          </Badge>
         )}
-      </div>
+      </CardHeader>
 
-      <div style={{ padding: "20px" }}>
+      <CardContent className="p-5">
         {loading ? (
-          <div
-            style={{
-              color: "#A0A0B0",
-              fontSize: "13px",
-              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-              padding: "20px 0",
-              textAlign: "center",
-            }}
-          >
-            Loading git status…
-          </div>
+          <div className="text-slate-500 text-sm text-center py-5">Loading git status…</div>
         ) : (
           <>
             {/* Repo info */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "12px",
-                marginBottom: "20px",
-              }}
-            >
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid #1E2D45",
-                  borderRadius: "8px",
-                  padding: "12px 14px",
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                    fontSize: "10px",
-                    color: "#A0A0B0",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.06em",
-                    marginBottom: "6px",
-                  }}
-                >
-                  Repository
-                </div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                    fontSize: "12px",
-                    color: "#4F8EF7",
-                    wordBreak: "break-all",
-                  }}
-                >
-                  {data?.remote || "—"}
-                </div>
-              </div>
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              <Card className="bg-white/[0.02] border-slate-700/60">
+                <CardContent className="p-3">
+                  <div className="font-mono text-[10px] text-slate-500 uppercase tracking-wider mb-1.5">Repository</div>
+                  <div className="font-mono text-xs text-blue-400 break-all">{data?.remote || "—"}</div>
+                </CardContent>
+              </Card>
 
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid #1E2D45",
-                  borderRadius: "8px",
-                  padding: "12px 14px",
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                    fontSize: "10px",
-                    color: "#A0A0B0",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.06em",
-                    marginBottom: "6px",
-                  }}
-                >
-                  Last Pushed
-                </div>
-                {latest ? (
-                  <div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                        fontSize: "11px",
-                        color: "#F0F0F5",
-                        marginBottom: "3px",
-                      }}
-                    >
-                      {formatDate(latest.date)}
+              <Card className="bg-white/[0.02] border-slate-700/60">
+                <CardContent className="p-3">
+                  <div className="font-mono text-[10px] text-slate-500 uppercase tracking-wider mb-1.5">Last Pushed</div>
+                  {latest ? (
+                    <div>
+                      <div className="font-mono text-[11px] text-slate-100 mb-0.5">{formatDate(latest.date)}</div>
+                      <div className="text-xs text-slate-400 truncate">{latest.message}</div>
                     </div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                        fontSize: "12px",
-                        color: "#8888A0",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {latest.message}
-                    </div>
-                  </div>
-                ) : (
-                  <span
-                    style={{
-                      fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                      fontSize: "12px",
-                      color: "#A0A0B0",
-                    }}
-                  >
-                    No commits
-                  </span>
-                )}
-              </div>
+                  ) : (
+                    <span className="font-mono text-xs text-slate-500">No commits</span>
+                  )}
+                </CardContent>
+              </Card>
             </div>
 
             {/* Recent Commits */}
             {data?.commits && data.commits.length > 0 && (
               <div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-syne, Syne, sans-serif)",
-                    fontSize: "13px",
-                    fontWeight: 700,
-                    color: "#8888A0",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.06em",
-                    marginBottom: "10px",
-                  }}
-                >
+                <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>
                   Recent Commits
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <div className="flex flex-col gap-1.5">
                   {data.commits.map((commit, i) => (
                     <div
                       key={commit.hash + i}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "12px",
-                        padding: "8px 12px",
-                        background: "rgba(255,255,255,0.02)",
-                        border: "1px solid rgba(30,45,69,0.6)",
-                        borderRadius: "6px",
-                      }}
+                      className="flex items-center gap-3 p-2 px-3 bg-white/[0.02] border border-slate-700/40 rounded-md"
                     >
-                      <span
-                        style={{
-                          fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                          fontSize: "11px",
-                          color: "#4F8EF7",
-                          flexShrink: 0,
-                          minWidth: "58px",
-                        }}
-                      >
-                        {commit.hash}
-                      </span>
-                      <span
-                        style={{
-                          fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                          fontSize: "12px",
-                          color: "#F0F0F5",
-                          flex: 1,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {commit.message}
-                      </span>
-                      <span
-                        style={{
-                          fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                          fontSize: "10px",
-                          color: "#A0A0B0",
-                          flexShrink: 0,
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {formatDate(commit.date)}
-                      </span>
+                      <span className="font-mono text-[11px] text-blue-400 shrink-0 min-w-[58px]">{commit.hash}</span>
+                      <span className="text-xs text-slate-100 flex-1 truncate">{commit.message}</span>
+                      <span className="font-mono text-[10px] text-slate-500 shrink-0 whitespace-nowrap">{formatDate(commit.date)}</span>
                     </div>
                   ))}
                 </div>
@@ -288,21 +114,13 @@ export default function GitStatus() {
             )}
 
             {!data?.connected && (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "20px",
-                  color: "#A0A0B0",
-                  fontSize: "13px",
-                  fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                }}
-              >
+              <div className="text-center py-5 text-slate-500 text-sm">
                 No git remote configured for this workspace.
               </div>
             )}
           </>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
