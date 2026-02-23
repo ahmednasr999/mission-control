@@ -12,8 +12,7 @@ import { useState, useEffect, useCallback } from "react";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
 import { SidebarContext } from "@/lib/sidebar-context";
-
-// ---- Shell ----
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -25,7 +24,6 @@ export default function DashboardShell({ children }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detect mobile on mount and resize
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -40,22 +38,12 @@ export default function DashboardShell({ children }: DashboardShellProps) {
 
   return (
     <SidebarContext.Provider value={{ sidebarOpen, toggleSidebar, closeSidebar }}>
-      <div
-        style={{
-          display: "flex",
-          height: "100vh",
-          overflow: "hidden",
-          background: "#080C16",
-          position: "relative",
-        }}
-      >
-        {/* Sidebar — collapsible on all screen sizes */}
+      <div className="flex h-screen overflow-hidden bg-[#080C16] relative">
         <div
+          className={
+            isMobile ? "fixed top-0 left-0 h-screen z-50" : "relative"
+          }
           style={{
-            position: isMobile ? "fixed" : "relative",
-            top: 0,
-            left: 0,
-            height: "100vh",
             width: sidebarOpen ? SIDEBAR_WIDTH : 0,
             zIndex: isMobile ? 50 : "auto",
             transition: "width 0.25s ease",
@@ -75,39 +63,18 @@ export default function DashboardShell({ children }: DashboardShellProps) {
           </div>
         </div>
 
-        {/* Overlay backdrop — mobile only */}
         {isMobile && sidebarOpen && (
           <div
             onClick={closeSidebar}
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "rgba(0, 0, 0, 0.6)",
-              zIndex: 40,
-            }}
+            className="fixed inset-0 bg-black/60 z-40"
           />
         )}
 
-        {/* Main content area — stretches to fill when sidebar hidden */}
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-            minWidth: 0,
-          }}
-        >
+        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
           <Topbar />
-          <main
-            style={{
-              flex: 1,
-              overflowY: "auto",
-              background: "#080C16",
-            }}
-          >
+          <ScrollArea className="flex-1 bg-[#080C16]">
             {children}
-          </main>
+          </ScrollArea>
         </div>
       </div>
     </SidebarContext.Provider>
