@@ -6,6 +6,8 @@ import OpsKanban from "@/components/ops/OpsKanban";
 import OpsArchive from "@/components/ops/OpsArchive";
 import OpsCalendar from "@/components/ops/OpsCalendar";
 import OpsMetrics from "@/components/ops/OpsMetrics";
+import OpsBottlenecks from "@/components/ops/OpsBottlenecks";
+import OpsTodayFocus from "@/components/ops/OpsTodayFocus";
 
 const DEFAULT_FILTERS: FilterState = {
   assignee: "All",
@@ -75,6 +77,8 @@ export default function OpsPage() {
         {/* Content */}
         {activeTab === "kanban" && (
           <>
+            <OpsBottlenecks />
+            <OpsTodayFocus />
             <FilterBar filters={filters} onChange={setFilters} />
             <OpsKanban filters={filters} />
             <div style={{ marginTop: "24px" }}>
