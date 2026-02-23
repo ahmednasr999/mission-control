@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface LessonEntry {
   date: string;
@@ -20,16 +22,11 @@ function EntryCard({ entry }: { entry: LessonEntry }) {
   const hasDetail = entry.why.length > 0 || entry.fix.length > 0 || entry.missed.length > 1;
 
   return (
-    <div
+    <Card
+      className="bg-slate-950 border-slate-800 border-l-4 border-l-red-400"
       style={{
-        background: "#0D1220",
-        borderRadius: "8px",
-        overflow: "hidden",
-        borderLeft: "3px solid #F87171",
-        border: "1px solid #1E2D45",
         borderLeftWidth: "3px",
         borderLeftColor: "#F87171",
-        borderLeftStyle: "solid",
       }}
     >
       {/* Card header — always visible */}
@@ -211,7 +208,7 @@ function EntryCard({ entry }: { entry: LessonEntry }) {
           )}
         </div>
       )}
-    </div>
+    </Card>
   );
 }
 
