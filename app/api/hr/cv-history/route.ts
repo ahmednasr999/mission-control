@@ -28,8 +28,15 @@ function mapOutcome(status: string): string {
   return "Pending";
 }
 
-/** Parse ATS score from file content like "ATS Score: 82%" or "ATS Score Estimate: 91%" */
+/** Parse ATS score from file content like "ATS Score: 82%" or "ATS Score Estimate: 91%" or "88-92%" */
 function extractAtsScore(content: string): number | null {
+  // Try "ATS Score Estimate: 88-92%"
+  const rangeMatch = content.match(/ATS\s+Score\s+Estimate[:\s*]*(\d+)-(\d+)%/i);
+  if (rangeMatch) {
+    // Take the average
+    return (parseInt(rangeMatch[1]) + parseInt(rangeMatch[2])) / 2;
+  }
+  // Try "ATS Score: 82%" or "ATS Score Estimate: 91%"
   const match = content.match(/ATS\s+Score(?:\s+Estimate)?[:\s*]*(\d+)%/i);
   if (match) return parseInt(match[1], 10);
   return null;
@@ -37,6 +44,14 @@ function extractAtsScore(content: string): number | null {
 
 /** Extract company name from cv-output file content */
 function extractCompanyFromContent(content: string, filename: string): string {
+  // Try "CV Analysis: Payfuture Director of Operations" - extract "Payfuture"
+  const analysisMatch = content.match(/CV\s+Analysis:\s*([^-\n]+)/i);
+  if (analysisMatch) {
+    const company = analysisMatch[1].trim();
+    // Clean up: remove "Ahmed Nasr - " prefix if present
+    return company.replace(/^Ahmed\s+Nasr\s*-\s*/, "").trim();
+  }
+
   // Try "Company: Foo" header first
   const companyMatch = content.match(/^\*?\*?Company\*?\*?:\s*(.+)$/im);
   if (companyMatch) return companyMatch[1].trim();
@@ -45,10 +60,6 @@ function extractCompanyFromContent(content: string, filename: string): string {
   const crossMatch = content.match(/Ahmed\s+Nasr\s*[×x]\s*(.+?)(?:\n|$)/i);
   if (crossMatch) return crossMatch[1].trim();
 
-  // Try "CV Analysis: CompanyName"
-  const analysisMatch = content.match(/CV\s+Analysis:\s*(.+?)(?:\s+-\s|\n|$)/i);
-  if (analysisMatch) return analysisMatch[1].trim();
-
   // Fall back to filename: cv-output-2026-02-21-delphi → "Delphi"
   const slug = filename.replace(/^cv-output-\d{4}-\d{2}-\d{2}-/, "").replace(".md", "");
   return slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -56,13 +67,13 @@ function extractCompanyFromContent(content: string, filename: string): string {
 
 /** Extract role from cv-output file content */
 function extractRoleFromContent(content: string): string {
+  // Try "CV Analysis: Payfuture Director of Operations" - extract "Director of Operations"
+  const analysisMatch = content.match(/CV\s+Analysis:\s*[^-\n]+-\s*(.+?)(?:\n|$)/i);
+  if (analysisMatch) return analysisMatch[1].trim();
+
   // Try "Role: Senior AI PM" header
   const roleMatch = content.match(/^\*?\*?Role\*?\*?:\s*(.+)$/im);
   if (roleMatch) return roleMatch[1].trim();
-
-  // Try "CV Analysis: Company Name - Role Title"
-  const analysisMatch = content.match(/CV\s+Analysis:\s*.+?-\s*(.+?)(?:\n|$)/i);
-  if (analysisMatch) return analysisMatch[1].trim();
 
   // Try first h2 after the personal details block
   const h2Match = content.match(/^## (.+)$/m);
@@ -201,17 +212,29 @@ const FALLBACK: CVHistoryEntry[] = [
 
 export async function GET() {
   try {
-    // 1) Get DB entries
+    // 1) Parse cv-output-*.md files FIRST (these have ATS scores)
+    const outputFiles = parseCVOutputFiles();
+    
+    // 2) Get DB entries
     const dbRows = getCVHistoryFromDB(100);
     
-    // 2) Also scan cvs folder for all PDFs
+    // 3) Scan cvs folder for all PDFs
     const cvsFolder = parseCVSFolder();
     
-    // Combine DB + cvs folder (avoid duplicates)
+    // Combine all sources (avoid duplicates, prefer entries with ATS scores)
     const history: CVHistoryEntry[] = [];
     const seen = new Set<string>();
     
-    // Add DB entries first
+    // Add cv-output files first (usually have ATS scores)
+    for (const entry of outputFiles) {
+      const key = `${entry.company}|${entry.role}`.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        history.push(entry);
+      }
+    }
+    
+    // Add DB entries
     for (const r of dbRows) {
       const key = `${r.company}|${r.jobTitle}`.toLowerCase();
       if (!seen.has(key)) {
@@ -242,15 +265,12 @@ export async function GET() {
       return NextResponse.json({ history });
     }
 
-    // Fallback: try cv-history.md file and cv-output-*.md files
+    // Fallback: try cv-history.md file
     const fileHistory = parseCVHistoryFile();
-    const outputFiles = parseCVOutputFiles();
-
-    // Merge
     const merged: CVHistoryEntry[] = [];
     const seen2 = new Set<string>();
 
-    for (const entry of [...fileHistory, ...outputFiles]) {
+    for (const entry of fileHistory) {
       const key = `${entry.company}|${entry.role}`.toLowerCase();
       if (!seen2.has(key)) {
         seen2.add(key);
