@@ -4,13 +4,14 @@ import { useState } from "react";
 import AgentHierarchy from "@/components/team/AgentHierarchy";
 import ChatLog from "@/components/team/ChatLog";
 import RunHistory from "@/components/team/RunHistory";
+import TeamStatus from "@/components/team/TeamStatus";
 
-const AGENT_META: Record<string, { name: string; emoji: string; role: string }> = {
-  main: { name: "NASR", emoji: "🎯", role: "Strategic Consultant" },
-  "cv-optimizer": { name: "ADHAM", emoji: "📄", role: "CV Optimization" },
-  "job-hunter": { name: "HEIKAL", emoji: "🔍", role: "Job Hunting" },
-  researcher: { name: "MAHER", emoji: "🔬", role: "Research" },
-  "content-creator": { name: "LOTFI", emoji: "✍️", role: "Content Creation" },
+const AGENT_META: Record<string, { label: string; emoji: string; role: string }> = {
+  main: { label: "Strategic Consultant", emoji: "🎯", role: "NASR" },
+  "cv-optimizer": { label: "CV Optimizer", emoji: "📄", role: "ADHAM" },
+  "job-hunter": { label: "Job Hunter", emoji: "🔍", role: "HEIKAL" },
+  researcher: { label: "Research", emoji: "🔬", role: "MAHER" },
+  "content-creator": { label: "Content / LinkedIn", emoji: "✍️", role: "LOTFI" },
 };
 
 export default function TeamPage() {
@@ -20,6 +21,7 @@ export default function TeamPage() {
 
   return (
     <div style={{ padding: "32px", maxWidth: "100%" }}>
+      <TeamStatus />
       {/* 1. Agent Hierarchy Diagram */}
       <AgentHierarchy
         selectedAgent={selectedAgent}
@@ -31,7 +33,7 @@ export default function TeamPage() {
         <ChatLog
           key={selectedAgent}
           agentId={selectedAgent}
-          agentName={agentInfo.name}
+          agentName={agentInfo.label}
           agentEmoji={agentInfo.emoji}
         />
       )}
