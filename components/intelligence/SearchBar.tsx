@@ -14,6 +14,8 @@ interface FileResult {
   matches: Match[];
 }
 
+import SearchActions from "./SearchActions";
+
 export default function SearchBar() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<FileResult[]>([]);
@@ -171,25 +173,34 @@ export default function SearchBar() {
         </div>
       )}
 
-      {/* Results */}
+      {/* Results + Suggested actions */}
       {showResults && (
         <div
           style={{
-            background: "#0D1220",
-            border: "1px solid #1E2D45",
-            borderRadius: "10px",
-            padding: "16px 20px",
+            display: "grid",
+            gridTemplateColumns: "2fr 1fr",
+            gap: "12px",
             marginTop: "8px",
-            maxHeight: "500px",
-            overflowY: "auto",
           }}
         >
-          <SearchResults
-            results={results}
-            query={query}
-            totalMatches={totalMatches}
-            focusedIndex={focusedIndex}
-          />
+          <div
+            style={{
+              background: "#0D1220",
+              border: "1px solid #1E2D45",
+              borderRadius: "10px",
+              padding: "16px 20px",
+              maxHeight: "500px",
+              overflowY: "auto",
+            }}
+          >
+            <SearchResults
+              results={results}
+              query={query}
+              totalMatches={totalMatches}
+              focusedIndex={focusedIndex}
+            />
+          </div>
+          <SearchActions query={query} />
         </div>
       )}
     </div>
