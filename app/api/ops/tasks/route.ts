@@ -8,38 +8,9 @@ import { getAllTaskColumns, parseActiveTasksMd } from "@/lib/ops-db";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  // Phase 2: Markdown is primary. Try markdown first; DB adds richer data if available.
+  // Phase 3.1: DB is primary. Try DB first; markdown is fallback only when DB is empty.
   try {
-    // Step 1: Parse markdown (canonical source)
-    const mdColumns = parseActiveTasksMd();
-    const totalFromMd =
-      mdColumns.todo.length +
-      mdColumns.inProgress.length +
-      mdColumns.blocked.length +
-      mdColumns.done.length;
-
-    // Step 2: If markdown has data, use it (with optional DB enrichment)
-    if (totalFromMd > 0) {
-      // Try to enrich with DB data (richer fields like dueDate, category, blocker)
-      try {
-        const dbColumns = getAllTaskColumns();
-        const totalFromDb =
-          dbColumns.todo.length +
-          dbColumns.inProgress.length +
-          dbColumns.blocked.length +
-          dbColumns.done.length;
-
-        // Only use DB if it has MORE data than markdown (sync has occurred)
-        if (totalFromDb > totalFromMd) {
-          return NextResponse.json({ columns: dbColumns, source: "db" });
-        }
-      } catch {
-        // DB unavailable — markdown-only is fine
-      }
-      return NextResponse.json({ columns: mdColumns, source: "markdown" });
-    }
-
-    // Step 3: Markdown is empty — try DB as supplemental source
+    // Step 1: Read from DB (preferred source for UI)
     try {
       const dbColumns = getAllTaskColumns();
       const totalFromDb =
@@ -47,19 +18,31 @@ export async function GET() {
         dbColumns.inProgress.length +
         dbColumns.blocked.length +
         dbColumns.done.length;
+
       if (totalFromDb > 0) {
-        return NextResponse.json({ columns: dbColumns, source: "db-only" });
+        return NextResponse.json({ columns: dbColumns, source: "db" });
       }
     } catch {
-      // DB also unavailable
+      // DB unavailable — we'll fall back to markdown
     }
 
-    // Step 4: All empty — return empty gracefully
+    // Step 2: DB empty/unavailable — fall back to markdown (canonical for humans)
+    const mdColumns = parseActiveTasksMd();
+    const totalFromMd =
+      mdColumns.todo.length +
+      mdColumns.inProgress.length +
+      mdColumns.blocked.length +
+      mdColumns.done.length;
+
+    if (totalFromMd > 0) {
+      return NextResponse.json({ columns: mdColumns, source: "markdown" });
+    }
+
+    // Step 3: All empty — return empty gracefully
     return NextResponse.json({
       columns: { todo: [], inProgress: [], blocked: [], done: [] },
       source: "empty",
     });
-
   } catch {
     return NextResponse.json(
       {

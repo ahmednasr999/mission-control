@@ -7,7 +7,7 @@ export interface Job {
   company: string;
   role: string;
   status: string;
-  column: "identified" | "applied" | "interview" | "offer" | "closed";
+  column: "identified" | "radar" | "applied" | "interview" | "offer" | "closed";
   atsScore: number | null;
   nextAction: string | null;
   salary: string | null;
@@ -177,6 +177,7 @@ interface JobCardProps {
 export default function JobCard({ job, dimmed = false, onClick }: JobCardProps) {
   const [hovered, setHovered] = useState(false);
   const colColor = COLUMN_COLORS[job.column] || "#64748B";
+  const isHighMatchRadar = job.column === "radar" && (job.atsScore ?? 0) >= 85;
 
   return (
     <div
@@ -185,7 +186,9 @@ export default function JobCard({ job, dimmed = false, onClick }: JobCardProps) 
       onMouseLeave={() => setHovered(false)}
       style={{
         background: "#0D1220",
-        border: `1px solid ${hovered ? colColor + "60" : "#1E2D45"}`,
+        border: isHighMatchRadar
+          ? `1px solid rgba(244, 114, 182, ${hovered ? 0.9 : 0.6})`
+          : `1px solid ${hovered ? colColor + "60" : "#1E2D45"}`,
         borderRadius: "10px",
         padding: "12px 14px",
         cursor: onClick ? "pointer" : "default",
@@ -271,23 +274,25 @@ export default function JobCard({ job, dimmed = false, onClick }: JobCardProps) 
         </div>
       )}
 
-      {/* Interview Countdown - Only for interview column */}
+      {/* Interview Highlight - Only for interview column */}
       {job.column === "interview" && job.nextAction && (
         <div
           style={{
             marginTop: "8px",
-            padding: "6px 8px",
-            background: "rgba(245, 158, 11, 0.15)",
-            border: "1px solid rgba(245, 158, 11, 0.3)",
-            borderRadius: "6px",
+            padding: "8px 10px",
+            background: "rgba(245, 158, 11, 0.18)",
+            border: "1px solid rgba(245, 158, 11, 0.4)",
+            borderRadius: "8px",
             fontSize: "11px",
-            color: "#F59E0B",
+            color: "#FBBF24",
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-            fontWeight: 600,
+            fontWeight: 700,
             textAlign: "center",
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
           }}
         >
-          🎯 Interview: {job.nextAction}
+          🎯 Next Interview: {job.nextAction}
         </div>
       )}
 

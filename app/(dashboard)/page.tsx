@@ -8,6 +8,7 @@ import PipelinePreview from "@/components/command-center/PipelinePreview";
 import ActivityFeed from "@/components/command-center/ActivityFeed";
 import ContentPreview from "@/components/command-center/ContentPreview";
 import GoalsProgress from "@/components/command-center/GoalsProgress";
+import DailyNotesPreview from "@/components/command-center/DailyNotesPreview";
 
 // ---- Types ----
 
@@ -75,6 +76,13 @@ async function safeFetch<T>(url: string, fallback: T): Promise<T> {
 
 // ---- Dashboard State ----
 
+interface DailyNote {
+  id: number;
+  date: string;
+  summary: string;
+  updatedAt: string;
+}
+
 interface DashboardData {
   alerts: Alert[];
   stats: Stats | null;
@@ -83,6 +91,7 @@ interface DashboardData {
   agents: Agent[];
   stages: ContentStages | null;
   goals: Goal[];
+  dailyNotes: DailyNote[];
 }
 
 const INITIAL: DashboardData = {
@@ -93,6 +102,7 @@ const INITIAL: DashboardData = {
   agents: [],
   stages: null,
   goals: [],
+  dailyNotes: [],
 };
 
 // ---- Component ----
@@ -102,7 +112,7 @@ export default function CommandCenterPage() {
   const [loading, setLoading] = useState(true);
 
   const fetchAll = useCallback(async () => {
-    const [alertsRes, statsRes, tasksRes, pipelineRes, agentsRes, contentRes, goalsRes] =
+    const [alertsRes, statsRes, tasksRes, pipelineRes, agentsRes, contentRes, goalsRes, notesRes] =
       await Promise.all([
         safeFetch<{ alerts: Alert[] }>("/api/command-center/alerts", { alerts: [] }),
         safeFetch<Stats>("/api/command-center/stats", {
@@ -118,6 +128,7 @@ export default function CommandCenterPage() {
           stages: { ideas: 0, draft: 0, review: 0, published: 0 },
         }),
         safeFetch<{ goals: Goal[] }>("/api/command-center/goals", { goals: [] }),
+        safeFetch<{ notes: DailyNote[] }>("/api/intelligence/daily-notes", { notes: [] }),
       ]);
 
     // Filter tasks for Ahmed, non-done, sort by priority
@@ -136,6 +147,7 @@ export default function CommandCenterPage() {
       agents: agentsRes.agents || [],
       stages: contentRes.stages || null,
       goals: goalsRes.goals || [],
+      dailyNotes: notesRes.notes || [],
     });
     setLoading(false);
   }, []);
@@ -208,7 +220,10 @@ export default function CommandCenterPage() {
       {/* 2-Column bottom grid */}
       <div className="cc-grid-2">
         <ContentPreview stages={data.stages} loading={loading} />
-        <GoalsProgress goals={data.goals} loading={loading} />
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <GoalsProgress goals={data.goals} loading={loading} />
+          <DailyNotesPreview notes={data.dailyNotes} loading={loading} />
+        </div>
       </div>
     </div>
   );

@@ -82,6 +82,20 @@ export function getActiveJobCount(): number {
   }
 }
 
+export function getRadarJobCount(): number {
+  try {
+    const db = getDb();
+    const row = db
+      .prepare(
+        `SELECT COUNT(*) as cnt FROM job_pipeline WHERE LOWER(status) LIKE '%radar%'`
+      )
+      .get() as { cnt: number };
+    return row?.cnt ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
 export function getAvgAtsScore(): number | null {
   try {
     const db = getDb();
@@ -198,5 +212,28 @@ export function getOpenTaskCount(): number {
     return row?.cnt ?? 0;
   } catch {
     return 0;
+  }
+}
+
+// ---- Memory Highlights ----
+
+export interface MemoryHighlightRow {
+  id: number;
+  title: string | null;
+  content: string | null;
+  category: string | null;
+  updatedAt: string | null;
+}
+
+export function getMemoryHighlights(): MemoryHighlightRow[] {
+  try {
+    const db = getDb();
+    return db
+      .prepare(
+        `SELECT id, title, content, category, updatedAt FROM memory_highlights ORDER BY updatedAt DESC LIMIT 20`
+      )
+      .all() as MemoryHighlightRow[];
+  } catch {
+    return [];
   }
 }

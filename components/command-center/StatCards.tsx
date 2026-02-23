@@ -15,10 +15,12 @@ interface Stats {
   avgAts: number | null;
   contentDue: number;
   openTasks: number;
+  radarJobs?: number;
   prevActiveJobs?: number | null;
   prevAvgAts?: number | null;
   prevContentDue?: number | null;
   prevOpenTasks?: number | null;
+  prevRadarJobs?: number | null;
 }
 
 type TrendDirection = "up" | "down" | "flat" | "na";
@@ -187,6 +189,14 @@ export default function StatCards({ stats, loading }: StatCardsProps) {
       glow: "#4F8EF7",
       trend: calcTrend(stats?.activeJobs, stats?.prevActiveJobs),
       details: "Applications in Identified, Applied, or Interview stages",
+    },
+    {
+      value: loading ? "—" : stats?.radarJobs ?? 0,
+      label: "Job Radar",
+      color: "linear-gradient(135deg, #EC4899, #F472B6)",
+      glow: "#EC4899",
+      trend: calcTrend(stats?.radarJobs ?? null, stats?.prevRadarJobs ?? null),
+      details: "High-potential roles parked in Radar. Review via HR → Focus: Job Radar.",
     },
     {
       value: loading ? "—" : stats?.avgAts != null ? `${stats.avgAts}%` : "N/A",

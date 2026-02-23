@@ -34,7 +34,7 @@ export interface KanbanJob {
   company: string;
   role: string;
   status: string;
-  column: "identified" | "applied" | "interview" | "offer" | "closed";
+  column: "identified" | "radar" | "applied" | "interview" | "offer" | "closed";
   atsScore: number | null;
   nextAction: string | null;
   salary: string | null;
@@ -123,6 +123,7 @@ export async function GET() {
     // Group into columns
     const columns: Record<string, KanbanJob[]> = {
       identified: [],
+      radar: [],
       applied: [],
       interview: [],
       offer: [],

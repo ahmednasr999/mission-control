@@ -62,8 +62,9 @@ export interface HRJobRow {
 /** Map raw status string to a canonical kanban column key */
 export function mapStatusToColumn(
   status: string | null
-): "identified" | "applied" | "interview" | "offer" | "closed" {
+): "identified" | "radar" | "applied" | "interview" | "offer" | "closed" {
   const s = (status || "").toLowerCase().trim();
+  if (s.includes("radar")) return "radar";
   if (s === "offer") return "offer";
   if (s === "interview" || s === "interviewing") return "interview";
   if (s === "applied" || s === "submitted") return "applied";

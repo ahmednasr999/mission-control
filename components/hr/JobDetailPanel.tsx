@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, FileText, Download, ExternalLink, Calendar, User, Building2, TrendingUp, CheckCircle } from "lucide-react";
+import { X, FileText, Download, ExternalLink, Calendar, TrendingUp, CheckCircle, Globe2 } from "lucide-react";
 import { Job } from "./JobCard";
 
 interface CVInfo {
@@ -75,7 +75,33 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
 
   const colColor = job.column === "interview" ? "#F59E0B" : 
                    job.column === "offer" ? "#34D399" : 
-                   job.column === "applied" ? "#3B82F6" : "#64748B";
+                   job.column === "applied" ? "#3B82F6" : job.column === "radar" ? "#F472B6" : "#64748B";
+
+  // Derive a human-friendly source from the job link (LinkedIn, Bayt, etc.)
+  let sourceLabel: string | null = null;
+  if (job.link) {
+    try {
+      const url = new URL(job.link);
+      const host = url.hostname.replace(/^www\./, "");
+      if (host.includes("linkedin.")) sourceLabel = "LinkedIn";
+      else if (host.includes("bayt.")) sourceLabel = "Bayt";
+      else if (host.includes("indeed.")) sourceLabel = "Indeed";
+      else if (host.includes("naukri.")) sourceLabel = "Naukri";
+      else if (host.includes("glassdoor.")) sourceLabel = "Glassdoor";
+      else if (host.includes("monster.")) sourceLabel = "Monster";
+      else if (host.includes("dubizzle.") || host.includes("olx.")) sourceLabel = "Local jobs portal";
+      else {
+        const parts = host.split(".");
+        if (parts.length >= 2) {
+          sourceLabel = parts.slice(-2).join(".");
+        } else {
+          sourceLabel = host;
+        }
+      }
+    } catch {
+      sourceLabel = null;
+    }
+  }
 
   return (
     <>
@@ -181,8 +207,8 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
             padding: "24px",
           }}
         >
-          {/* Status Badge */}
-          <div style={{ marginBottom: "24px" }}>
+          {/* Status Badge + Interview focus */}
+          <div style={{ marginBottom: job.column === "interview" && job.nextAction ? "16px" : "24px" }}>
             <span
               style={{
                 fontSize: "12px",
@@ -200,6 +226,40 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
               {job.column}
             </span>
           </div>
+
+          {job.column === "interview" && job.nextAction && (
+            <div
+              style={{
+                marginBottom: "24px",
+                padding: "10px 12px",
+                background: "rgba(245, 158, 11, 0.16)",
+                borderRadius: "10px",
+                border: "1px solid rgba(245, 158, 11, 0.4)",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "11px",
+                  fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                  color: "#FBBF24",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                  marginBottom: "4px",
+                }}
+              >
+                Next Interview
+              </div>
+              <div
+                style={{
+                  fontSize: "13px",
+                  fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                  color: "#FDE68A",
+                }}
+              >
+                {job.nextAction}
+              </div>
+            </div>
+          )}
 
           {/* ATS Score */}
           {job.atsScore && (
@@ -264,7 +324,7 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
             </div>
           )}
 
-          {/* Job Link Section */}
+          {/* Job Link + Source Section */}
           {job.link && (
             <div
               style={{
@@ -281,18 +341,36 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
                   alignItems: "center",
                   gap: "8px",
                   marginBottom: "12px",
+                  justifyContent: "space-between",
                 }}
               >
-                <ExternalLink size={16} color="#4F8EF7" />
-                <span
-                  style={{
-                    fontSize: "13px",
-                    color: "#A0A0B0",
-                    fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                  }}
-                >
-                  Job Posting
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <ExternalLink size={16} color="#4F8EF7" />
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      color: "#A0A0B0",
+                      fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                    }}
+                  >
+                    Job Posting
+                  </span>
+                </div>
+                {sourceLabel && (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      fontSize: "11px",
+                      color: "#A0A0B0",
+                      fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                    }}
+                  >
+                    <Globe2 size={12} color="#A0A0B0" />
+                    <span>{sourceLabel}</span>
+                  </div>
+                )}
               </div>
               <a
                 href={job.link}

@@ -7,6 +7,7 @@ import JobDetailPanel from "./JobDetailPanel";
 interface PipelineResponse {
   columns: {
     identified: Job[];
+    radar: Job[];
     applied: Job[];
     interview: Job[];
     offer: Job[];
@@ -20,6 +21,7 @@ const COLUMNS: {
   dotColor: string;
 }[] = [
   { key: "identified", label: "Identified", dotColor: "#64748B" },
+  { key: "radar",     label: "Radar",      dotColor: "#F472B6" },
   { key: "applied",    label: "Applied",    dotColor: "#3B82F6" },
   { key: "interview",  label: "Interview",  dotColor: "#F59E0B" },
   { key: "offer",      label: "Offer",      dotColor: "#34D399" },
@@ -47,6 +49,7 @@ export default function HRKanban() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [showRadarOnly, setShowRadarOnly] = useState(false);
 
   useEffect(() => {
     fetch("/api/hr/pipeline")
@@ -84,42 +87,66 @@ export default function HRKanban() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            gap: "12px",
           }}
         >
-          <div>
-            <span
-              style={{
-                fontFamily: "var(--font-syne, Syne, sans-serif)",
-                fontSize: "15px",
-                fontWeight: 700,
-                color: "#F0F0F5",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              Job Pipeline
-            </span>
-            <span
-              style={{
-                marginLeft: "10px",
-                fontSize: "11px",
-                color: "#A0A0B0",
-                fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-              }}
-            >
-              Kanban
-            </span>
+          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+            <div>
+              <span
+                style={{
+                  fontFamily: "var(--font-syne, Syne, sans-serif)",
+                  fontSize: "15px",
+                  fontWeight: 700,
+                  color: "#F0F0F5",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                Job Pipeline
+              </span>
+              <span
+                style={{
+                  marginLeft: "10px",
+                  fontSize: "11px",
+                  color: "#A0A0B0",
+                  fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                }}
+              >
+                Kanban
+              </span>
+            </div>
+            {!loading && (
+              <span
+                style={{
+                  fontSize: "11px",
+                  color: "#6B7280",
+                  fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                }}
+              >
+                {totalJobs} total • {data?.columns.radar.length ?? 0} in Radar
+              </span>
+            )}
           </div>
-          {!loading && (
-            <span
-              style={{
-                fontSize: "11px",
-                color: "#A0A0B0",
-                fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-              }}
-            >
-              {totalJobs} total
-            </span>
-          )}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            {!loading && (
+              <button
+                onClick={() => setShowRadarOnly((v) => !v)}
+                style={{
+                  fontSize: "11px",
+                  fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                  padding: "6px 10px",
+                  borderRadius: "999px",
+                  border: showRadarOnly ? "1px solid #F472B6" : "1px solid #1E2D45",
+                  background: showRadarOnly ? "rgba(244, 114, 182, 0.16)" : "transparent",
+                  color: showRadarOnly ? "#F9A8D4" : "#A0A0B0",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {showRadarOnly ? "Showing Radar only" : "Focus: Job Radar"}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Kanban columns */}
@@ -152,8 +179,13 @@ export default function HRKanban() {
             <style>{`
               .hr-kanban-grid {
                 display: grid;
-                grid-template-columns: repeat(5, 1fr);
+                grid-template-columns: repeat(6, 1fr);
                 gap: 0;
+              }
+              @media (max-width: 1200px) {
+                .hr-kanban-grid {
+                  grid-template-columns: repeat(3, 1fr);
+                }
               }
               @media (max-width: 768px) {
                 .hr-kanban-grid {
@@ -166,6 +198,9 @@ export default function HRKanban() {
               }
             `}</style>
             {COLUMNS.map((col, idx) => {
+              if (showRadarOnly && col.key !== "radar") {
+                return null;
+              }
               const jobs = data?.columns[col.key] ?? [];
               return (
                 <div

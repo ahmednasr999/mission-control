@@ -7,6 +7,7 @@ import {
   getAvgAtsScore,
   getContentDueCount,
   getOpenTaskCount,
+  getRadarJobCount,
 } from "@/lib/command-center-db";
 
 export async function GET() {
@@ -14,11 +15,13 @@ export async function GET() {
   const avgAts = getAvgAtsScore();
   const contentDue = getContentDueCount();
   const openTasks = getOpenTaskCount();
+  const radarJobs = getRadarJobCount();
 
   return NextResponse.json({
     activeJobs,
     avgAts,
     contentDue,
     openTasks,
+    radarJobs,
   });
 }
