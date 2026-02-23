@@ -201,37 +201,59 @@ const FALLBACK: CVHistoryEntry[] = [
 
 export async function GET() {
   try {
-    // 1) Try DB
+    // 1) Get DB entries
     const dbRows = getCVHistoryFromDB(100);
-    if (dbRows.length > 0) {
-      const history: CVHistoryEntry[] = dbRows.map((r, i) => ({
-        id: r.id,
-        company: r.company,
-        role: r.jobTitle,
-        atsScore: r.atsScore,
-        date: r.createdAt.split("T")[0],
-        outcome: mapOutcome(r.status),
-      }));
-      return NextResponse.json({ history });
-    }
-
-    // 2) Try cv-history.md file
-    const fileHistory = parseCVHistoryFile();
-
-    // 3) Parse cv-output-*.md files
-    const outputFiles = parseCVOutputFiles();
-
-    // 4) Scan cvs folder for all PDFs
+    
+    // 2) Also scan cvs folder for all PDFs
     const cvsFolder = parseCVSFolder();
-
-    // Merge: prefer cv-history.md entries over output files (output files deduplicated by company+role)
+    
+    // Combine DB + cvs folder (avoid duplicates)
+    const history: CVHistoryEntry[] = [];
     const seen = new Set<string>();
-    const merged: CVHistoryEntry[] = [];
-
-    for (const entry of [...fileHistory, ...outputFiles, ...cvsFolder]) {
+    
+    // Add DB entries first
+    for (const r of dbRows) {
+      const key = `${r.company}|${r.jobTitle}`.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        history.push({
+          id: r.id,
+          company: r.company,
+          role: r.jobTitle,
+          atsScore: r.atsScore,
+          date: r.createdAt.split("T")[0],
+          outcome: mapOutcome(r.status),
+        });
+      }
+    }
+    
+    // Add CVS folder entries that aren't duplicates
+    for (const entry of cvsFolder) {
       const key = `${entry.company}|${entry.role}`.toLowerCase();
       if (!seen.has(key)) {
         seen.add(key);
+        history.push(entry);
+      }
+    }
+    
+    if (history.length > 0) {
+      // Sort by date descending
+      history.sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
+      return NextResponse.json({ history });
+    }
+
+    // Fallback: try cv-history.md file and cv-output-*.md files
+    const fileHistory = parseCVHistoryFile();
+    const outputFiles = parseCVOutputFiles();
+
+    // Merge
+    const merged: CVHistoryEntry[] = [];
+    const seen2 = new Set<string>();
+
+    for (const entry of [...fileHistory, ...outputFiles]) {
+      const key = `${entry.company}|${entry.role}`.toLowerCase();
+      if (!seen2.has(key)) {
+        seen2.add(key);
         merged.push(entry);
       }
     }
