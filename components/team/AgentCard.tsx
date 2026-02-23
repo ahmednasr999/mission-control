@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Card } from "@/components/ui/card";
 
 interface AgentCardProps {
   id: string;
@@ -60,7 +61,7 @@ export default function AgentCard({
     : "none";
 
   return (
-    <div
+    <Card
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -182,6 +183,6 @@ export default function AgentCard({
           </span>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

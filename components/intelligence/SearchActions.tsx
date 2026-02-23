@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Match {
   line: number;
@@ -49,107 +50,101 @@ export default function SearchActions({ query }: SearchActionsProps) {
   const hasMatches = data && data.totalMatches > 0;
 
   return (
-    <div
-      style={{
-        marginTop: "16px",
-        borderRadius: "10px",
-        border: "1px solid #1E2D45",
-        background: "#020617",
-        padding: "12px 14px",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "8px",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span style={{ fontSize: "16px" }}>🧩</span>
-          <div
-            style={{
-              fontFamily: "var(--font-syne, Syne, sans-serif)",
-              fontSize: "13px",
-              fontWeight: 600,
-              color: "#F0F0F5",
-              letterSpacing: "0.02em",
-              textTransform: "uppercase",
-            }}
-          >
-            Suggested Actions
-          </div>
-        </div>
-        {loading && (
-          <span
-            style={{
-              fontSize: "11px",
-              color: "#6B7280",
-              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-            }}
-          >
-            Thinking…
-          </span>
-        )}
-      </div>
-
-      {!hasMatches && !loading && (
-        <div
-          style={{
-            fontSize: "11px",
-            color: "#9CA3AF",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-          }}
-        >
-          No notes found yet for "{query}". Once you have more history on this topic, Ill propose concrete next steps here.
-        </div>
-      )}
-
-      {hasMatches && data && (
+    <Card className="mt-4" style={{ borderRadius: "10px", border: "1px solid #1E2D45", background: "#020617" }}>
+      <CardContent className="p-3" style={{ padding: "12px 14px" }}>
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            gap: "6px",
-            fontSize: "11px",
-            color: "#E5E7EB",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "8px",
           }}
         >
-          {data.results.slice(0, 3).map((file, idx) => (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ fontSize: "16px" }}>🧩</span>
             <div
-              key={idx}
               style={{
-                padding: "6px 8px",
-                borderRadius: "6px",
-                border: "1px solid #1E2D45",
-                background: "#020617",
+                fontFamily: "var(--font-syne, Syne, sans-serif)",
+                fontSize: "13px",
+                fontWeight: 600,
+                color: "#F0F0F5",
+                letterSpacing: "0.02em",
+                textTransform: "uppercase",
               }}
             >
-              <div
-                style={{
-                  marginBottom: "2px",
-                  color: "#9CA3AF",
-                  fontSize: "10px",
-                  fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                }}
-              >
-                {file.file}
-              </div>
-              <div
-                style={{
-                  whiteSpace: "pre-wrap",
-                  lineHeight: 1.4,
-                  color: "#D1D5DB",
-                }}
-              >
-                {file.matches[0]?.context}
-              </div>
+              Suggested Actions
             </div>
-          ))}
+          </div>
+          {loading && (
+            <span
+              style={{
+                fontSize: "11px",
+                color: "#6B7280",
+                fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+              }}
+            >
+              Thinking…
+            </span>
+          )}
         </div>
-      )}
-    </div>
+
+        {!hasMatches && !loading && (
+          <div
+            style={{
+              fontSize: "11px",
+              color: "#9CA3AF",
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+            }}
+          >
+            No notes found yet for "{query}". Once you have more history on this topic, I_ll propose concrete next steps here.
+          </div>
+        )}
+
+        {hasMatches && data && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "6px",
+              fontSize: "11px",
+              color: "#E5E7EB",
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+            }}
+          >
+            {data.results.slice(0, 3).map((file, idx) => (
+              <div
+                key={idx}
+                style={{
+                  padding: "6px 8px",
+                  borderRadius: "6px",
+                  border: "1px solid #1E2D45",
+                  background: "#020617",
+                }}
+              >
+                <div
+                  style={{
+                    marginBottom: "2px",
+                    color: "#9CA3AF",
+                    fontSize: "10px",
+                    fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                  }}
+                >
+                  {file.file}
+                </div>
+                <div
+                  style={{
+                    whiteSpace: "pre-wrap",
+                    lineHeight: 1.4,
+                    color: "#D1D5DB",
+                  }}
+                >
+                  {file.matches[0]?.context}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface Tool {
   name: string;
@@ -234,32 +235,11 @@ export default function ToolsRadar() {
   }, []);
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
-      {/* Panel header */}
-      <div
-        style={{
-          padding: "12px 16px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span style={{
-          fontFamily: "var(--font-syne, Syne, sans-serif)",
-          fontSize: "13px",
-          fontWeight: 700,
-          color: "#F0F0F5",
-        }}>
+    <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", overflow: "hidden" }}>
+      <CardHeader className="pb-3" style={{ padding: "12px 16px", borderBottom: "1px solid #1E2D45", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <CardTitle className="text-sm font-semibold" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontSize: "13px", fontWeight: 700, color: "#F0F0F5" }}>
           📡 Tools Radar
-        </span>
+        </CardTitle>
         <span style={{
           fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
           fontSize: "10px",
@@ -267,10 +247,8 @@ export default function ToolsRadar() {
         }}>
           Adopt · Trial · Reject
         </span>
-      </div>
-
-      {/* Three-column radar */}
-      <div style={{ padding: "14px 16px" }}>
+      </CardHeader>
+      <CardContent className="p-4" style={{ padding: "14px 16px" }}>
         {loading ? (
           <div style={{
             textAlign: "center",
@@ -292,7 +270,7 @@ export default function ToolsRadar() {
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

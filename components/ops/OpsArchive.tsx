@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import OpsTaskCard from "./OpsTaskCard";
 import type { OpsTask } from "@/lib/ops-db";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface ArchiveResponse {
   archived: OpsTask[];
@@ -44,16 +46,9 @@ export default function OpsArchive() {
   const archived = data?.archived ?? [];
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
-      {/* Toggle header */}
-      <button
+    <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", overflow: "hidden" }}>
+      <Button
+        variant="ghost"
         onClick={handleToggle}
         style={{
           width: "100%",
@@ -66,9 +61,9 @@ export default function OpsArchive() {
           gap: "10px",
           borderBottom: expanded ? "1px solid #1E2D45" : "none",
           textAlign: "left",
+          justifyContent: "flex-start",
         }}
       >
-        {/* Arrow */}
         <span
           style={{
             color: "#A0A0B0",
@@ -81,7 +76,6 @@ export default function OpsArchive() {
           ▶
         </span>
 
-        {/* Label */}
         <span
           style={{
             fontFamily: "var(--font-syne, Syne, sans-serif)",
@@ -94,7 +88,6 @@ export default function OpsArchive() {
           {expanded ? "Hide Archive" : "View Archive"}
         </span>
 
-        {/* Count badge */}
         {count > 0 && (
           <span
             style={{
@@ -112,7 +105,6 @@ export default function OpsArchive() {
           </span>
         )}
 
-        {/* Subtitle */}
         <span
           style={{
             fontSize: "11px",
@@ -123,9 +115,8 @@ export default function OpsArchive() {
         >
           Done tasks &gt;7 days ago
         </span>
-      </button>
+      </Button>
 
-      {/* Archive body */}
       {expanded && (
         <div style={{ padding: "16px 20px" }}>
           {loading ? (
@@ -179,6 +170,6 @@ export default function OpsArchive() {
           )}
         </div>
       )}
-    </div>
+    </Card>
   );
 }

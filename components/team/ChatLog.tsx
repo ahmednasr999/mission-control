@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -80,29 +82,12 @@ export default function ChatLog({ agentId, agentName, agentEmoji }: ChatLogProps
   }
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-        marginBottom: "20px",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          padding: "14px 20px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          background: "rgba(255,255,255,0.01)",
-        }}
-      >
+    <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", overflow: "hidden", marginBottom: "20px" }}>
+      <CardHeader className="pb-3" style={{ padding: "14px 20px", borderBottom: "1px solid #1E2D45", display: "flex", alignItems: "center", gap: "10px", background: "rgba(255,255,255,0.01)" }}>
         <span style={{ fontSize: "18px" }}>{agentEmoji}</span>
         <div>
-          <span
+          <CardTitle
+            className="text-sm"
             style={{
               fontFamily: "var(--font-syne, Syne, sans-serif)",
               fontSize: "14px",
@@ -111,7 +96,7 @@ export default function ChatLog({ agentId, agentName, agentEmoji }: ChatLogProps
             }}
           >
             {agentName}
-          </span>
+          </CardTitle>
           <span
             style={{
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
@@ -135,33 +120,8 @@ export default function ChatLog({ agentId, agentName, agentEmoji }: ChatLogProps
             {total} messages
           </span>
         )}
-      </div>
-
-      {/* Messages area */}
-      <div style={{ padding: "16px 20px", maxHeight: "520px", overflowY: "auto" }}>
-        {/* Load More button at top */}
-        {hasMore && !loading && (
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
-            <button
-              onClick={loadMore}
-              disabled={loadingMore}
-              style={{
-                background: "rgba(79,142,247,0.1)",
-                border: "1px solid #4F8EF740",
-                borderRadius: "6px",
-                padding: "6px 16px",
-                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                fontSize: "12px",
-                color: "#4F8EF7",
-                cursor: loadingMore ? "default" : "pointer",
-                opacity: loadingMore ? 0.6 : 1,
-                transition: "all 0.15s ease",
-              }}
-            >
-              {loadingMore ? "Loading…" : "← Load Earlier Messages"}
-            </button>
-          </div>
-        )}
+      </CardHeader>
+      <CardContent className="p-4" style={{ padding: "16px 20px", maxHeight: "520px", overflowY: "auto" }}>
 
         {loading ? (
           <div
@@ -234,7 +194,7 @@ export default function ChatLog({ agentId, agentName, agentEmoji }: ChatLogProps
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

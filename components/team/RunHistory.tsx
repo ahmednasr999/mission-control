@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface RunRecord {
   id: string;
@@ -153,36 +155,19 @@ export default function RunHistory() {
   };
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          padding: "14px 20px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <div>
-          <span
-            style={{
-              fontFamily: "var(--font-syne, Syne, sans-serif)",
-              fontSize: "14px",
-              fontWeight: 700,
-              color: "#F0F0F5",
-            }}
-          >
-            Sub-Agent Run History
-          </span>
-        </div>
+    <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", overflow: "hidden" }}>
+      <CardHeader className="pb-3" style={{ padding: "14px 20px", borderBottom: "1px solid #1E2D45", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <CardTitle
+          className="text-sm"
+          style={{
+            fontFamily: "var(--font-syne, Syne, sans-serif)",
+            fontSize: "14px",
+            fontWeight: 700,
+            color: "#F0F0F5",
+          }}
+        >
+          Sub-Agent Run History
+        </CardTitle>
         {total > 0 && (
           <span
             style={{
@@ -194,168 +179,160 @@ export default function RunHistory() {
             {total} runs
           </span>
         )}
-      </div>
-
-      {/* Table header */}
-      <div
-        style={{
-          display: "flex",
-          borderBottom: "1px solid #1E2D45",
-          background: "rgba(255,255,255,0.01)",
-        }}
-      >
-        <div style={{ ...HEADER_STYLE, ...COL_STYLES.task }}>Task</div>
-        <div style={{ ...HEADER_STYLE, ...COL_STYLES.agent }}>Agent</div>
-        <div style={{ ...HEADER_STYLE, ...COL_STYLES.model }}>Model</div>
-        <div style={{ ...HEADER_STYLE, ...COL_STYLES.duration }}>Duration</div>
-        <div style={{ ...HEADER_STYLE, ...COL_STYLES.started }}>Started</div>
-        <div style={{ ...HEADER_STYLE, ...COL_STYLES.status }}>Status</div>
-      </div>
-
-      {/* Rows */}
-      {loading ? (
+      </CardHeader>
+      <CardContent className="p-0">
         <div
           style={{
-            padding: "40px 20px",
-            textAlign: "center",
-            color: "#A0A0B0",
-            fontSize: "13px",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+            display: "flex",
+            borderBottom: "1px solid #1E2D45",
+            background: "rgba(255,255,255,0.01)",
           }}
         >
-          Loading run history…
+          <div style={{ ...HEADER_STYLE, ...COL_STYLES.task }}>Task</div>
+          <div style={{ ...HEADER_STYLE, ...COL_STYLES.agent }}>Agent</div>
+          <div style={{ ...HEADER_STYLE, ...COL_STYLES.model }}>Model</div>
+          <div style={{ ...HEADER_STYLE, ...COL_STYLES.duration }}>Duration</div>
+          <div style={{ ...HEADER_STYLE, ...COL_STYLES.started }}>Started</div>
+          <div style={{ ...HEADER_STYLE, ...COL_STYLES.status }}>Status</div>
         </div>
-      ) : runs.length === 0 ? (
-        <div
-          style={{
-            padding: "40px 20px",
-            textAlign: "center",
-            color: "#A0A0B0",
-            fontSize: "13px",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-          }}
-        >
-          No sub-agent runs recorded
-        </div>
-      ) : (
-        <>
-          {runs.map((run, i) => (
-            <div
-              key={run.id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                borderBottom: i < runs.length - 1 ? "1px solid rgba(30,45,69,0.6)" : "none",
-                padding: "10px 0",
-                transition: "background 0.1s ease",
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.015)";
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.background = "transparent";
-              }}
-            >
-              {/* Task */}
+
+        {loading ? (
+          <div
+            style={{
+              padding: "40px 20px",
+              textAlign: "center",
+              color: "#A0A0B0",
+              fontSize: "13px",
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+            }}
+          >
+            Loading run history…
+          </div>
+        ) : runs.length === 0 ? (
+          <div
+            style={{
+              padding: "40px 20px",
+              textAlign: "center",
+              color: "#A0A0B0",
+              fontSize: "13px",
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+            }}
+          >
+            No sub-agent runs recorded
+          </div>
+        ) : (
+          <>
+            {runs.map((run, i) => (
+              <div
+                key={run.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  borderBottom: i < runs.length - 1 ? "1px solid rgba(30,45,69,0.6)" : "none",
+                  padding: "10px 0",
+                  transition: "background 0.1s ease",
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.015)";
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.background = "transparent";
+                }}
+              >
+                <div
+                  style={{
+                    ...COL_STYLES.task,
+                    padding: "0 12px",
+                    fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                    fontSize: "12px",
+                    color: "#F0F0F5",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                  title={run.task}
+                >
+                  {run.task || "—"}
+                </div>
+
+                <div
+                  style={{
+                    ...COL_STYLES.agent,
+                    padding: "0 12px",
+                    fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                    fontSize: "12px",
+                    color: "#8888A0",
+                  }}
+                >
+                  sub-agent
+                </div>
+
+                <div style={{ ...COL_STYLES.model, padding: "0 12px" }}>
+                  <ModelBadge model={run.model} />
+                </div>
+
+                <div
+                  style={{
+                    ...COL_STYLES.duration,
+                    padding: "0 12px",
+                    fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                    fontSize: "11px",
+                    color: "#8888A0",
+                  }}
+                >
+                  {run.duration || "—"}
+                </div>
+
+                <div
+                  style={{
+                    ...COL_STYLES.started,
+                    padding: "0 12px",
+                    fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                    fontSize: "11px",
+                    color: "#A0A0B0",
+                  }}
+                >
+                  {formatTime(run.startTime)}
+                </div>
+
+                <div style={{ ...COL_STYLES.status, padding: "0 12px" }}>
+                  <StatusBadge status={run.status} />
+                </div>
+              </div>
+            ))}
+
+            {hasMore && (
               <div
                 style={{
-                  ...COL_STYLES.task,
-                  padding: "0 12px",
-                  fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                  fontSize: "12px",
-                  color: "#F0F0F5",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-                title={run.task}
-              >
-                {run.task || "—"}
-              </div>
-
-              {/* Agent */}
-              <div
-                style={{
-                  ...COL_STYLES.agent,
-                  padding: "0 12px",
-                  fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                  fontSize: "12px",
-                  color: "#8888A0",
+                  padding: "14px 20px",
+                  borderTop: "1px solid #1E2D45",
+                  display: "flex",
+                  justifyContent: "center",
                 }}
               >
-                sub-agent
+                <Button
+                  variant="secondary"
+                  onClick={loadMore}
+                  disabled={loadingMore}
+                  style={{
+                    background: "rgba(79,142,247,0.08)",
+                    border: "1px solid #4F8EF730",
+                    borderRadius: "6px",
+                    padding: "7px 20px",
+                    fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                    fontSize: "12px",
+                    color: "#4F8EF7",
+                    cursor: loadingMore ? "default" : "pointer",
+                    opacity: loadingMore ? 0.6 : 1,
+                  }}
+                >
+                  {loadingMore ? "Loading…" : "Load More"}
+                </Button>
               </div>
-
-              {/* Model */}
-              <div style={{ ...COL_STYLES.model, padding: "0 12px" }}>
-                <ModelBadge model={run.model} />
-              </div>
-
-              {/* Duration */}
-              <div
-                style={{
-                  ...COL_STYLES.duration,
-                  padding: "0 12px",
-                  fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                  fontSize: "11px",
-                  color: "#8888A0",
-                }}
-              >
-                {run.duration || "—"}
-              </div>
-
-              {/* Started */}
-              <div
-                style={{
-                  ...COL_STYLES.started,
-                  padding: "0 12px",
-                  fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                  fontSize: "11px",
-                  color: "#A0A0B0",
-                }}
-              >
-                {formatTime(run.startTime)}
-              </div>
-
-              {/* Status */}
-              <div style={{ ...COL_STYLES.status, padding: "0 12px" }}>
-                <StatusBadge status={run.status} />
-              </div>
-            </div>
-          ))}
-
-          {/* Load More */}
-          {hasMore && (
-            <div
-              style={{
-                padding: "14px 20px",
-                borderTop: "1px solid #1E2D45",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <button
-                onClick={loadMore}
-                disabled={loadingMore}
-                style={{
-                  background: "rgba(79,142,247,0.08)",
-                  border: "1px solid #4F8EF730",
-                  borderRadius: "6px",
-                  padding: "7px 20px",
-                  fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                  fontSize: "12px",
-                  color: "#4F8EF7",
-                  cursor: loadingMore ? "default" : "pointer",
-                  opacity: loadingMore ? 0.6 : 1,
-                  transition: "all 0.15s ease",
-                }}
-              >
-                {loadingMore ? "Loading…" : "Load More"}
-              </button>
-            </div>
-          )}
-        </>
-      )}
-    </div>
+            )}
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 }

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import type { ContentItem } from "@/lib/marketing-db";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface PipelineResponse {
   columns: {
@@ -69,15 +71,7 @@ export default function MarketingCalendar() {
   }
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
-      {/* Calendar Header */}
+    <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", overflow: "hidden" }}>
       <div
         style={{
           display: "flex",
@@ -87,7 +81,8 @@ export default function MarketingCalendar() {
           borderBottom: "1px solid #1E2D45",
         }}
       >
-        <button
+        <Button
+          variant="ghost"
           onClick={prevMonth}
           style={{
             background: "transparent",
@@ -99,7 +94,7 @@ export default function MarketingCalendar() {
           }}
         >
           ←
-        </button>
+        </Button>
         <span
           style={{
             fontSize: "15px",
@@ -109,7 +104,8 @@ export default function MarketingCalendar() {
         >
           {monthNames[month]} {year}
         </span>
-        <button
+        <Button
+          variant="ghost"
           onClick={nextMonth}
           style={{
             background: "transparent",
@@ -121,7 +117,7 @@ export default function MarketingCalendar() {
           }}
         >
           →
-        </button>
+        </Button>
       </div>
 
       {/* Day Headers */}
@@ -277,6 +273,6 @@ export default function MarketingCalendar() {
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import { Card, CardContent } from "@/components/ui/card";
+
 interface Match {
   line: number;
   text: string;
@@ -85,7 +87,6 @@ export default function SearchResults({
 
       {results.map((fileResult) => (
         <div key={fileResult.file}>
-          {/* File header */}
           <div
             style={{
               display: "flex",
@@ -116,7 +117,6 @@ export default function SearchResults({
             </span>
           </div>
 
-          {/* Matches */}
           <div style={{ display: "flex", flexDirection: "column", gap: "4px", paddingLeft: "22px" }}>
             {fileResult.matches.map((match) => {
               const idx = currentFlatIndex++;
@@ -134,7 +134,6 @@ export default function SearchResults({
                     transition: "all 0.1s ease",
                   }}
                 >
-                  {/* Line number */}
                   <div
                     style={{
                       fontSize: "10px",
@@ -145,7 +144,6 @@ export default function SearchResults({
                   >
                     Line {match.line}
                   </div>
-                  {/* Match text */}
                   <div
                     style={{
                       fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
@@ -158,7 +156,6 @@ export default function SearchResults({
                   >
                     {highlightText(match.text.trim(), query)}
                   </div>
-                  {/* Context (collapsed by default, shown on focus) */}
                   {isFocused && match.context !== match.text && (
                     <div
                       style={{

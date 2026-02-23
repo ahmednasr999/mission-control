@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 // ---- Types ----
 
@@ -152,19 +154,7 @@ const CATEGORIES: CategoryFilter[] = [
 
 export default function FilterBar({ filters, onChange }: FilterBarProps) {
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        padding: "12px 16px",
-        marginBottom: "16px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px",
-      }}
-    >
-      {/* Row 1: Assignee */}
+    <Card className="mb-4" style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "12px 16px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
         <span
           style={{
@@ -189,9 +179,7 @@ export default function FilterBar({ filters, onChange }: FilterBarProps) {
         ))}
       </div>
 
-      {/* Row 2: Priority + Category */}
-      <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
-        {/* Priority pills */}
+      <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", marginTop: "10px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
           <span
             style={{
@@ -217,7 +205,6 @@ export default function FilterBar({ filters, onChange }: FilterBarProps) {
           ))}
         </div>
 
-        {/* Divider */}
         <div
           style={{
             width: "1px",
@@ -227,7 +214,6 @@ export default function FilterBar({ filters, onChange }: FilterBarProps) {
           }}
         />
 
-        {/* Category dropdown */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <span
             style={{
@@ -248,10 +234,8 @@ export default function FilterBar({ filters, onChange }: FilterBarProps) {
           />
         </div>
 
-        {/* Divider */}
         <div style={{ width: "1px", height: "24px", background: "#1E2D45", flexShrink: 0 }} />
 
-        {/* Blockers Only toggle — Phase 2 */}
         <Pill
           label="🚫 Blockers Only"
           active={filters.blockersOnly}
@@ -259,6 +243,6 @@ export default function FilterBar({ filters, onChange }: FilterBarProps) {
           color="#FB923C"
         />
       </div>
-    </div>
+    </Card>
   );
 }

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface Task {
   id: string;
@@ -46,7 +48,6 @@ export default function OpsCalendar() {
     );
   }
 
-  // Get all tasks with due dates
   const allTasks = data
     ? [
         ...data.columns.todo,
@@ -55,7 +56,6 @@ export default function OpsCalendar() {
       ].filter((task) => task.due_date)
     : [];
 
-  // Generate calendar
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
   const firstDay = new Date(year, month, 1);
@@ -89,7 +89,6 @@ export default function OpsCalendar() {
     setCurrentMonth(new Date(year, month + 1, 1));
   }
 
-  // Calculate stats
   const overdue = allTasks.filter(t => {
     const due = new Date(t.due_date!);
     return due < new Date() && !data?.columns.done.find(d => d.id === t.id);
@@ -104,32 +103,28 @@ export default function OpsCalendar() {
 
   return (
     <div>
-      {/* Stats Summary */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", marginBottom: "24px" }}>
-        <div style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "16px", textAlign: "center" }}>
+        <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "16px", textAlign: "center" }}>
           <div style={{ fontSize: "24px", fontWeight: 700, color: "#F87171" }}>{overdue}</div>
           <div style={{ fontSize: "11px", color: "#A0A0B0", textTransform: "uppercase" }}>Overdue</div>
-        </div>
-        <div style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "16px", textAlign: "center" }}>
+        </Card>
+        <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "16px", textAlign: "center" }}>
           <div style={{ fontSize: "24px", fontWeight: 700, color: "#F59E0B" }}>{upcoming}</div>
           <div style={{ fontSize: "11px", color: "#A0A0B0", textTransform: "uppercase" }}>Due This Week</div>
-        </div>
-        <div style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "16px", textAlign: "center" }}>
+        </Card>
+        <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "16px", textAlign: "center" }}>
           <div style={{ fontSize: "24px", fontWeight: 700, color: "#4F8EF7" }}>{allTasks.length}</div>
           <div style={{ fontSize: "11px", color: "#A0A0B0", textTransform: "uppercase" }}>Total with Due Date</div>
-        </div>
+        </Card>
       </div>
 
-      {/* Calendar */}
-      <div style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", overflow: "hidden" }}>
-        {/* Header */}
+      <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", overflow: "hidden" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid #1E2D45" }}>
-          <button onClick={prevMonth} style={{ background: "transparent", border: "none", color: "#8888A0", fontSize: "18px", cursor: "pointer", padding: "8px" }}>←</button>
+          <Button variant="ghost" onClick={prevMonth} style={{ background: "transparent", border: "none", color: "#8888A0", fontSize: "18px", cursor: "pointer", padding: "8px" }}>←</Button>
           <span style={{ fontSize: "15px", fontWeight: 600, color: "#F0F0F5" }}>{monthNames[month]} {year}</span>
-          <button onClick={nextMonth} style={{ background: "transparent", border: "none", color: "#8888A0", fontSize: "18px", cursor: "pointer", padding: "8px" }}>→</button>
+          <Button variant="ghost" onClick={nextMonth} style={{ background: "transparent", border: "none", color: "#8888A0", fontSize: "18px", cursor: "pointer", padding: "8px" }}>→</Button>
         </div>
 
-        {/* Day Headers */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", borderBottom: "1px solid #1E2D45" }}>
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
             <div key={day} style={{ padding: "10px", textAlign: "center", fontSize: "11px", fontWeight: 600, color: "#A0A0B0", textTransform: "uppercase" }}>
@@ -138,7 +133,6 @@ export default function OpsCalendar() {
           ))}
         </div>
 
-        {/* Grid */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "1px", background: "#1E2D45" }}>
           {Array.from({ length: startDayOfWeek }).map((_, i) => (
             <div key={`empty-${i}`} style={{ background: "#0D1220", minHeight: "100px", padding: "8px" }} />
@@ -163,11 +157,10 @@ export default function OpsCalendar() {
             );
           })}
         </div>
-      </div>
+      </Card>
 
-      {/* Upcoming Tasks List */}
       {upcoming > 0 && (
-        <div style={{ marginTop: "24px", background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "16px 20px" }}>
+        <Card style={{ marginTop: "24px", background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "16px 20px" }}>
           <div style={{ fontSize: "12px", fontWeight: 600, color: "#A0A0B0", textTransform: "uppercase", marginBottom: "12px" }}>Due This Week</div>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             {allTasks.filter(t => {
@@ -183,7 +176,7 @@ export default function OpsCalendar() {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );

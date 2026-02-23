@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface Section {
   title: string;
@@ -342,7 +344,8 @@ function IdeaCard({ section }: { section: Section }) {
           borderTop: expanded ? "1px solid #1E2D45" : "none",
         }}
       >
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setExpanded(e => !e)}
           style={{
             background: "none",
@@ -356,7 +359,7 @@ function IdeaCard({ section }: { section: Section }) {
           }}
         >
           {expanded ? "← Collapse" : "Read More →"}
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -375,32 +378,11 @@ export default function IdeasPanel() {
   }, []);
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
-      {/* Panel header */}
-      <div
-        style={{
-          padding: "12px 16px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span style={{
-          fontFamily: "var(--font-syne, Syne, sans-serif)",
-          fontSize: "13px",
-          fontWeight: 700,
-          color: "#F0F0F5",
-        }}>
+    <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", overflow: "hidden" }}>
+      <CardHeader className="pb-3" style={{ padding: "12px 16px", borderBottom: "1px solid #1E2D45", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <CardTitle className="text-sm font-semibold" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontSize: "13px", fontWeight: 700, color: "#F0F0F5" }}>
           💡 Ideas & Recommendations
-        </span>
+        </CardTitle>
         {data && (
           <span style={{
             fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
@@ -410,10 +392,8 @@ export default function IdeasPanel() {
             {data.sections.length} sections
           </span>
         )}
-      </div>
-
-      {/* Cards */}
-      <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+      </CardHeader>
+      <CardContent className="p-4" style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: "10px" }}>
         {loading ? (
           <div style={{
             textAlign: "center",
@@ -433,7 +413,7 @@ export default function IdeasPanel() {
             <IdeaCard key={i} section={section} />
           ))
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

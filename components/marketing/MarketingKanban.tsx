@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import ContentCard from "./ContentCard";
 import type { ContentItem } from "@/lib/marketing-db";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface PipelineResponse {
   columns: {
@@ -68,27 +69,11 @@ export default function MarketingKanban() {
     : 0;
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-        marginBottom: "20px",
-      }}
-    >
-      {/* Section header */}
-      <div
-        style={{
-          padding: "16px 20px 14px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
+    <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", overflow: "hidden", marginBottom: "20px" }}>
+      <CardHeader className="pb-3" style={{ padding: "16px 20px 14px", borderBottom: "1px solid #1E2D45", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
-          <span
+          <CardTitle
+            className="text-base"
             style={{
               fontFamily: "var(--font-syne, Syne, sans-serif)",
               fontSize: "15px",
@@ -98,7 +83,7 @@ export default function MarketingKanban() {
             }}
           >
             Content Pipeline
-          </span>
+          </CardTitle>
           <span
             style={{
               marginLeft: "10px",
@@ -121,139 +106,134 @@ export default function MarketingKanban() {
             {totalItems} item{totalItems !== 1 ? "s" : ""}
           </span>
         )}
-      </div>
-
-      {/* Kanban columns */}
-      {loading ? (
-        <div
-          style={{
-            padding: "48px",
-            textAlign: "center",
-            color: "#A0A0B0",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            fontSize: "13px",
-          }}
-        >
-          Loading pipeline…
-        </div>
-      ) : error ? (
-        <div
-          style={{
-            padding: "48px",
-            textAlign: "center",
-            color: "#F87171",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            fontSize: "13px",
-          }}
-        >
-          Failed to load pipeline — check API
-        </div>
-      ) : (
-        <div className="marketing-kanban-grid" style={{ minHeight: "300px" }}>
-          <style>{`
-            .marketing-kanban-grid {
-              display: grid;
-              grid-template-columns: repeat(5, 1fr);
-              gap: 0;
-            }
-            @media (max-width: 768px) {
+      </CardHeader>
+      <CardContent className="p-0">
+        {loading ? (
+          <div
+            style={{
+              padding: "48px",
+              textAlign: "center",
+              color: "#A0A0B0",
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+              fontSize: "13px",
+            }}
+          >
+            Loading pipeline…
+          </div>
+        ) : error ? (
+          <div
+            style={{
+              padding: "48px",
+              textAlign: "center",
+              color: "#F87171",
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+              fontSize: "13px",
+            }}
+          >
+            Failed to load pipeline — check API
+          </div>
+        ) : (
+          <div className="marketing-kanban-grid" style={{ minHeight: "300px" }}>
+            <style>{`
               .marketing-kanban-grid {
-                grid-template-columns: 1fr;
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                gap: 0;
               }
-              .marketing-kanban-grid > div {
-                border-right: none !important;
-                border-bottom: 1px solid #1E2D45;
+              @media (max-width: 768px) {
+                .marketing-kanban-grid {
+                  grid-template-columns: 1fr;
+                }
+                .marketing-kanban-grid > div {
+                  border-right: none !important;
+                  border-bottom: 1px solid #1E2D45;
+                }
               }
-            }
-          `}</style>
-          {COLUMNS.map((col, idx) => {
-            const items = data?.columns[col.key] ?? [];
-            return (
-              <div
-                key={col.key}
-                style={{
-                  borderRight:
-                    idx < COLUMNS.length - 1 ? "1px solid #1E2D45" : "none",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                {/* Column header */}
+            `}</style>
+            {COLUMNS.map((col, idx) => {
+              const items = data?.columns[col.key] ?? [];
+              return (
                 <div
+                  key={col.key}
                   style={{
-                    padding: "12px 14px 10px",
-                    borderBottom: "1px solid #1E2D45",
+                    borderRight:
+                      idx < COLUMNS.length - 1 ? "1px solid #1E2D45" : "none",
                     display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    background: "#080C16",
+                    flexDirection: "column",
                   }}
                 >
-                  {/* Status dot */}
                   <div
                     style={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      background: col.dotColor,
-                      flexShrink: 0,
-                    }}
-                  />
-                  {/* Column name */}
-                  <span
-                    style={{
-                      fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                      fontSize: "12px",
-                      fontWeight: 600,
-                      color: "#F0F0F5",
-                      flex: 1,
+                      padding: "12px 14px 10px",
+                      borderBottom: "1px solid #1E2D45",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      background: "#080C16",
                     }}
                   >
-                    {col.label}
-                  </span>
-                  {/* Count badge */}
-                  <span
-                    style={{
-                      fontSize: "11px",
-                      fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                      color: col.dotColor,
-                      background: `${col.dotColor}18`,
-                      border: `1px solid ${col.dotColor}35`,
-                      borderRadius: "20px",
-                      padding: "1px 7px",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {items.length}
-                  </span>
-                </div>
+                    <div
+                      style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        background: col.dotColor,
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        color: "#F0F0F5",
+                        flex: 1,
+                      }}
+                    >
+                      {col.label}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                        color: col.dotColor,
+                        background: `${col.dotColor}18`,
+                        border: `1px solid ${col.dotColor}35`,
+                        borderRadius: "20px",
+                        padding: "1px 7px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {items.length}
+                    </span>
+                  </div>
 
-                {/* Column body */}
-                <div
-                  style={{
-                    flex: 1,
-                    overflowY: "auto",
-                    padding: "12px 10px",
-                    maxHeight: "480px",
-                  }}
-                >
-                  {items.length === 0 ? (
-                    <EmptyColumn label={col.label} />
-                  ) : (
-                    items.map((item) => (
-                      <ContentCard
-                        key={item.id}
-                        item={item}
-                        accentColor={col.dotColor}
-                      />
-                    ))
-                  )}
+                  <div
+                    style={{
+                      flex: 1,
+                      overflowY: "auto",
+                      padding: "12px 10px",
+                      maxHeight: "480px",
+                    }}
+                  >
+                    {items.length === 0 ? (
+                      <EmptyColumn label={col.label} />
+                    ) : (
+                      items.map((item) => (
+                        <ContentCard
+                          key={item.id}
+                          item={item}
+                          accentColor={col.dotColor}
+                        />
+                      ))
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+              );
+            })}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

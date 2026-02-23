@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 
 type SyncStatus = "synced" | "syncing" | "error";
 
@@ -68,20 +69,12 @@ export default function SyncIndicator() {
   const label = STATUS_LABELS[state.status];
 
   return (
-    <div
+    <Card
       style={{ position: "relative", display: "inline-flex", alignItems: "center" }}
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
     >
-      {/* Dot wrapper */}
-      <div
-        style={{
-          position: "relative",
-          width: "10px",
-          height: "10px",
-          cursor: "default",
-        }}
-      >
+      <CardContent className="p-0" style={{ position: "relative", width: "10px", height: "10px", cursor: "default" }}>
         {/* Ping ring — only for synced/syncing */}
         {state.status !== "error" && (
           <span
@@ -108,9 +101,8 @@ export default function SyncIndicator() {
                 : "none",
           }}
         />
-      </div>
+      </CardContent>
 
-      {/* Tooltip */}
       {showTooltip && (
         <div
           style={{
@@ -143,6 +135,6 @@ export default function SyncIndicator() {
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

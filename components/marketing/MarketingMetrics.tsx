@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { ContentItem } from "@/lib/marketing-db";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface PipelineResponse {
   columns: {
@@ -35,7 +36,6 @@ export default function MarketingMetrics() {
     );
   }
 
-  // Calculate metrics
   const ideas = data?.columns.ideas.length || 0;
   const drafts = data?.columns.draft.length || 0;
   const reviews = data?.columns.review.length || 0;
@@ -89,7 +89,6 @@ export default function MarketingMetrics() {
 
   return (
     <div>
-      {/* Key Metrics Grid */}
       <div
         style={{
           display: "grid",
@@ -99,7 +98,7 @@ export default function MarketingMetrics() {
         }}
       >
         {metrics.map((m) => (
-          <div
+          <Card
             key={m.label}
             style={{
               background: "#0D1220",
@@ -129,12 +128,11 @@ export default function MarketingMetrics() {
             >
               {m.label}
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
-      {/* Funnel / Conversion */}
-      <div
+      <Card
         style={{
           background: "#0D1220",
           border: "1px solid #1E2D45",
@@ -143,154 +141,144 @@ export default function MarketingMetrics() {
           marginBottom: "24px",
         }}
       >
-        <h3
-          style={{
-            fontSize: "14px",
-            fontWeight: 600,
-            color: "#F0F0F5",
-            marginBottom: "20px",
-          }}
-        >
-          Pipeline Conversion
-        </h3>
-
-        {/* Funnel visualization */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          {/* Ideas to Draft */}
-          <div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: "12px",
-                marginBottom: "4px",
-              }}
-            >
-              <span style={{ color: "#A0A0B0" }}>Ideas → Draft</span>
-              <span style={{ color: "#F0F0F5" }}>{ideas > 0 ? Math.round((drafts / ideas) * 100) : 0}%</span>
-            </div>
-            <div
-              style={{
-                height: "8px",
-                background: "#1E2D45",
-                borderRadius: "4px",
-                overflow: "hidden",
-              }}
-            >
+        <CardHeader className="pb-4" style={{ padding: 0, marginBottom: "20px" }}>
+          <CardTitle className="text-sm font-semibold" style={{ fontSize: "14px", fontWeight: 600, color: "#F0F0F5" }}>
+            Pipeline Conversion
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div>
               <div
                 style={{
-                  height: "100%",
-                  width: `${ideas > 0 ? (drafts / ideas) * 100 : 0}%`,
-                  background: "linear-gradient(90deg, #3B82F6, #8B5CF6)",
-                  borderRadius: "4px",
-                  transition: "width 0.5s ease",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: "12px",
+                  marginBottom: "4px",
                 }}
-              />
-            </div>
-          </div>
-
-          {/* Draft to Review */}
-          <div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: "12px",
-                marginBottom: "4px",
-              }}
-            >
-              <span style={{ color: "#A0A0B0" }}>Draft → Review</span>
-              <span style={{ color: "#F0F0F5" }}>{drafts > 0 ? Math.round((reviews / drafts) * 100) : 0}%</span>
-            </div>
-            <div
-              style={{
-                height: "8px",
-                background: "#1E2D45",
-                borderRadius: "4px",
-                overflow: "hidden",
-              }}
-            >
+              >
+                <span style={{ color: "#A0A0B0" }}>Ideas → Draft</span>
+                <span style={{ color: "#F0F0F5" }}>{ideas > 0 ? Math.round((drafts / ideas) * 100) : 0}%</span>
+              </div>
               <div
                 style={{
-                  height: "100%",
-                  width: `${drafts > 0 ? (reviews / drafts) * 100 : 0}%`,
-                  background: "linear-gradient(90deg, #8B5CF6, #F59E0B)",
+                  height: "8px",
+                  background: "#1E2D45",
                   borderRadius: "4px",
-                  transition: "width 0.5s ease",
+                  overflow: "hidden",
                 }}
-              />
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${ideas > 0 ? (drafts / ideas) * 100 : 0}%`,
+                    background: "linear-gradient(90deg, #3B82F6, #8B5CF6)",
+                    borderRadius: "4px",
+                    transition: "width 0.5s ease",
+                  }}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Review to Scheduled */}
-          <div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: "12px",
-                marginBottom: "4px",
-              }}
-            >
-              <span style={{ color: "#A0A0B0" }}>Review → Scheduled</span>
-              <span style={{ color: "#F0F0F5" }}>{reviews > 0 ? Math.round((scheduled / reviews) * 100) : 0}%</span>
-            </div>
-            <div
-              style={{
-                height: "8px",
-                background: "#1E2D45",
-                borderRadius: "4px",
-                overflow: "hidden",
-              }}
-            >
+            <div>
               <div
                 style={{
-                  height: "100%",
-                  width: `${reviews > 0 ? (scheduled / reviews) * 100 : 0}%`,
-                  background: "linear-gradient(90deg, #F59E0B, #22D3EE)",
-                  borderRadius: "4px",
-                  transition: "width 0.5s ease",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: "12px",
+                  marginBottom: "4px",
                 }}
-              />
-            </div>
-          </div>
-
-          {/* Scheduled to Published */}
-          <div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: "12px",
-                marginBottom: "4px",
-              }}
-            >
-              <span style={{ color: "#A0A0B0" }}>Scheduled → Published</span>
-              <span style={{ color: "#F0F0F5" }}>{scheduled > 0 ? Math.round((published / scheduled) * 100) : 0}%</span>
-            </div>
-            <div
-              style={{
-                height: "8px",
-                background: "#1E2D45",
-                borderRadius: "4px",
-                overflow: "hidden",
-              }}
-            >
+              >
+                <span style={{ color: "#A0A0B0" }}>Draft → Review</span>
+                <span style={{ color: "#F0F0F5" }}>{drafts > 0 ? Math.round((reviews / drafts) * 100) : 0}%</span>
+              </div>
               <div
                 style={{
-                  height: "100%",
-                  width: `${scheduled > 0 ? (published / scheduled) * 100 : 0}%`,
-                  background: "linear-gradient(90deg, #22D3EE, #34D399)",
+                  height: "8px",
+                  background: "#1E2D45",
                   borderRadius: "4px",
-                  transition: "width 0.5s ease",
+                  overflow: "hidden",
                 }}
-              />
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${drafts > 0 ? (reviews / drafts) * 100 : 0}%`,
+                    background: "linear-gradient(90deg, #8B5CF6, #F59E0B)",
+                    borderRadius: "4px",
+                    transition: "width 0.5s ease",
+                  }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: "12px",
+                  marginBottom: "4px",
+                }}
+              >
+                <span style={{ color: "#A0A0B0" }}>Review → Scheduled</span>
+                <span style={{ color: "#F0F0F5" }}>{reviews > 0 ? Math.round((scheduled / reviews) * 100) : 0}%</span>
+              </div>
+              <div
+                style={{
+                  height: "8px",
+                  background: "#1E2D45",
+                  borderRadius: "4px",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${reviews > 0 ? (scheduled / reviews) * 100 : 0}%`,
+                    background: "linear-gradient(90deg, #F59E0B, #22D3EE)",
+                    borderRadius: "4px",
+                    transition: "width 0.5s ease",
+                  }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: "12px",
+                  marginBottom: "4px",
+                }}
+              >
+                <span style={{ color: "#A0A0B0" }}>Scheduled → Published</span>
+                <span style={{ color: "#F0F0F5" }}>{scheduled > 0 ? Math.round((published / scheduled) * 100) : 0}%</span>
+              </div>
+              <div
+                style={{
+                  height: "8px",
+                  background: "#1E2D45",
+                  borderRadius: "4px",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${scheduled > 0 ? (published / scheduled) * 100 : 0}%`,
+                    background: "linear-gradient(90deg, #22D3EE, #34D399)",
+                    borderRadius: "4px",
+                    transition: "width 0.5s ease",
+                  }}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      {/* Summary Stats */}
       <div
         style={{
           display: "grid",
@@ -298,7 +286,7 @@ export default function MarketingMetrics() {
           gap: "16px",
         }}
       >
-        <div
+        <Card
           style={{
             background: "#0D1220",
             border: "1px solid #1E2D45",
@@ -315,9 +303,9 @@ export default function MarketingMetrics() {
           <div style={{ fontSize: "11px", color: "#A0A0B0", marginTop: "4px" }}>
             Ideas → Published
           </div>
-        </div>
+        </Card>
 
-        <div
+        <Card
           style={{
             background: "#0D1220",
             border: "1px solid #1E2D45",
@@ -334,9 +322,9 @@ export default function MarketingMetrics() {
           <div style={{ fontSize: "11px", color: "#A0A0B0", marginTop: "4px" }}>
             Draft + Review + Scheduled
           </div>
-        </div>
+        </Card>
 
-        <div
+        <Card
           style={{
             background: "#0D1220",
             border: "1px solid #1E2D45",
@@ -353,7 +341,7 @@ export default function MarketingMetrics() {
           <div style={{ fontSize: "11px", color: "#A0A0B0", marginTop: "4px" }}>
             Published / (Draft+Review+Scheduled)
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
 
 interface AgentInfo {
   id: string;
@@ -62,7 +63,7 @@ export default function TeamStatus() {
   const lastRun = formatLastRun(data.agents);
 
   return (
-    <div
+    <Card
       style={{
         marginBottom: "20px",
         borderRadius: "10px",
@@ -116,6 +117,6 @@ export default function TeamStatus() {
       >
         Last run: {lastRun}
       </div>
-    </div>
+    </Card>
   );
 }

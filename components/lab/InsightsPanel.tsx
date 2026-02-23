@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface Win {
   text: string;
@@ -150,36 +153,15 @@ export default function InsightsPanel() {
   }, []);
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
-      {/* Header with tab toggles */}
-      <div
-        style={{
-          padding: "12px 16px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "8px",
-        }}
-      >
-        <span style={{
-          fontFamily: "var(--font-syne, Syne, sans-serif)",
-          fontSize: "13px",
-          fontWeight: 700,
-          color: "#F0F0F5",
-        }}>
+    <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", overflow: "hidden" }}>
+      <CardHeader className="pb-3" style={{ padding: "12px 16px", borderBottom: "1px solid #1E2D45", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+        <CardTitle className="text-sm font-semibold" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontSize: "13px", fontWeight: 700, color: "#F0F0F5" }}>
           ⚡ System Health
-        </span>
+        </CardTitle>
 
         <div style={{ display: "flex", gap: "4px" }}>
-          <button
+          <Button
+            variant={tab === "wins" ? "secondary" : "ghost"}
             onClick={() => setTab("wins")}
             style={{
               background: tab === "wins" ? "rgba(52, 211, 153, 0.15)" : "transparent",
@@ -191,12 +173,12 @@ export default function InsightsPanel() {
               fontSize: "11px",
               fontWeight: tab === "wins" ? 700 : 500,
               color: tab === "wins" ? "#34D399" : "#A0A0B0",
-              transition: "all 0.12s ease",
             }}
           >
             ✓ Working {data ? `(${data.wins.length})` : ""}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={tab === "mistakes" ? "secondary" : "ghost"}
             onClick={() => setTab("mistakes")}
             style={{
               background: tab === "mistakes" ? "rgba(248, 113, 113, 0.15)" : "transparent",
@@ -208,16 +190,13 @@ export default function InsightsPanel() {
               fontSize: "11px",
               fontWeight: tab === "mistakes" ? 700 : 500,
               color: tab === "mistakes" ? "#F87171" : "#A0A0B0",
-              transition: "all 0.12s ease",
             }}
           >
             ✕ Went Wrong {data ? `(${data.mistakes.length})` : ""}
-          </button>
+          </Button>
         </div>
-      </div>
-
-      {/* Body */}
-      <div style={{ padding: "12px 16px", maxHeight: "320px", overflowY: "auto" }}>
+      </CardHeader>
+      <CardContent className="p-3" style={{ padding: "12px 16px", maxHeight: "320px", overflowY: "auto" }}>
         {loading ? (
           <div style={{
             textAlign: "center",
@@ -249,7 +228,7 @@ export default function InsightsPanel() {
             </div>
           )
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
