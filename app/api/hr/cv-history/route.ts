@@ -146,6 +146,48 @@ function parseCVOutputFiles(): CVHistoryEntry[] {
   }
 }
 
+/** Scan cvs directory for PDF files and extract company/role from filename */
+function parseCVSFolder(): CVHistoryEntry[] {
+  const CVS_DIR = path.join(process.env.HOME || "/root", ".openclaw/workspace/cvs");
+  
+  try {
+    if (!fs.existsSync(CVS_DIR)) return [];
+
+    const files = fs.readdirSync(CVS_DIR).filter(
+      (f) => f.endsWith(".pdf") && f.includes("Ahmed Nasr")
+    );
+
+    const entries: CVHistoryEntry[] = [];
+    let idCounter = 3000;
+
+    for (const file of files) {
+      // Parse filename: "Ahmed Nasr - Role - Company.pdf"
+      const clean = file.replace("Ahmed Nasr - ", "").replace(".pdf", "");
+      const parts = clean.split(" - ");
+      
+      const role = parts[0] || "Unknown Role";
+      const company = parts.slice(1).join(" - ") || "Unknown Company";
+
+      // Extract date from file metadata
+      const stats = fs.statSync(path.join(CVS_DIR, file));
+      const date = stats.mtime.toISOString().split("T")[0];
+
+      entries.push({
+        id: idCounter++,
+        company,
+        role,
+        atsScore: null,
+        date,
+        outcome: "Ready",
+      });
+    }
+
+    return entries;
+  } catch {
+    return [];
+  }
+}
+
 const FALLBACK: CVHistoryEntry[] = [
   {
     id: 1,
@@ -179,11 +221,14 @@ export async function GET() {
     // 3) Parse cv-output-*.md files
     const outputFiles = parseCVOutputFiles();
 
+    // 4) Scan cvs folder for all PDFs
+    const cvsFolder = parseCVSFolder();
+
     // Merge: prefer cv-history.md entries over output files (output files deduplicated by company+role)
     const seen = new Set<string>();
     const merged: CVHistoryEntry[] = [];
 
-    for (const entry of [...fileHistory, ...outputFiles]) {
+    for (const entry of [...fileHistory, ...outputFiles, ...cvsFolder]) {
       const key = `${entry.company}|${entry.role}`.toLowerCase();
       if (!seen.has(key)) {
         seen.add(key);
