@@ -5,6 +5,8 @@ import MarketingKanban from "@/components/marketing/MarketingKanban";
 import MarketingArchive from "@/components/marketing/MarketingArchive";
 import MarketingCalendar from "@/components/marketing/MarketingCalendar";
 import MarketingMetrics from "@/components/marketing/MarketingMetrics";
+import MarketingFocus from "@/components/marketing/MarketingFocus";
+import MarketingConsistency from "@/components/marketing/MarketingConsistency";
 
 type Tab = "kanban" | "calendar" | "metrics";
 
@@ -81,6 +83,8 @@ export default function MarketingPage() {
       {/* Content based on active tab */}
       {activeTab === "kanban" && (
         <>
+          <MarketingFocus />
+          <MarketingConsistency />
           <MarketingKanban />
           <div style={{ marginTop: "24px" }}>
             <MarketingArchive />
