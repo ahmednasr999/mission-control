@@ -32,7 +32,8 @@ function formatContext(n: number): string {
   return `${n}`;
 }
 
-function formatCost(cost: { input: number; output: number }): string {
+function formatCost(cost: { input: number; output: number; note?: string }): string {
+  if (cost.note) return cost.note;
   if (cost.input === 0 && cost.output === 0) return "Free";
   return `$${cost.input}/$${cost.output}`;
 }

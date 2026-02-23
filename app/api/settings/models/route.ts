@@ -6,10 +6,10 @@ import path from "path";
 export const dynamic = "force-dynamic";
 
 const ROUTING_RULES = [
-  { task: "Deep strategy, interview prep", model: "Opus 4.6" },
-  { task: "CV tailoring, drafting", model: "Sonnet 4.6" },
-  { task: "Quick lookups, formatting", model: "Haiku 4.5" },
-  { task: "Bulk processing, first drafts", model: "MiniMax M2.5" },
+  { task: "Deep strategy, interview prep", model: "Claude Opus 4.6" },
+  { task: "CV tailoring, drafting", model: "Claude Sonnet 4.6" },
+  { task: "Quick lookups, formatting", model: "Claude Haiku 4.5" },
+  { task: "Bulk processing, first drafts", model: "MiniMax M2.5-highspeed" },
   { task: "Long document analysis", model: "Kimi K2.5" },
 ];
 
@@ -34,6 +34,7 @@ export async function GET() {
             ? {
                 input: safeModel.cost.input,
                 output: safeModel.cost.output,
+                note: safeModel.cost.note || undefined,
               }
             : { input: 0, output: 0 },
           capabilities: Array.isArray(safeModel.input) ? safeModel.input : ["text"],
