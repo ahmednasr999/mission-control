@@ -57,8 +57,8 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
           setLoading(false);
         });
 
-      // Fetch interview prep if in interview column
-      if (job.column === "interview") {
+      // Fetch interview prep if in interview column OR if CV exists
+      if (job.column === "interview" || cvInfo) {
         fetch(`/api/hr/interview-prep?company=${encodeURIComponent(job.company)}`)
           .then(r => r.json())
           .then(data => {
@@ -518,7 +518,7 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
           </div>
 
           {/* Interview Prep Section - Only show for interview column */}
-          {job.column === "interview" && interviewPrep && (
+          {(job.column === "interview" || cvInfo) && interviewPrep && (
             <div
               style={{
                 background: "#0D1220",
