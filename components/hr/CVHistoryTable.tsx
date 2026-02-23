@@ -208,7 +208,7 @@ export default function CVHistoryTable() {
                   borderBottom: "1px solid #1E2D45",
                 }}
               >
-                {["Company", "Role", "ATS Score", "Date", "Outcome"].map(
+                {["Company", "Role", "ATS Score", "Date", "Outcome", ""].map(
                   (header) => (
                     <th
                       key={header}
@@ -288,6 +288,30 @@ export default function CVHistoryTable() {
                   {/* Outcome */}
                   <td style={{ padding: "12px 16px" }}>
                     <OutcomeBadge outcome={entry.outcome} />
+                  </td>
+
+                  {/* Actions - View CV */}
+                  <td style={{ padding: "12px 16px" }}>
+                    <a
+                      href={`/api/hr/cv-file?company=${encodeURIComponent(entry.company)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        padding: "4px 8px",
+                        background: "rgba(79, 142, 247, 0.15)",
+                        border: "1px solid rgba(79, 142, 247, 0.3)",
+                        borderRadius: "4px",
+                        color: "#4F8EF7",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        textDecoration: "none",
+                      }}
+                    >
+                      View CV
+                    </a>
                   </td>
                 </tr>
               ))}

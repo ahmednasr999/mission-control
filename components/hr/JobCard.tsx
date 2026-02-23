@@ -271,6 +271,26 @@ export default function JobCard({ job, dimmed = false, onClick }: JobCardProps) 
         </div>
       )}
 
+      {/* Interview Countdown - Only for interview column */}
+      {job.column === "interview" && job.nextAction && (
+        <div
+          style={{
+            marginTop: "8px",
+            padding: "6px 8px",
+            background: "rgba(245, 158, 11, 0.15)",
+            border: "1px solid rgba(245, 158, 11, 0.3)",
+            borderRadius: "6px",
+            fontSize: "11px",
+            color: "#F59E0B",
+            fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+            fontWeight: 600,
+            textAlign: "center",
+          }}
+        >
+          🎯 Interview: {job.nextAction}
+        </div>
+      )}
+
       {/* Next action */}
       {job.nextAction && (
         <div
