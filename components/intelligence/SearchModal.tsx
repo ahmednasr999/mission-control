@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import SearchResults from "./SearchResults";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface Match {
   line: number;
@@ -91,42 +94,17 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
   if (!open) return null;
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 9999,
-        display: "flex",
-        alignItems: "flex-start",
-        justifyContent: "center",
-        paddingTop: "10vh",
-      }}
-      onClick={onClose}
-    >
-      {/* Backdrop */}
-      <div
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent
         style={{
-          position: "absolute",
-          inset: 0,
-          background: "rgba(8, 12, 22, 0.85)",
-          backdropFilter: "blur(4px)",
-        }}
-      />
-
-      {/* Modal */}
-      <div
-        onClick={e => e.stopPropagation()}
-        style={{
-          position: "relative",
-          width: "100%",
-          maxWidth: "680px",
-          margin: "0 16px",
           background: "#0D1220",
           border: "1px solid #1E2D45",
           borderRadius: "12px",
-          boxShadow: "0 24px 80px rgba(0,0,0,0.6)",
+          maxWidth: "680px",
+          padding: 0,
           overflow: "hidden",
         }}
+        className="sm:max-w-[680px]"
       >
         {/* Input row */}
         <div
@@ -138,7 +116,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
           }}
         >
           <span style={{ fontSize: "18px", color: "#A0A0B0", marginRight: "12px", flexShrink: 0 }}>🔍</span>
-          <input
+          <Input
             ref={inputRef}
             type="text"
             value={query}
@@ -154,6 +132,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               fontSize: "16px",
               color: "#F0F0F5",
+              boxShadow: "none",
             }}
           />
           {loading && (
@@ -169,7 +148,9 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
               searching…
             </span>
           )}
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={onClose}
             style={{
               background: "rgba(255,255,255,0.05)",
@@ -185,7 +166,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
             }}
           >
             ESC
-          </button>
+          </Button>
         </div>
 
         {/* Results area */}
@@ -259,7 +240,7 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
             </div>
           ))}
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

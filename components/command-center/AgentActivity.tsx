@@ -1,5 +1,7 @@
 "use client";
 
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
 interface Agent {
   name: string;
   emoji: string;
@@ -14,49 +16,18 @@ interface AgentActivityProps {
 
 export default function AgentActivity({ agents, loading }: AgentActivityProps) {
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          padding: "16px 20px 14px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "13px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-          }}
-        >
-          Agent Activity
-        </span>
-        <span
-          style={{
-            fontSize: "11px",
-            color: "#A0A0B0",
-            fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-          }}
-        >
-          CREW
-        </span>
-      </div>
-
-      {/* Agents */}
-      <div style={{ flex: 1 }}>
+    <Card className="bg-[#0D1220] border-[#1E2D45] rounded-[10px] overflow-hidden">
+      <CardHeader className="pb-3" style={{ padding: "16px 20px 14px", borderBottom: "1px solid #1E2D45" }}>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-bold text-[#F0F0F5]" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>
+            Agent Activity
+          </CardTitle>
+          <span style={{ fontSize: "11px", color: "#A0A0B0", fontFamily: "var(--font-dm-mono, DM Mono, monospace)" }}>
+            CREW
+          </span>
+        </div>
+      </CardHeader>
+      <CardContent className="flex-1">
         {loading ? (
           <EmptyState message="Loading…" />
         ) : !agents || agents.length === 0 ? (
@@ -72,11 +43,9 @@ export default function AgentActivity({ agents, loading }: AgentActivityProps) {
                   alignItems: "flex-start",
                   gap: "12px",
                   padding: "12px 20px",
-                  borderBottom:
-                    i < agents.length - 1 ? "1px solid #1E2D45" : "none",
+                  borderBottom: i < agents.length - 1 ? "1px solid #1E2D45" : "none",
                 }}
               >
-                {/* Agent avatar */}
                 <div
                   style={{
                     width: "32px",
@@ -85,7 +54,7 @@ export default function AgentActivity({ agents, loading }: AgentActivityProps) {
                     background: hasActivity
                       ? "linear-gradient(135deg, rgba(79, 142, 247, 0.2), rgba(124, 58, 237, 0.2))"
                       : "rgba(30, 45, 69, 0.5)",
-                    border: `1px solid ${hasActivity ? "#1E2D45" : "#1E2D45"}`,
+                    border: "1px solid #1E2D45",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -95,16 +64,8 @@ export default function AgentActivity({ agents, loading }: AgentActivityProps) {
                 >
                   {agent.emoji}
                 </div>
-
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "baseline",
-                      gap: "8px",
-                      marginBottom: "2px",
-                    }}
-                  >
+                  <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginBottom: "2px" }}>
                     <span
                       style={{
                         fontFamily: "var(--font-syne, Syne, sans-serif)",
@@ -117,13 +78,7 @@ export default function AgentActivity({ agents, loading }: AgentActivityProps) {
                       {agent.name}
                     </span>
                     {agent.timestamp && (
-                      <span
-                        style={{
-                          fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                          fontSize: "10px",
-                          color: "#A0A0B0",
-                        }}
-                      >
+                      <span style={{ fontFamily: "var(--font-dm-mono, DM Mono, monospace)", fontSize: "10px", color: "#A0A0B0" }}>
                         {agent.timestamp}
                       </span>
                     )}
@@ -143,8 +98,6 @@ export default function AgentActivity({ agents, loading }: AgentActivityProps) {
                     {agent.lastAction}
                   </div>
                 </div>
-
-                {/* Active indicator */}
                 <div
                   style={{
                     width: "6px",
@@ -159,22 +112,14 @@ export default function AgentActivity({ agents, loading }: AgentActivityProps) {
             );
           })
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div
-      style={{
-        padding: "32px 20px",
-        textAlign: "center",
-        color: "#A0A0B0",
-        fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-        fontSize: "13px",
-      }}
-    >
+    <div style={{ padding: "32px 20px", textAlign: "center", color: "#A0A0B0", fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)", fontSize: "13px" }}>
       {message}
     </div>
   );

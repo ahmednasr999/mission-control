@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
 
 interface Agent {
   name: string;
@@ -22,15 +23,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-        marginBottom: "12px",
-      }}
-    >
+    <Card style={{ background: "#0D1220", borderColor: "#1E2D45", overflow: "hidden", marginBottom: "12px" }}>
       <div
         style={{
           padding: "12px 16px",
@@ -52,7 +45,7 @@ function SectionCard({
         </span>
       </div>
       <div style={{ padding: "14px 16px" }}>{children}</div>
-    </div>
+    </Card>
   );
 }
 
@@ -70,20 +63,11 @@ export default function MemoryHighlights() {
 
   if (loading) {
     return (
-      <div
-        style={{
-          background: "#0D1220",
-          border: "1px solid #1E2D45",
-          borderRadius: "10px",
-          padding: "24px",
-          textAlign: "center",
-          color: "#A0A0B0",
-          fontSize: "13px",
-          fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-        }}
-      >
-        Loading memory…
-      </div>
+      <Card style={{ background: "#0D1220", borderColor: "#1E2D45", padding: "24px", textAlign: "center" }}>
+        <span style={{ color: "#A0A0B0", fontSize: "13px", fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)" }}>
+          Loading memory…
+        </span>
+      </Card>
     );
   }
 

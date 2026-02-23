@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { X, FileText, Download, ExternalLink, Calendar, TrendingUp, CheckCircle, Globe2 } from "lucide-react";
 import { Job } from "./JobCard";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface CVInfo {
   jobTitle: string;
@@ -175,28 +177,20 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
               {job.role}
             </div>
           </div>
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onClose}
             style={{
               background: "transparent",
               border: "none",
-              padding: "8px",
               cursor: "pointer",
               color: "#A0A0B0",
               borderRadius: "8px",
-              transition: "all 0.15s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-              e.currentTarget.style.color = "#F0F0F5";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.color = "#A0A0B0";
             }}
           >
             <X size={20} />
-          </button>
+          </Button>
         </div>
 
         {/* Content */}
@@ -209,22 +203,9 @@ export default function JobDetailPanel({ job, onClose }: JobDetailPanelProps) {
         >
           {/* Status Badge + Interview focus */}
           <div style={{ marginBottom: job.column === "interview" && job.nextAction ? "16px" : "24px" }}>
-            <span
-              style={{
-                fontSize: "12px",
-                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                fontWeight: 600,
-                color: colColor,
-                background: `${colColor}18`,
-                border: `1px solid ${colColor}40`,
-                borderRadius: "20px",
-                padding: "4px 12px",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-              }}
-            >
+            <Badge style={{ background: `${colColor}18`, borderColor: `${colColor}40`, color: colColor, textTransform: "uppercase", letterSpacing: "0.05em" }}>
               {job.column}
-            </span>
+            </Badge>
           </div>
 
           {job.column === "interview" && job.nextAction && (

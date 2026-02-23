@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
 
 interface Agent {
   name: string;
@@ -38,18 +39,15 @@ export default function TodayHighlights() {
   const whoAhmedIs = data.identity.slice(0, 2);
 
   return (
-    <div
+    <Card
       style={{
         marginBottom: "20px",
         borderRadius: "10px",
         border: "1px solid #1E2D45",
         background: "#020617",
         padding: "10px 14px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: "12px",
       }}
+      className="flex items-center justify-between gap-3"
     >
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         <span style={{ fontSize: "18px" }}>🧭</span>

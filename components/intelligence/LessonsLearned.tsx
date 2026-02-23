@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 interface Mistake {
   date: string;
@@ -155,15 +157,7 @@ export default function LessonsLearned() {
   }, []);
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-        height: "100%",
-      }}
-    >
+    <Card style={{ background: "#0D1220", borderColor: "#1E2D45", overflow: "hidden", height: "100%" }}>
       {/* Header */}
       <div
         style={{
@@ -188,40 +182,38 @@ export default function LessonsLearned() {
 
         {/* Tab toggles */}
         <div style={{ display: "flex", gap: "4px" }}>
-          <button
+          <Button
+            variant={tab === "mistakes" ? "default" : "ghost"}
             onClick={() => setTab("mistakes")}
             style={{
               background: tab === "mistakes" ? "rgba(248, 113, 113, 0.15)" : "transparent",
               border: tab === "mistakes" ? "1px solid rgba(248, 113, 113, 0.4)" : "1px solid #1E2D45",
               borderRadius: "6px",
               padding: "4px 10px",
-              cursor: "pointer",
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               fontSize: "11px",
               fontWeight: tab === "mistakes" ? 700 : 500,
               color: tab === "mistakes" ? "#F87171" : "#A0A0B0",
-              transition: "all 0.12s ease",
             }}
           >
             What Went Wrong {data ? `(${data.mistakes.length})` : ""}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={tab === "wins" ? "default" : "ghost"}
             onClick={() => setTab("wins")}
             style={{
               background: tab === "wins" ? "rgba(52, 211, 153, 0.15)" : "transparent",
               border: tab === "wins" ? "1px solid rgba(52, 211, 153, 0.4)" : "1px solid #1E2D45",
               borderRadius: "6px",
               padding: "4px 10px",
-              cursor: "pointer",
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
               fontSize: "11px",
               fontWeight: tab === "wins" ? 700 : 500,
               color: tab === "wins" ? "#34D399" : "#A0A0B0",
-              transition: "all 0.12s ease",
             }}
           >
             What&apos;s Working {data ? `(${data.wins.length})` : ""}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -265,6 +257,6 @@ export default function LessonsLearned() {
           )
         )}
       </div>
-    </div>
+    </Card>
   );
 }

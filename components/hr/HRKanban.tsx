@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import JobCard, { Job } from "./JobCard";
 import JobDetailPanel from "./JobDetailPanel";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface PipelineResponse {
   columns: {
@@ -70,15 +73,7 @@ export default function HRKanban() {
 
   return (
     <>
-      <div
-        style={{
-          background: "#0D1220",
-          border: "1px solid #1E2D45",
-          borderRadius: "10px",
-          overflow: "hidden",
-          marginBottom: "20px",
-        }}
-      >
+      <Card className="overflow-hidden" style={{ background: "#0D1220", borderColor: "#1E2D45", marginBottom: "20px" }}>
         {/* Section header */}
         <div
           style={{
@@ -128,23 +123,21 @@ export default function HRKanban() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             {!loading && (
-              <button
+              <Button
+                variant={showRadarOnly ? "default" : "outline"}
                 onClick={() => setShowRadarOnly((v) => !v)}
                 style={{
                   fontSize: "11px",
                   fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                  padding: "6px 10px",
                   borderRadius: "999px",
                   border: showRadarOnly ? "1px solid #F472B6" : "1px solid #1E2D45",
                   background: showRadarOnly ? "rgba(244, 114, 182, 0.16)" : "transparent",
                   color: showRadarOnly ? "#F9A8D4" : "#A0A0B0",
-                  cursor: "pointer",
-                  transition: "all 0.15s ease",
                   whiteSpace: "nowrap",
                 }}
               >
                 {showRadarOnly ? "Showing Radar only" : "Focus: Job Radar"}
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -246,20 +239,9 @@ export default function HRKanban() {
                       {col.label}
                     </span>
                     {/* Count badge */}
-                    <span
-                      style={{
-                        fontSize: "11px",
-                        fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                        color: col.dotColor,
-                        background: `${col.dotColor}18`,
-                        border: `1px solid ${col.dotColor}35`,
-                        borderRadius: "20px",
-                        padding: "1px 7px",
-                        fontWeight: 600,
-                      }}
-                    >
+                    <Badge style={{ background: `${col.dotColor}18`, borderColor: `${col.dotColor}35`, color: col.dotColor }}>
                       {jobs.length}
-                    </span>
+                    </Badge>
                   </div>
 
                   {/* Column body — scrollable */}
@@ -287,8 +269,8 @@ export default function HRKanban() {
               );
             })}
           </div>
-        )}
-      </div>
+          )}
+        </Card>
 
       {/* Job Detail Panel */}
       <JobDetailPanel 

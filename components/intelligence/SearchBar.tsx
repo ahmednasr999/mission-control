@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import SearchResults from "./SearchResults";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface Match {
   line: number;
@@ -96,11 +98,12 @@ export default function SearchBar() {
             fontSize: "18px",
             pointerEvents: "none",
             lineHeight: 1,
+            zIndex: 10,
           }}
         >
           🔍
         </div>
-        <input
+        <Input
           ref={inputRef}
           type="text"
           value={query}
@@ -137,7 +140,9 @@ export default function SearchBar() {
         )}
         {/* Clear button */}
         {query && !loading && (
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => { setQuery(""); setResults([]); inputRef.current?.focus(); }}
             style={{
               position: "absolute",
@@ -154,7 +159,7 @@ export default function SearchBar() {
             }}
           >
             ✕
-          </button>
+          </Button>
         )}
       </div>
 

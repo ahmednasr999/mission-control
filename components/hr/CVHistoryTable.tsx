@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface CVHistoryEntry {
   id: number;
@@ -74,21 +77,9 @@ const OUTCOME_STYLES: Record<
 function OutcomeBadge({ outcome }: { outcome: string }) {
   const style = OUTCOME_STYLES[outcome] ?? OUTCOME_STYLES.Pending;
   return (
-    <span
-      style={{
-        fontSize: "11px",
-        fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-        fontWeight: 600,
-        color: style.color,
-        background: style.bg,
-        border: `1px solid ${style.border}`,
-        borderRadius: "20px",
-        padding: "3px 10px",
-        whiteSpace: "nowrap",
-      }}
-    >
+    <Badge style={{ background: style.bg, borderColor: style.border, color: style.color }}>
       {outcome}
-    </span>
+    </Badge>
   );
 }
 
@@ -111,15 +102,7 @@ export default function CVHistoryTable() {
   }, []);
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-        marginBottom: "20px",
-      }}
-    >
+    <Card className="overflow-hidden" style={{ background: "#0D1220", borderColor: "#1E2D45", marginBottom: "20px" }}>
       {/* Header */}
       <div
         style={{
@@ -319,6 +302,6 @@ export default function CVHistoryTable() {
           </table>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

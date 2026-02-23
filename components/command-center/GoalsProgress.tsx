@@ -1,13 +1,7 @@
 "use client";
 
-/**
- * GoalsProgress — Phase 3: A+ Polish (SSR-safe)
- * - CSS-only animations
- * - Hover effects
- * - SSR-safe (no animated counters)
- */
-
 import { useState } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface Goal {
   category: string;
@@ -85,14 +79,7 @@ export default function GoalsProgress({ goals, loading }: GoalsProgressProps) {
   const totalCount = goals?.length || 0;
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
+    <Card className="bg-[#0D1220] border-[#1E2D45] rounded-[10px] overflow-hidden">
       <style>{`
         @keyframes slideInUp {
           from { opacity: 0; transform: translateY(10px); }
@@ -103,74 +90,33 @@ export default function GoalsProgress({ goals, loading }: GoalsProgressProps) {
         }
       `}</style>
 
-      {/* Header */}
-      <div
-        style={{
-          padding: "12px 16px 10px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "13px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-          }}
-        >
-          Q1 Goals
-        </span>
-        {!loading && totalCount > 0 && (
-          <span
-            style={{
-              fontSize: "11px",
-              color: "#A0A0B0",
-              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-            }}
-          >
-            {completedCount}/{totalCount} done
-          </span>
-        )}
-      </div>
+      <CardHeader className="pb-2" style={{ padding: "12px 16px 10px", borderBottom: "1px solid #1E2D45" }}>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-bold text-[#F0F0F5]" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>
+            Q1 Goals
+          </CardTitle>
+          {!loading && totalCount > 0 && (
+            <span style={{ fontSize: "11px", color: "#A0A0B0", fontFamily: "var(--font-dm-mono, DM Mono, monospace)" }}>
+              {completedCount}/{totalCount} done
+            </span>
+          )}
+        </div>
+      </CardHeader>
 
-      {/* Goals list */}
-      <div style={{ padding: "12px 16px" }}>
+      <CardContent style={{ padding: "12px 16px" }}>
         {loading ? (
-          <div
-            style={{
-              textAlign: "center",
-              color: "#A0A0B0",
-              fontSize: "13px",
-              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-              padding: "16px 0",
-            }}
-          >
+          <div style={{ textAlign: "center", color: "#A0A0B0", fontSize: "13px", fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)", padding: "16px 0" }}>
             Loading…
           </div>
         ) : !goals || goals.length === 0 ? (
-          <div
-            style={{
-              textAlign: "center",
-              color: "#A0A0B0",
-              fontSize: "13px",
-              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-              padding: "16px 0",
-            }}
-          >
+          <div style={{ textAlign: "center", color: "#A0A0B0", fontSize: "13px", fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)", padding: "16px 0" }}>
             No goals data yet
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             {goals.map((goal, i) => {
               const isHovered = hoveredIdx === i;
-              const progressColor = goal.progress >= 80
-                ? "#34D399"
-                : goal.progress >= 40
-                ? "#4F8EF7"
-                : "#8888A0";
+              const progressColor = goal.progress >= 80 ? "#34D399" : goal.progress >= 40 ? "#4F8EF7" : "#8888A0";
 
               return (
                 <div
@@ -189,15 +135,7 @@ export default function GoalsProgress({ goals, loading }: GoalsProgressProps) {
                   onMouseEnter={() => setHoveredIdx(i)}
                   onMouseLeave={() => setHoveredIdx(null)}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "baseline",
-                      justifyContent: "space-between",
-                      marginBottom: "5px",
-                      gap: "8px",
-                    }}
-                  >
+                  <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "5px", gap: "8px" }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <span
                         style={{
@@ -249,7 +187,7 @@ export default function GoalsProgress({ goals, loading }: GoalsProgressProps) {
             })}
           </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

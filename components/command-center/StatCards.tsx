@@ -151,7 +151,7 @@ export default function StatCards({ stats }: StatCardsProps) {
     );
   }
   
-  const statItems = [
+  const statItems: Array<{ value: string | number; label: string; color: string; glow: string; trend: TrendDirection; details?: string }> = [
     {
       value: stats.activeJobs,
       label: "Active Job Leads",

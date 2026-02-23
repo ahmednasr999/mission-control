@@ -1,13 +1,8 @@
 "use client";
 
-/**
- * PipelinePreview — Phase 3: A+ Polish (SSR-safe)
- * - CSS-only animations
- * - Hover effects
- * - SSR-safe (no mounted state)
- */
-
 import { useState } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface Job {
   company: string;
@@ -58,20 +53,20 @@ function StatusBadge({ status }: { status: string }) {
   const normalized = normalizeStatus(status);
   const colors = STATUS_COLORS[normalized] || { bg: "rgba(136, 136, 160, 0.15)", text: "#8888A0" };
   return (
-    <span
+    <Badge
       style={{
         fontSize: "10px",
         fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
         fontWeight: 600,
-        color: colors.text,
         background: colors.bg,
+        color: colors.text,
         borderRadius: "4px",
         padding: "2px 7px",
         whiteSpace: "nowrap",
       }}
     >
       {normalized}
-    </span>
+    </Badge>
   );
 }
 
@@ -86,16 +81,7 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
   const displayJobs = (jobs || []).slice(0, 4);
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <Card className="bg-[#0D1220] border-[#1E2D45] rounded-[10px] overflow-hidden flex flex-col">
       <style>{`
         @keyframes slideIn {
           from { opacity: 0; transform: translateX(-10px); }
@@ -106,41 +92,20 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
         }
       `}</style>
 
-      {/* Header */}
-      <div
-        style={{
-          padding: "12px 16px 10px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "13px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-          }}
-        >
-          Job Pipeline
-        </span>
-        {!loading && displayJobs.length > 0 && (
-          <span
-            style={{
-              fontSize: "11px",
-              color: "#A0A0B0",
-              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-            }}
-          >
-            {displayJobs.length} active
-          </span>
-        )}
-      </div>
+      <CardHeader className="pb-2" style={{ padding: "12px 16px 10px", borderBottom: "1px solid #1E2D45" }}>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-bold text-[#F0F0F5]" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>
+            Job Pipeline
+          </CardTitle>
+          {!loading && displayJobs.length > 0 && (
+            <span style={{ fontSize: "11px", color: "#A0A0B0", fontFamily: "var(--font-dm-mono, DM Mono, monospace)" }}>
+              {displayJobs.length} active
+            </span>
+          )}
+        </div>
+      </CardHeader>
 
-      {/* Jobs list */}
-      <div style={{ flex: 1 }}>
+      <CardContent className="flex-1" style={{ padding: 0 }}>
         {loading ? (
           <EmptyState message="Loading…" />
         ) : displayJobs.length === 0 ? (
@@ -170,7 +135,6 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
                 onMouseEnter={() => setHoveredIdx(i)}
                 onMouseLeave={() => setHoveredIdx(null)}
               >
-                {/* Company initial avatar */}
                 <div
                   style={{
                     width: "28px",
@@ -242,8 +206,8 @@ export default function PipelinePreview({ jobs, loading }: PipelinePreviewProps)
             );
           })
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 

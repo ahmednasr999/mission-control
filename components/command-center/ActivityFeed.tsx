@@ -1,14 +1,8 @@
 "use client";
 
-/**
- * ActivityFeed — Phase 3: A+ Polish (SSR-safe)
- * - Staggered fade-in using CSS only
- * - Hover lift effects
- * - SSR-safe (no state changes on mount)
- */
-
 import { useState } from "react";
 import { CheckCircle2, Briefcase, Zap, Clock } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface Activity {
   id: string;
@@ -52,7 +46,6 @@ const TYPE_STYLES: Record<string, { bg: string; border: string; icon: string }> 
 export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityFeedProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  // Build activities synchronously (SSR-safe)
   const activities: Activity[] = [];
 
   if (tasks?.length > 0) {
@@ -99,15 +92,24 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
 
   if (loading) {
     return (
-      <div style={cardStyle}>
-        <CardHeader title="Live Activity" icon={<Clock size={16} />} />
-        <div style={{ color: "#A0A0B0", fontSize: "13px", padding: "20px 0" }}>Loading activity...</div>
-      </div>
+      <Card className="bg-[#0D1220] border-[#1E2D45] rounded-[10px]" style={{ padding: "12px", height: "100%", display: "flex", flexDirection: "column" }}>
+        <CardHeader className="pb-2" style={{ paddingBottom: "10px", borderBottom: "1px solid rgba(30, 45, 69, 0.5)", marginBottom: "12px" }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Clock size={16} className="text-[#4F8EF7]" />
+              <CardTitle className="text-sm font-bold text-[#F0F0F5]" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>Live Activity</CardTitle>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="flex-1 flex items-center justify-center">
+          <div style={{ color: "#A0A0B0", fontSize: "13px" }}>Loading activity...</div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div style={cardStyle}>
+    <Card className="bg-[#0D1220] border-[#1E2D45] rounded-[10px]" style={{ padding: "12px", height: "100%", display: "flex", flexDirection: "column" }}>
       <style>{`
         @keyframes slideInRight {
           from { opacity: 0; transform: translateX(10px); }
@@ -118,127 +120,98 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
         }
       `}</style>
 
-      <CardHeader title="Live Activity" icon={<Clock size={16} />} badge={displayActivities.length} />
+      <CardHeader className="pb-2" style={{ paddingBottom: "10px", borderBottom: "1px solid rgba(30, 45, 69, 0.5)", marginBottom: "12px" }}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Clock size={16} className="text-[#4F8EF7]" />
+            <CardTitle className="text-sm font-bold text-[#F0F0F5]" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>Live Activity</CardTitle>
+          </div>
+          {displayActivities.length > 0 && (
+            <span style={{ fontSize: "10px", fontFamily: "var(--font-dm-mono, DM Mono, monospace)", color: "#4F8EF7", background: "rgba(79, 142, 247, 0.15)", padding: "2px 8px", borderRadius: "10px" }}>
+              {displayActivities.length}
+            </span>
+          )}
+        </div>
+      </CardHeader>
 
-      {displayActivities.length === 0 ? (
-        <EmptyState
-          message="No recent activity"
-          submessage="Start working — actions will appear here"
-          action="View Team page →"
-        />
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          {displayActivities.map((activity, i) => {
-            const styles = TYPE_STYLES[activity.type];
-            const isHovered = hoveredId === activity.id;
+      <CardContent className="flex-1 flex flex-col gap-2">
+        {displayActivities.length === 0 ? (
+          <EmptyState
+            message="No recent activity"
+            submessage="Start working — actions will appear here"
+            action="View Team page →"
+          />
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            {displayActivities.map((activity, i) => {
+              const styles = TYPE_STYLES[activity.type];
+              const isHovered = hoveredId === activity.id;
 
-            return (
-              <div
-                key={activity.id}
-                className="activity-item"
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: "10px",
-                  padding: "10px 12px",
-                  background: isHovered ? styles.bg.replace("0.08", "0.15") : styles.bg,
-                  border: `1px solid ${isHovered ? styles.border.replace("0.2", "0.4") : styles.border}`,
-                  borderRadius: "8px",
-                  transform: isHovered ? "translateX(6px)" : "translateX(0)",
-                  transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
-                  cursor: "pointer",
-                  animationDelay: `${i * 50}ms`,
-                }}
-                onMouseEnter={() => setHoveredId(activity.id)}
-                onMouseLeave={() => setHoveredId(null)}
-              >
-                <span style={{
-                  color: styles.icon,
-                  flexShrink: 0,
-                  marginTop: "2px",
-                  transform: isHovered ? "scale(1.2)" : "scale(1)",
-                  transition: "transform 0.2s ease",
-                }}>
-                  {activity.icon}
-                </span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                      fontSize: "12px",
-                      color: isHovered ? "#F0F0F5" : "#E8E8ED",
-                      lineHeight: 1.4,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      transition: "color 0.15s ease",
-                    }}
-                  >
-                    {activity.message}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "10px",
-                      fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                      color: isHovered ? "#8888A0" : "#A0A0B0",
-                      marginTop: "4px",
-                      transition: "color 0.15s ease",
-                    }}
-                  >
-                    {activity.timeAgo}
+              return (
+                <div
+                  key={activity.id}
+                  className="activity-item"
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "10px",
+                    padding: "10px 12px",
+                    background: isHovered ? styles.bg.replace("0.08", "0.15") : styles.bg,
+                    border: `1px solid ${isHovered ? styles.border.replace("0.2", "0.4") : styles.border}`,
+                    borderRadius: "8px",
+                    transform: isHovered ? "translateX(6px)" : "translateX(0)",
+                    transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+                    cursor: "pointer",
+                    animationDelay: `${i * 50}ms`,
+                  }}
+                  onMouseEnter={() => setHoveredId(activity.id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                >
+                  <span style={{
+                    color: styles.icon,
+                    flexShrink: 0,
+                    marginTop: "2px",
+                    transform: isHovered ? "scale(1.2)" : "scale(1)",
+                    transition: "transform 0.2s ease",
+                  }}>
+                    {activity.icon}
+                  </span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+                        fontSize: "12px",
+                        color: isHovered ? "#F0F0F5" : "#E8E8ED",
+                        lineHeight: 1.4,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        transition: "color 0.15s ease",
+                      }}
+                    >
+                      {activity.message}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "10px",
+                        fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                        color: isHovered ? "#8888A0" : "#A0A0B0",
+                        marginTop: "4px",
+                        transition: "color 0.15s ease",
+                      }}
+                    >
+                      {activity.timeAgo}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function CardHeader({ title, icon, badge }: { title: string; icon: React.ReactNode; badge?: number }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginBottom: "12px",
-        paddingBottom: "10px",
-        borderBottom: "1px solid rgba(30, 45, 69, 0.5)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        <span style={{ color: "#4F8EF7" }}>{icon}</span>
-        <span
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "13px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-          }}
-        >
-          {title}
-        </span>
-      </div>
-      {badge !== undefined && badge > 0 && (
-        <span
-          style={{
-            fontSize: "10px",
-            fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-            color: "#4F8EF7",
-            background: "rgba(79, 142, 247, 0.15)",
-            padding: "2px 8px",
-            borderRadius: "10px",
-          }}
-        >
-          {badge}
-        </span>
-      )}
-    </div>
+              );
+            })}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -287,13 +260,3 @@ function EmptyState({ message, submessage, action }: { message: string; submessa
     </div>
   );
 }
-
-const cardStyle: React.CSSProperties = {
-  background: "#0D1220",
-  border: "1px solid #1E2D45",
-  borderRadius: "10px",
-  padding: "12px",
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-};

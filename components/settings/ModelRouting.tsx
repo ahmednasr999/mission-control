@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface ModelInfo {
   id: string;
   name: string;
   contextWindow: number;
-  cost: { input: number; output: number };
+  cost: { input: number; output: number; note?: string };
   capabilities: string[];
   reasoning: boolean;
 }
@@ -68,270 +71,113 @@ export default function ModelRouting() {
   }, []);
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          padding: "14px 20px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "16px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-          }}
-        >
+    <Card className="bg-slate-900/60 border-slate-700/50 overflow-hidden">
+      <CardHeader className="p-4 border-b border-slate-700/50 flex flex-row items-center justify-between">
+        <CardTitle className="text-base font-bold text-slate-100" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>
           Model Routing
-        </span>
-        <span
-          style={{
-            fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-            fontSize: "10px",
-            fontWeight: 600,
-            color: "#8888A0",
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid #1E2D45",
-            borderRadius: "4px",
-            padding: "3px 8px",
-            letterSpacing: "0.05em",
-            textTransform: "uppercase",
-          }}
-        >
+        </CardTitle>
+        <Badge variant="outline" className="text-[10px] font-mono text-slate-400 border-slate-700 uppercase tracking-wider">
           Read-Only
-        </span>
-      </div>
+        </Badge>
+      </CardHeader>
 
-      <div style={{ padding: "20px" }}>
+      <CardContent className="p-5">
         {loading ? (
-          <div
-            style={{
-              color: "#A0A0B0",
-              fontSize: "13px",
-              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-              padding: "20px 0",
-              textAlign: "center",
-            }}
-          >
-            Loading model config…
-          </div>
+          <div className="text-slate-500 text-sm text-center py-5">Loading model config…</div>
         ) : (
           <>
             {/* Model Table */}
-            <div style={{ overflowX: "auto", marginBottom: "24px" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "600px" }}>
-                <thead>
-                  <tr>
-                    {["Provider", "Model", "Context Window", "Cost (in/out per 1M)", "Capabilities"].map((h) => (
-                      <th
-                        key={h}
-                        style={{
-                          textAlign: "left",
-                          padding: "8px 12px",
-                          fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                          fontSize: "10px",
-                          fontWeight: 600,
-                          color: "#A0A0B0",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.06em",
-                          borderBottom: "1px solid #1E2D45",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
+            <div className="overflow-x-auto mb-6">
+              <Table className="min-w-[600px]">
+                <TableHeader>
+                  <TableRow className="border-slate-700/50">
+                    {["Provider", "Model", "Context", "Cost (in/out)", "Capabilities"].map((h) => (
+                      <TableHead key={h} className="font-mono text-[10px] text-slate-500 uppercase tracking-wider">
                         {h}
-                      </th>
+                      </TableHead>
                     ))}
-                  </tr>
-                </thead>
-                <tbody>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {data?.providers.flatMap((provider) =>
                     provider.models.map((model, mi) => (
-                      <tr
-                        key={`${provider.name}-${model.id}`}
-                        style={{
-                          borderBottom: "1px solid rgba(30,45,69,0.4)",
-                        }}
-                      >
-                        <td style={{ padding: "10px 12px" }}>
+                      <TableRow key={`${provider.name}-${model.id}`} className="border-slate-700/30">
+                        <TableCell className="py-2.5">
                           {mi === 0 ? (
-                            <span
-                              style={{
-                                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                                fontSize: "12px",
-                                fontWeight: 600,
-                                color: PROVIDER_COLORS[provider.name] || "#8888A0",
-                              }}
-                            >
+                            <span className="text-xs font-semibold" style={{ color: PROVIDER_COLORS[provider.name] || "#8888A0" }}>
                               {providerLabel(provider.name)}
                             </span>
                           ) : (
-                            <span style={{ color: "#333" }}>↳</span>
+                            <span className="text-slate-600">↳</span>
                           )}
-                        </td>
-                        <td style={{ padding: "10px 12px" }}>
-                          <span
-                            style={{
-                              fontFamily: "var(--font-syne, Syne, sans-serif)",
-                              fontSize: "12px",
-                              fontWeight: 700,
-                              color: "#F0F0F5",
-                            }}
-                          >
+                        </TableCell>
+                        <TableCell className="py-2.5">
+                          <span className="text-xs font-bold text-slate-100" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>
                             {model.name}
                           </span>
-                        </td>
-                        <td style={{ padding: "10px 12px" }}>
-                          <span
-                            style={{
-                              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                              fontSize: "12px",
-                              color: "#8888A0",
-                            }}
-                          >
-                            {formatContext(model.contextWindow)}
-                          </span>
-                        </td>
-                        <td style={{ padding: "10px 12px" }}>
-                          <span
-                            style={{
-                              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                              fontSize: "12px",
-                              color:
-                                model.cost.input === 0 && model.cost.output === 0
-                                  ? "#34D399"
-                                  : "#FBBF24",
-                              fontWeight: 600,
-                            }}
-                          >
+                        </TableCell>
+                        <TableCell className="py-2.5">
+                          <span className="font-mono text-xs text-slate-400">{formatContext(model.contextWindow)}</span>
+                        </TableCell>
+                        <TableCell className="py-2.5">
+                          <span className={`font-mono text-xs font-semibold ${
+                            model.cost.input === 0 && model.cost.output === 0 ? "text-emerald-400" : "text-amber-400"
+                          }`}>
                             {formatCost(model.cost)}
                           </span>
-                        </td>
-                        <td style={{ padding: "10px 12px" }}>
-                          <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+                        </TableCell>
+                        <TableCell className="py-2.5">
+                          <div className="flex gap-1 flex-wrap">
                             {model.capabilities.map((cap) => (
-                              <span
-                                key={cap}
-                                style={{
-                                  background: "rgba(79,142,247,0.12)",
-                                  border: "1px solid rgba(79,142,247,0.25)",
-                                  borderRadius: "4px",
-                                  padding: "2px 7px",
-                                  fontSize: "10px",
-                                  color: "#4F8EF7",
-                                  fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                                  textTransform: "capitalize",
-                                }}
-                              >
+                              <Badge key={cap} variant="outline" className="text-[10px] text-blue-400 border-blue-500/25 bg-blue-500/10 capitalize">
                                 {cap}
-                              </span>
+                              </Badge>
                             ))}
                             {model.reasoning && (
-                              <span
-                                style={{
-                                  background: "rgba(124,58,237,0.12)",
-                                  border: "1px solid rgba(124,58,237,0.25)",
-                                  borderRadius: "4px",
-                                  padding: "2px 7px",
-                                  fontSize: "10px",
-                                  color: "#A78BFA",
-                                  fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                                }}
-                              >
+                              <Badge variant="outline" className="text-[10px] text-purple-400 border-purple-500/25 bg-purple-500/10">
                                 reasoning
-                              </span>
+                              </Badge>
                             )}
                           </div>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))
                   )}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
 
             {/* Routing Rules */}
             <div>
-              <div
-                style={{
-                  fontFamily: "var(--font-syne, Syne, sans-serif)",
-                  fontSize: "13px",
-                  fontWeight: 700,
-                  color: "#8888A0",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.06em",
-                  marginBottom: "12px",
-                }}
-              >
+              <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>
                 Routing Rules
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div className="flex flex-col gap-2">
                 {(data?.routingRules || []).map((rule, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "12px",
-                      background: "rgba(255,255,255,0.02)",
-                      border: "1px solid #1E2D45",
-                      borderRadius: "6px",
-                      padding: "9px 14px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                        fontSize: "13px",
-                        color: "#8888A0",
-                        flex: 1,
-                      }}
-                    >
-                      {rule.task}
-                    </span>
-                    <span
-                      style={{
-                        color: "#A0A0B0",
-                        fontSize: "14px",
-                        flexShrink: 0,
-                      }}
-                    >
-                      →
-                    </span>
-                    <span
-                      style={{
-                        fontFamily: "var(--font-syne, Syne, sans-serif)",
-                        fontSize: "12px",
-                        fontWeight: 700,
-                        background: "linear-gradient(135deg, #4F8EF7, #7C3AED)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text",
-                        flexShrink: 0,
-                        minWidth: "90px",
-                        textAlign: "right",
-                      }}
-                    >
-                      {rule.model}
-                    </span>
-                  </div>
+                  <Card key={i} className="bg-white/[0.02] border-slate-700/50">
+                    <CardContent className="p-2.5 px-3.5 flex items-center gap-3">
+                      <span className="text-sm text-slate-400 flex-1">{rule.task}</span>
+                      <span className="text-slate-500 text-sm shrink-0">→</span>
+                      <span
+                        className="text-xs font-bold shrink-0 min-w-[90px] text-right"
+                        style={{
+                          fontFamily: "var(--font-syne, Syne, sans-serif)",
+                          background: "linear-gradient(135deg, #4F8EF7, #7C3AED)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          backgroundClip: "text",
+                        }}
+                      >
+                        {rule.model}
+                      </span>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </div>
           </>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

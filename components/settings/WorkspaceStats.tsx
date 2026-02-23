@@ -1,11 +1,7 @@
 "use client";
 
-/**
- * WorkspaceStats — Phase 2 updates:
- * - Shows file growth trend over last 7 days
- */
-
 import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface StatsData {
   memoryFiles: string;
@@ -14,72 +10,36 @@ interface StatsData {
   agentCount: string;
   dailyLogs: string;
   workspaceSize: string;
-  /** Phase 2: daily file count trend, format "MM-DD:count" */
   fileGrowthTrend?: string[];
 }
 
-interface StatItemProps {
-  value: string;
-  label: string;
-  gradient: string;
-}
-
-function StatItem({ value, label, gradient }: StatItemProps) {
+function StatItem({ value, label, gradient }: { value: string; label: string; gradient: string }) {
   return (
-    <div
-      style={{
-        background: "rgba(255,255,255,0.02)",
-        border: "1px solid #1E2D45",
-        borderRadius: "8px",
-        padding: "18px 16px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "6px",
-      }}
-    >
-      <div
-        style={{
-          fontFamily: "var(--font-syne, Syne, sans-serif)",
-          fontSize: "24px",
-          fontWeight: 700,
-          background: gradient,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-          lineHeight: 1.1,
-          letterSpacing: "-0.02em",
-        }}
-      >
-        {value}
-      </div>
-      <div
-        style={{
-          fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-          fontSize: "11px",
-          color: "#A0A0B0",
-          textTransform: "uppercase",
-          letterSpacing: "0.05em",
-          fontWeight: 500,
-        }}
-      >
-        {label}
-      </div>
-    </div>
+    <Card className="bg-white/[0.02] border-slate-700/50">
+      <CardContent className="p-4">
+        <div
+          className="text-2xl font-bold leading-tight tracking-tight"
+          style={{
+            fontFamily: "var(--font-syne, Syne, sans-serif)",
+            background: gradient,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+          }}
+        >
+          {value}
+        </div>
+        <div className="text-[11px] text-slate-500 uppercase tracking-wider font-medium mt-1.5">
+          {label}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
-/** Mini sparkline bar chart for the 7-day trend */
 function FileGrowthChart({ trend }: { trend: string[] }) {
   if (!trend || trend.length === 0) {
-    return (
-      <div style={{
-        fontSize: "11px",
-        fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-        color: "#A0A0B0",
-      }}>
-        Trend: N/A
-      </div>
-    );
+    return <div className="text-[11px] text-slate-500">Trend: N/A</div>;
   }
 
   const parsed = trend.map((t) => {
@@ -90,56 +50,23 @@ function FileGrowthChart({ trend }: { trend: string[] }) {
 
   return (
     <div>
-      <div style={{
-        fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-        fontSize: "10px",
-        color: "#A0A0B0",
-        textTransform: "uppercase",
-        letterSpacing: "0.06em",
-        marginBottom: "8px",
-      }}>
+      <div className="font-mono text-[10px] text-slate-500 uppercase tracking-wider mb-2">
         Memory File Activity (7 days)
       </div>
-      <div style={{
-        display: "flex",
-        alignItems: "flex-end",
-        gap: "4px",
-        height: "40px",
-      }}>
+      <div className="flex items-end gap-1 h-10">
         {parsed.map(({ date, count }) => {
           const heightPct = maxVal > 0 ? (count / maxVal) * 100 : 0;
           return (
-            <div
-              key={date}
-              title={`${date}: ${count} files`}
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "2px",
-                height: "100%",
-                justifyContent: "flex-end",
-              }}
-            >
-              <div style={{
-                width: "100%",
-                height: `${Math.max(heightPct, 4)}%`,
-                background: count > 0
-                  ? "linear-gradient(180deg, #4F8EF7, #7C3AED)"
-                  : "rgba(136,136,160,0.15)",
-                borderRadius: "2px",
-                transition: "height 0.3s ease",
-                minHeight: "3px",
-              }} />
-              <div style={{
-                fontSize: "8px",
-                fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                color: "#A0A0B0",
-                whiteSpace: "nowrap",
-              }}>
-                {date}
-              </div>
+            <div key={date} title={`${date}: ${count} files`} className="flex-1 flex flex-col items-center gap-0.5 h-full justify-end">
+              <div
+                className="w-full rounded-sm transition-all duration-300"
+                style={{
+                  height: `${Math.max(heightPct, 4)}%`,
+                  background: count > 0 ? "linear-gradient(180deg, #4F8EF7, #7C3AED)" : "rgba(136,136,160,0.15)",
+                  minHeight: "3px",
+                }}
+              />
+              <div className="text-[8px] font-mono text-slate-500 whitespace-nowrap">{date}</div>
             </div>
           );
         })}
@@ -149,36 +76,12 @@ function FileGrowthChart({ trend }: { trend: string[] }) {
 }
 
 const STAT_CONFIGS = [
-  {
-    key: "memoryFiles" as keyof StatsData,
-    label: "Memory Files",
-    gradient: "linear-gradient(135deg, #4F8EF7, #60A5FA)",
-  },
-  {
-    key: "memorySize" as keyof StatsData,
-    label: "Memory Size",
-    gradient: "linear-gradient(135deg, #7C3AED, #A78BFA)",
-  },
-  {
-    key: "sessionFiles" as keyof StatsData,
-    label: "Session Files",
-    gradient: "linear-gradient(135deg, #059669, #34D399)",
-  },
-  {
-    key: "agentCount" as keyof StatsData,
-    label: "Active Agents",
-    gradient: "linear-gradient(135deg, #D97706, #FBBF24)",
-  },
-  {
-    key: "dailyLogs" as keyof StatsData,
-    label: "Daily Logs (2026)",
-    gradient: "linear-gradient(135deg, #EC4899, #F472B6)",
-  },
-  {
-    key: "workspaceSize" as keyof StatsData,
-    label: "Total Workspace",
-    gradient: "linear-gradient(135deg, #0891B2, #22D3EE)",
-  },
+  { key: "memoryFiles" as keyof StatsData, label: "Memory Files", gradient: "linear-gradient(135deg, #4F8EF7, #60A5FA)" },
+  { key: "memorySize" as keyof StatsData, label: "Memory Size", gradient: "linear-gradient(135deg, #7C3AED, #A78BFA)" },
+  { key: "sessionFiles" as keyof StatsData, label: "Session Files", gradient: "linear-gradient(135deg, #059669, #34D399)" },
+  { key: "agentCount" as keyof StatsData, label: "Active Agents", gradient: "linear-gradient(135deg, #D97706, #FBBF24)" },
+  { key: "dailyLogs" as keyof StatsData, label: "Daily Logs (2026)", gradient: "linear-gradient(135deg, #EC4899, #F472B6)" },
+  { key: "workspaceSize" as keyof StatsData, label: "Total Workspace", gradient: "linear-gradient(135deg, #0891B2, #22D3EE)" },
 ];
 
 export default function WorkspaceStats() {
@@ -190,91 +93,39 @@ export default function WorkspaceStats() {
       .then((r) => r.json())
       .then(setStats)
       .catch(() =>
-        setStats({
-          memoryFiles: "—",
-          memorySize: "—",
-          sessionFiles: "—",
-          agentCount: "—",
-          dailyLogs: "—",
-          workspaceSize: "—",
-        })
+        setStats({ memoryFiles: "—", memorySize: "—", sessionFiles: "—", agentCount: "—", dailyLogs: "—", workspaceSize: "—" })
       )
       .finally(() => setLoading(false));
   }, []);
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          padding: "14px 20px",
-          borderBottom: "1px solid #1E2D45",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "16px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-          }}
-        >
+    <Card className="bg-slate-900/60 border-slate-700/50 overflow-hidden">
+      <CardHeader className="p-4 border-b border-slate-700/50">
+        <CardTitle className="text-base font-bold text-slate-100" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>
           Workspace Statistics
-        </span>
-      </div>
+        </CardTitle>
+      </CardHeader>
 
-      <div style={{ padding: "20px" }}>
+      <CardContent className="p-5">
         {loading ? (
-          <div
-            style={{
-              color: "#A0A0B0",
-              fontSize: "13px",
-              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-              padding: "20px 0",
-              textAlign: "center",
-            }}
-          >
-            Gathering statistics…
-          </div>
+          <div className="text-slate-500 text-sm text-center py-5">Gathering statistics…</div>
         ) : (
           <>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: "12px",
-                marginBottom: "20px",
-              }}
-            >
+            <div className="grid grid-cols-3 gap-3 mb-5">
               {STAT_CONFIGS.map((cfg) => (
-                <StatItem
-                  key={cfg.key}
-                  value={stats?.[cfg.key] as string ?? "—"}
-                  label={cfg.label}
-                  gradient={cfg.gradient}
-                />
+                <StatItem key={cfg.key} value={stats?.[cfg.key] as string ?? "—"} label={cfg.label} gradient={cfg.gradient} />
               ))}
             </div>
 
-            {/* Phase 2: File growth trend chart */}
-            <div style={{
-              padding: "16px",
-              background: "rgba(255,255,255,0.02)",
-              border: "1px solid #1E2D45",
-              borderRadius: "8px",
-            }}>
-              <FileGrowthChart trend={stats?.fileGrowthTrend ?? []} />
-            </div>
+            {/* File growth trend chart */}
+            {stats?.fileGrowthTrend && stats.fileGrowthTrend.length > 0 && (
+              <div className="pt-4 border-t border-slate-700/50">
+                <FileGrowthChart trend={stats.fileGrowthTrend} />
+              </div>
+            )}
           </>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

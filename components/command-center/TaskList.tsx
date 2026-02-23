@@ -1,13 +1,7 @@
 "use client";
 
-/**
- * TaskList — Phase 3: A+ Polish (SSR-safe)
- * - CSS-only animations
- * - Hover effects
- * - SSR-safe (no mounted state)
- */
-
 import { useState } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface Task {
   id: number;
@@ -62,23 +56,12 @@ interface TaskListProps {
 export default function TaskList({ tasks, loading }: TaskListProps) {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
-  // Sort synchronously (SSR-safe)
   const sorted = [...(tasks || [])]
     .sort((a, b) => (PRIORITY_ORDER[a.priority] ?? 1) - (PRIORITY_ORDER[b.priority] ?? 1))
     .slice(0, 6);
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        padding: "0",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-      }}
-    >
+    <Card className="bg-[#0D1220] border-[#1E2D45] rounded-[10px] overflow-hidden flex flex-col">
       <style>{`
         @keyframes slideIn {
           from { opacity: 0; transform: translateX(-10px); }
@@ -89,42 +72,20 @@ export default function TaskList({ tasks, loading }: TaskListProps) {
         }
       `}</style>
 
-      {/* Header */}
-      <div
-        style={{
-          padding: "12px 16px 10px",
-          borderBottom: "1px solid #1E2D45",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontSize: "13px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-            letterSpacing: "-0.01em",
-          }}
-        >
-          My Tasks
-        </span>
-        {!loading && sorted.length > 0 && (
-          <span
-            style={{
-              fontSize: "11px",
-              color: "#A0A0B0",
-              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-            }}
-          >
-            {sorted.length} open
-          </span>
-        )}
-      </div>
+      <CardHeader className="pb-2" style={{ padding: "12px 16px 10px", borderBottom: "1px solid #1E2D45" }}>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-bold text-[#F0F0F5]" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", letterSpacing: "-0.01em" }}>
+            My Tasks
+          </CardTitle>
+          {!loading && sorted.length > 0 && (
+            <span style={{ fontSize: "11px", color: "#A0A0B0", fontFamily: "var(--font-dm-mono, DM Mono, monospace)" }}>
+              {sorted.length} open
+            </span>
+          )}
+        </div>
+      </CardHeader>
 
-      {/* Task list */}
-      <div style={{ flex: 1 }}>
+      <CardContent className="flex-1" style={{ padding: 0 }}>
         {loading ? (
           <EmptyState message="Loading…" />
         ) : sorted.length === 0 ? (
@@ -155,12 +116,9 @@ export default function TaskList({ tasks, loading }: TaskListProps) {
                 onMouseEnter={() => setHoveredId(task.id)}
                 onMouseLeave={() => setHoveredId(null)}
               >
-                <span style={{ 
-                  fontSize: "13px", 
-                  flexShrink: 0,
-                  transform: isHovered ? "scale(1.2)" : "scale(1)",
-                  transition: "transform 0.2s ease",
-                }}>{dot}</span>
+                <span style={{ fontSize: "13px", flexShrink: 0, transform: isHovered ? "scale(1.2)" : "scale(1)", transition: "transform 0.2s ease" }}>
+                  {dot}
+                </span>
                 <span
                   style={{
                     flex: 1,
@@ -196,8 +154,8 @@ export default function TaskList({ tasks, loading }: TaskListProps) {
             );
           })
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 

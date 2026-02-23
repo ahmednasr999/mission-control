@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface Objective {
   text: string;
@@ -65,14 +67,7 @@ function CategoryCard({ category }: { category: Category }) {
   const [expanded, setExpanded] = useState(true);
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
+    <Card style={{ background: "#0D1220", borderColor: "#1E2D45", overflow: "hidden" }}>
       {/* Card header */}
       <div
         onClick={() => setExpanded(e => !e)}
@@ -178,7 +173,7 @@ function CategoryCard({ category }: { category: Category }) {
           ))}
         </div>
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -186,15 +181,7 @@ function MetricsTable({ metrics }: { metrics: Metric[] }) {
   if (metrics.length === 0) return null;
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-        marginTop: "20px",
-      }}
-    >
+    <Card style={{ background: "#0D1220", borderColor: "#1E2D45", overflow: "hidden", marginTop: "20px" }}>
       <div
         style={{
           padding: "12px 16px",
@@ -294,7 +281,7 @@ function MetricsTable({ metrics }: { metrics: Metric[] }) {
           </tbody>
         </table>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -339,35 +326,17 @@ export default function GoalsDashboard() {
       </div>
 
       {loading ? (
-        <div
-          style={{
-            background: "#0D1220",
-            border: "1px solid #1E2D45",
-            borderRadius: "10px",
-            padding: "24px",
-            textAlign: "center",
-            color: "#A0A0B0",
-            fontSize: "13px",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-          }}
-        >
-          Loading goals…
-        </div>
+        <Card style={{ background: "#0D1220", borderColor: "#1E2D45", padding: "24px", textAlign: "center" }}>
+          <span style={{ color: "#A0A0B0", fontSize: "13px", fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)" }}>
+            Loading goals…
+          </span>
+        </Card>
       ) : !data || data.categories.length === 0 ? (
-        <div
-          style={{
-            background: "#0D1220",
-            border: "1px solid #1E2D45",
-            borderRadius: "10px",
-            padding: "24px",
-            textAlign: "center",
-            color: "#A0A0B0",
-            fontSize: "13px",
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-          }}
-        >
-          No goals data found
-        </div>
+        <Card style={{ background: "#0D1220", borderColor: "#1E2D45", padding: "24px", textAlign: "center" }}>
+          <span style={{ color: "#A0A0B0", fontSize: "13px", fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)" }}>
+            No goals data found
+          </span>
+        </Card>
       ) : (
         <>
           <div

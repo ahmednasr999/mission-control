@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import JobCard, { Job } from "./JobCard";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface ArchiveResponse {
   archived: Job[];
@@ -15,7 +18,6 @@ export default function ArchiveSection() {
   const [fetched, setFetched] = useState(false);
   const [error, setError] = useState(false);
 
-  // Fetch count on mount, full data on expand
   useEffect(() => {
     fetch("/api/hr/archive")
       .then((r) => r.json())
@@ -51,30 +53,13 @@ export default function ArchiveSection() {
   const archived = data?.archived ?? [];
 
   return (
-    <div
-      style={{
-        background: "#0D1220",
-        border: "1px solid #1E2D45",
-        borderRadius: "10px",
-        overflow: "hidden",
-      }}
-    >
-      {/* Toggle header */}
-      <button
+    <Card className="overflow-hidden" style={{ background: "#0D1220", borderColor: "#1E2D45" }}>
+      <Button
+        variant="ghost"
         onClick={handleToggle}
-        style={{
-          width: "100%",
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-          padding: "14px 20px",
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          borderBottom: expanded ? "1px solid #1E2D45" : "none",
-        }}
+        className="w-full justify-start px-5 py-3 h-auto"
+        style={{ borderBottom: expanded ? "1px solid #1E2D45" : "none", borderRadius: 0 }}
       >
-        {/* Arrow */}
         <span
           style={{
             color: "#A0A0B0",
@@ -86,8 +71,6 @@ export default function ArchiveSection() {
         >
           ▶
         </span>
-
-        {/* Label */}
         <span
           style={{
             fontFamily: "var(--font-syne, Syne, sans-serif)",
@@ -99,26 +82,11 @@ export default function ArchiveSection() {
         >
           {expanded ? "Hide Archive" : "View Archive"}
         </span>
-
-        {/* Count badge */}
         {count > 0 && (
-          <span
-            style={{
-              fontSize: "11px",
-              fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-              color: "#6B7280",
-              background: "rgba(107,114,128,0.15)",
-              border: "1px solid rgba(107,114,128,0.3)",
-              borderRadius: "20px",
-              padding: "1px 8px",
-              fontWeight: 600,
-            }}
-          >
+          <Badge variant="secondary" className="ml-2" style={{ background: "rgba(107,114,128,0.15)", borderColor: "rgba(107,114,128,0.3)", color: "#6B7280" }}>
             {count}
-          </span>
+          </Badge>
         )}
-
-        {/* Subtitle */}
         <span
           style={{
             fontSize: "11px",
@@ -129,9 +97,8 @@ export default function ArchiveSection() {
         >
           Closed applications &gt;30 days ago
         </span>
-      </button>
+      </Button>
 
-      {/* Archive body */}
       {expanded && (
         <div style={{ padding: "16px 20px" }}>
           {loading ? (
@@ -185,6 +152,6 @@ export default function ArchiveSection() {
           )}
         </div>
       )}
-    </div>
+    </Card>
   );
 }
