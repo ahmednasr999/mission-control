@@ -17,7 +17,7 @@ interface AgentInfo {
 }
 
 const AGENT_META: Record<string, { name: string; emoji: string; role: string }> = {
-  main: { name: "Strategic Consultant", emoji: "🎯", role: "NASR" },
+  main: { name: "NASR", emoji: "🎯", role: "Strategic Consultant" },
   "cv-optimizer": { name: "CV Optimizer", emoji: "📄", role: "ADHAM" },
   "job-hunter": { name: "Job Hunter", emoji: "🔍", role: "HEIKAL" },
   researcher: { name: "Research", emoji: "🔬", role: "MAHER" },

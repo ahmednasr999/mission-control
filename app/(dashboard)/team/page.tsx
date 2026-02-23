@@ -7,7 +7,7 @@ import RunHistory from "@/components/team/RunHistory";
 import TeamStatus from "@/components/team/TeamStatus";
 
 const AGENT_META: Record<string, { label: string; emoji: string; role: string }> = {
-  main: { label: "Strategic Consultant", emoji: "🎯", role: "NASR" },
+  main: { label: "NASR", emoji: "🎯", role: "Strategic Consultant" },
   "cv-optimizer": { label: "CV Optimizer", emoji: "📄", role: "ADHAM" },
   "job-hunter": { label: "Job Hunter", emoji: "🔍", role: "HEIKAL" },
   researcher: { label: "Research", emoji: "🔬", role: "MAHER" },
