@@ -12,6 +12,7 @@ import {
   FlaskConical,
   Settings,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { label: "Command Center", icon: LayoutGrid, href: "/" },
@@ -105,46 +106,26 @@ export default function Sidebar() {
         {navItems.map(({ label, icon: Icon, href }) => {
           const active = isActive(href);
           return (
-            <Link
-              key={href}
-              href={href}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                padding: "8px 12px",
-                borderRadius: "8px",
-                fontSize: "13px",
-                fontWeight: active ? 600 : 400,
-                color: active ? "#4F8EF7" : "#8888A0",
-                textDecoration: "none",
-                transition: "all 0.15s ease",
-                background: active ? "rgba(79, 142, 247, 0.12)" : "transparent",
-                borderLeft: active ? "2px solid #4F8EF7" : "2px solid transparent",
-                marginLeft: "-2px",
-                marginBottom: "2px",
-              }}
-              onMouseEnter={(e) => {
-                if (!active) {
-                  (e.currentTarget as HTMLElement).style.background =
-                    "rgba(255, 255, 255, 0.04)";
-                  (e.currentTarget as HTMLElement).style.color = "#F0F0F5";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!active) {
-                  (e.currentTarget as HTMLElement).style.background =
-                    "transparent";
-                  (e.currentTarget as HTMLElement).style.color = "#8888A0";
-                }
-              }}
-            >
-              <Icon
-                size={16}
-                style={{ flexShrink: 0 }}
-                strokeWidth={active ? 2.5 : 2}
-              />
-              <span>{label}</span>
+            <Link key={href} href={href} passHref legacyBehavior>
+              <Button
+                variant="ghost"
+                className={`w-full justify-start gap-3 h-9 ${
+                  active 
+                    ? "bg-slate-800/50 text-blue-400 border-l-2 border-blue-500" 
+                    : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/30"
+                }`}
+                style={{
+                  fontSize: "13px",
+                  fontWeight: active ? 600 : 400,
+                }}
+              >
+                <Icon
+                  size={16}
+                  style={{ flexShrink: 0 }}
+                  strokeWidth={active ? 2.5 : 2}
+                />
+                <span>{label}</span>
+              </Button>
             </Link>
           );
         })}
@@ -158,40 +139,21 @@ export default function Sidebar() {
           flexShrink: 0,
         }}
       >
-        <Link
-          href="/settings"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            padding: "8px 12px",
-            borderRadius: "8px",
-            fontSize: "13px",
-            color:
-              pathname === "/settings" ? "#4F8EF7" : "#8888A0",
-            textDecoration: "none",
-            transition: "all 0.15s ease",
-            background:
+        <Link href="/settings" passHref legacyBehavior>
+          <Button
+            variant="ghost"
+            className={`w-full justify-start gap-3 h-9 ${
               pathname === "/settings"
-                ? "rgba(79, 142, 247, 0.12)"
-                : "transparent",
-          }}
-          onMouseEnter={(e) => {
-            if (pathname !== "/settings") {
-              (e.currentTarget as HTMLElement).style.background =
-                "rgba(255, 255, 255, 0.04)";
-              (e.currentTarget as HTMLElement).style.color = "#F0F0F5";
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (pathname !== "/settings") {
-              (e.currentTarget as HTMLElement).style.background = "transparent";
-              (e.currentTarget as HTMLElement).style.color = "#8888A0";
-            }
-          }}
-        >
-          <Settings size={16} strokeWidth={2} />
-          <span>Settings</span>
+                ? "bg-slate-800/50 text-blue-400 border-l-2 border-blue-500"
+                : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/30"
+            }`}
+            style={{
+              fontSize: "13px",
+            }}
+          >
+            <Settings size={16} strokeWidth={2} />
+            <span>Settings</span>
+          </Button>
         </Link>
       </div>
     </aside>

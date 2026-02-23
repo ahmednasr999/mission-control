@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import SyncIndicator from "./SyncIndicator";
 import { useSidebar } from "@/lib/sidebar-context";
 import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const ROUTE_TITLES: Record<string, string> = {
   "/": "Command Center",
@@ -19,7 +20,6 @@ const ROUTE_TITLES: Record<string, string> = {
 
 function getPageTitle(pathname: string): string {
   if (pathname === "/") return "Command Center";
-  // find the best matching prefix
   const matched = Object.entries(ROUTE_TITLES)
     .filter(([route]) => route !== "/" && pathname.startsWith(route))
     .sort((a, b) => b[0].length - a[0].length)[0];
@@ -68,16 +68,16 @@ export default function Topbar() {
         flexShrink: 0,
       }}
     >
-      {/* Left: Hamburger (mobile) + Page title */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        {/* Hamburger button — only visible on mobile via CSS */}
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
+          className="topbar-hamburger lg:hidden"
           onClick={toggleSidebar}
-          className="topbar-hamburger"
           aria-label="Toggle sidebar"
         >
           <Menu size={20} />
-        </button>
+        </Button>
         <h1
           style={{
             fontFamily: "var(--font-syne, Syne, sans-serif)",
@@ -92,17 +92,9 @@ export default function Topbar() {
         </h1>
       </div>
 
-      {/* Right: Clock + Sync indicator */}
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        {/* Cairo clock */}
         {time && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
-          >
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <span
               style={{
                 fontSize: "11px",
@@ -126,16 +118,8 @@ export default function Topbar() {
           </div>
         )}
 
-        {/* Divider */}
-        <div
-          style={{
-            width: "1px",
-            height: "20px",
-            background: "#1E2D45",
-          }}
-        />
+        <div style={{ width: "1px", height: "20px", background: "#1E2D45" }} />
 
-        {/* Sync indicator */}
         <SyncIndicator />
       </div>
     </header>
