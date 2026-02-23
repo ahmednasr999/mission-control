@@ -44,42 +44,36 @@ function extractAtsScore(content: string): number | null {
 
 /** Extract company name from cv-output file content */
 function extractCompanyFromContent(content: string, filename: string): string {
-  // Try "CV Analysis: Payfuture Director of Operations" - extract "Payfuture"
-  const analysisMatch = content.match(/CV\s+Analysis:\s*([^-\n]+)/i);
-  if (analysisMatch) {
-    const company = analysisMatch[1].trim();
-    // Clean up: remove "Ahmed Nasr - " prefix if present
-    return company.replace(/^Ahmed\s+Nasr\s*-\s*/, "").trim();
-  }
+  // Try "CV Output — Ahmed Nasr × Delphi Consulting" pattern
+  const crossMatch = content.match(/CV\s+Output[—\-]\s*Ahmed\s+Nasr\s*[×x]\s*(.+?)(?:\n|\*|$)/i);
+  if (crossMatch) return crossMatch[1].replace(/\*+$/, "").replace(/^\*+/, "").trim();
 
-  // Try "Company: Foo" header first
+  // Try "CV Analysis: Payfuture Director of Operations" - extract first word
+  const analysisMatch = content.match(/CV\s+Analysis:\s*(\S+)/i);
+  if (analysisMatch) return analysisMatch[1].trim();
+
+  // Try "Company: Foo" header
   const companyMatch = content.match(/^\*?\*?Company\*?\*?:\s*(.+)$/im);
-  if (companyMatch) return companyMatch[1].trim();
+  if (companyMatch) return companyMatch[1].replace(/\*+$/, "").trim();
 
-  // Try "Ahmed Nasr × Company Name" pattern
-  const crossMatch = content.match(/Ahmed\s+Nasr\s*[×x]\s*(.+?)(?:\n|$)/i);
-  if (crossMatch) return crossMatch[1].trim();
-
-  // Fall back to filename: cv-output-2026-02-21-delphi → "Delphi"
+  // Fall back to filename: cv-output-2026-02-21-carter-murray → "Carter Murray"
   const slug = filename.replace(/^cv-output-\d{4}-\d{2}-\d{2}-/, "").replace(".md", "");
   return slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 /** Extract role from cv-output file content */
 function extractRoleFromContent(content: string): string {
-  // Try "CV Analysis: Payfuture Director of Operations" - extract "Director of Operations"
-  const analysisMatch = content.match(/CV\s+Analysis:\s*[^-\n]+-\s*(.+?)(?:\n|$)/i);
+  // Try "Role: Senior AI PM" header - this is most reliable
+  const roleMatch = content.match(/^\*?\*?Role\*?\*?:\s*(.+)$/im);
+  if (roleMatch) return roleMatch[1].replace(/\*+$/, "").replace(/^\*+/, "").trim();
+
+  // Try "CV Analysis: Payfuture Director of Operations" - extract after first word
+  const analysisMatch = content.match(/CV\s+Analysis:\s*\S+\s+(.+?)(?:\n|$)/i);
   if (analysisMatch) return analysisMatch[1].trim();
 
-  // Try "Role: Senior AI PM" header
-  const roleMatch = content.match(/^\*?\*?Role\*?\*?:\s*(.+)$/im);
-  if (roleMatch) return roleMatch[1].trim();
-
-  // Try first h2 after the personal details block
-  const h2Match = content.match(/^## (.+)$/m);
-  if (h2Match && !/professional summary|core competencies|Ahmed Nasr/i.test(h2Match[1])) {
-    return h2Match[1].trim();
-  }
+  // Try extracting from title line after name: # Ahmed Nasr **Executive Director**
+  const titleMatch = content.match(/^#\s+Ahmed Nasr\s*\n.*?\*\*([^\n*]+)\*\*/m);
+  if (titleMatch) return titleMatch[1].replace(/\*+$/, "").replace(/^\*+/, "").trim();
 
   return "Unknown Role";
 }
