@@ -95,6 +95,6 @@ export default function TodayHighlights() {
           {whoAhmedIs.join("  •  ")}
         </div>
       )}
-    </div>
+    </Card>
   );
 }

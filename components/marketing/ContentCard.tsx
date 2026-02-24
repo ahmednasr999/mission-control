@@ -133,8 +133,8 @@ export default function ContentCard({
           {item.assignee && <AssigneeBadge name={item.assignee} />}
         </div>
 
-        {/* Description */}
-        {item.description && (
+        {/* Performance Notes */}
+        {item.performance && (
           <div
             style={{
               fontSize: "12px",
@@ -144,9 +144,9 @@ export default function ContentCard({
               whiteSpace: "nowrap",
               lineHeight: 1.4,
             }}
-            title={item.description}
+            title={item.performance}
           >
-            {item.description}
+            {item.performance}
           </div>
         )}
       </CardContent>
