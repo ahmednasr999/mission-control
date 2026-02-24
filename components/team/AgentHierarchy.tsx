@@ -38,10 +38,10 @@ export default function AgentHierarchy({
 
   const defaultAgents: AgentInfo[] = [
     { id: "main", name: "NASR", emoji: "🎯", role: "Strategic Consultant", lastActive: null, isActive: false, sessionCount: 0 },
-    { id: "cv-optimizer", name: "ADHAM", emoji: "📄", role: "CV Optimization", lastActive: null, isActive: false, sessionCount: 0 },
-    { id: "job-hunter", name: "HEIKAL", emoji: "🔍", role: "Job Hunting", lastActive: null, isActive: false, sessionCount: 0 },
-    { id: "researcher", name: "MAHER", emoji: "🔬", role: "Research", lastActive: null, isActive: false, sessionCount: 0 },
-    { id: "content-creator", name: "LOTFI", emoji: "✍️", role: "Content Creation", lastActive: null, isActive: false, sessionCount: 0 },
+    { id: "cv-optimizer", name: "CV Optimizer", emoji: "📄", role: "CV Optimization", lastActive: null, isActive: false, sessionCount: 0 },
+    { id: "job-hunter", name: "Job Hunter", emoji: "🔍", role: "Job Hunting", lastActive: null, isActive: false, sessionCount: 0 },
+    { id: "researcher", name: "Researcher", emoji: "🔬", role: "Research", lastActive: null, isActive: false, sessionCount: 0 },
+    { id: "content-creator", name: "Content Creator", emoji: "✍️", role: "Content Creation", lastActive: null, isActive: false, sessionCount: 0 },
   ];
 
   const displayAgents = loading ? defaultAgents : (agents.length > 0 ? agents : defaultAgents);

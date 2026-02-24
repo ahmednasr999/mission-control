@@ -8,10 +8,10 @@ import TeamStatus from "@/components/team/TeamStatus";
 
 const AGENT_META: Record<string, { label: string; emoji: string; role: string }> = {
   main: { label: "NASR", emoji: "🎯", role: "Strategic Consultant" },
-  "cv-optimizer": { label: "CV Optimizer", emoji: "📄", role: "ADHAM" },
-  "job-hunter": { label: "Job Hunter", emoji: "🔍", role: "HEIKAL" },
-  researcher: { label: "Research", emoji: "🔬", role: "MAHER" },
-  "content-creator": { label: "Content / LinkedIn", emoji: "✍️", role: "LOTFI" },
+  "cv-optimizer": { label: "CV Optimizer", emoji: "📄", role: "CV Optimization" },
+  "job-hunter": { label: "Job Hunter", emoji: "🔍", role: "Job Hunting" },
+  researcher: { label: "Researcher", emoji: "🔬", role: "Research" },
+  "content-creator": { label: "Content Creator", emoji: "✍️", role: "Content Creation" },
 };
 
 export default function TeamPage() {

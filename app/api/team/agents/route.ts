@@ -18,10 +18,10 @@ interface AgentInfo {
 
 const AGENT_META: Record<string, { name: string; emoji: string; role: string }> = {
   main: { name: "NASR", emoji: "🎯", role: "Strategic Consultant" },
-  "cv-optimizer": { name: "CV Optimizer", emoji: "📄", role: "ADHAM" },
-  "job-hunter": { name: "Job Hunter", emoji: "🔍", role: "HEIKAL" },
-  researcher: { name: "Research", emoji: "🔬", role: "MAHER" },
-  "content-creator": { name: "Content / LinkedIn", emoji: "✍️", role: "LOTFI" },
+  "cv-optimizer": { name: "CV Optimizer", emoji: "📄", role: "CV Optimization" },
+  "job-hunter": { name: "Job Hunter", emoji: "🔍", role: "Job Hunting" },
+  researcher: { name: "Researcher", emoji: "🔬", role: "Research" },
+  "content-creator": { name: "Content Creator", emoji: "✍️", role: "Content Creation" },
 };
 
 function readSessionsJson(): Record<string, Record<string, unknown>> {
