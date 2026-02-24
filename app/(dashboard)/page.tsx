@@ -50,6 +50,7 @@ interface Agent {
   lastAction: string;
   timestamp: string | null;
   sessionCount?: number;
+  agentId?: string;
 }
 
 interface ContentStages {
@@ -342,21 +343,28 @@ export default function CommandCenterPage() {
           {data.agents.length === 0 ? (
             <div style={{ textAlign: "center", color: "#A0A0B0", padding: "32px 0" }}>No agents configured</div>
           ) : (
-            data.agents.map((agent, i) => (
-              <div key={agent.name} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "8px" }}>
-                <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: "linear-gradient(135deg, rgba(79, 142, 247, 0.2), rgba(124, 58, 237, 0.2))", border: "1px solid #1E2D45", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>
-                  {agent.emoji}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontSize: "14px", fontWeight: 700, color: "#F0F0F5" }}>{agent.name}</div>
-                  <div style={{ fontSize: "12px", color: "#A0A0B0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{agent.lastAction}</div>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <div style={{ fontFamily: "var(--font-dm-mono, DM Mono, monospace)", fontSize: "10px", color: "#34D399" }}>{agent.timestamp || "—"}</div>
-                  {agent.sessionCount !== undefined && <div style={{ fontSize: "10px", color: "#A0A0B0" }}>{agent.sessionCount} sessions</div>}
-                </div>
-              </div>
-            ))
+            data.agents.map((agent, i) => {
+              const agentId = agent.agentId || (agent.name === "NASR" ? "main" : agent.name.toLowerCase().replace(/\s+/g, "-"));
+              return (
+                <Link 
+                  key={agent.name} 
+                  href={`/team/${agentId}`}
+                  style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "8px", textDecoration: "none" }}
+                >
+                  <div style={{ width: "40px", height: "40px", borderRadius: "8px", background: "linear-gradient(135deg, rgba(79, 142, 247, 0.2), rgba(124, 58, 237, 0.2))", border: "1px solid #1E2D45", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>
+                    {agent.emoji}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontSize: "14px", fontWeight: 700, color: "#F0F0F5" }}>{agent.name}</div>
+                    <div style={{ fontSize: "12px", color: "#A0A0B0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{agent.lastAction}</div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontFamily: "var(--font-dm-mono, DM Mono, monospace)", fontSize: "10px", color: "#34D399" }}>{agent.timestamp || "—"}</div>
+                    {agent.sessionCount !== undefined && <div style={{ fontSize: "10px", color: "#A0A0B0" }}>{agent.sessionCount} sessions</div>}
+                  </div>
+                </Link>
+              );
+            })
           )}
           <Link href="/team" style={{ display: "block", textAlign: "center", marginTop: "8px", padding: "10px", background: "#1E2D45", borderRadius: "6px", color: "#7C3AED", textDecoration: "none", fontSize: "13px", fontWeight: 600 }}>
             View All →

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import AgentCard from "./AgentCard";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
@@ -149,6 +150,35 @@ export default function AgentHierarchy({
         >
           Click an agent to view their session history
         </div>
+
+        {selectedAgent && (
+          <div
+            style={{
+              marginTop: "16px",
+              textAlign: "center",
+            }}
+          >
+            <Link
+              href={`/team/${selectedAgent}`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "8px 16px",
+                background: "linear-gradient(135deg, rgba(79,142,247,0.15), rgba(124,58,237,0.15))",
+                border: "1px solid #4F8EF780",
+                borderRadius: "8px",
+                color: "#4F8EF7",
+                textDecoration: "none",
+                fontSize: "12px",
+                fontWeight: 600,
+                transition: "all 0.2s",
+              }}
+            >
+              View Full Details →
+            </Link>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -13,14 +13,15 @@ interface AgentInfo {
   emoji: string;
   lastAction: string;
   timestamp: string | null;
+  agentId?: string;
 }
 
 const AGENTS: AgentInfo[] = [
-  { name: "NASR", emoji: "🎯", lastAction: "No recent activity", timestamp: null },
-  { name: "CV Optimizer", emoji: "📄", lastAction: "No recent activity", timestamp: null },
-  { name: "Job Hunter", emoji: "🔍", lastAction: "No recent activity", timestamp: null },
-  { name: "Researcher", emoji: "🔬", lastAction: "No recent activity", timestamp: null },
-  { name: "Content Creator", emoji: "✍️", lastAction: "No recent activity", timestamp: null },
+  { name: "NASR", emoji: "🎯", lastAction: "No recent activity", timestamp: null, agentId: "main" },
+  { name: "CV Optimizer", emoji: "📄", lastAction: "No recent activity", timestamp: null, agentId: "cv-optimizer" },
+  { name: "Job Hunter", emoji: "🔍", lastAction: "No recent activity", timestamp: null, agentId: "job-hunter" },
+  { name: "Researcher", emoji: "🔬", lastAction: "No recent activity", timestamp: null, agentId: "researcher" },
+  { name: "Content Creator", emoji: "✍️", lastAction: "No recent activity", timestamp: null, agentId: "content-creator" },
 ];
 
 // Gateway sessions use "agent:main:main" for NASR
