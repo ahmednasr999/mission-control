@@ -21,12 +21,15 @@ interface DashboardShellProps {
 const SIDEBAR_WIDTH = 220;
 
 export default function DashboardShell({ children }: DashboardShellProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true); // Start open on desktop
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      // If mobile, close sidebar; if desktop, open sidebar
+      setSidebarOpen(!mobile);
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
