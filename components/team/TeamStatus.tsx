@@ -13,6 +13,18 @@ interface AgentInfo {
   sessionCount: number;
 }
 
+interface RunRecord {
+  id: string;
+  task: string;
+  agent: string;
+  model: string;
+  startTime: string;
+  endTime: string | null;
+  duration: string | null;
+  outputFile: string | null;
+  status: "completed" | "running" | "failed";
+}
+
 interface ApiResponse {
   agents: AgentInfo[];
 }
@@ -44,13 +56,17 @@ function formatLastRun(agents: AgentInfo[]): string {
 
 export default function TeamStatus() {
   const [data, setData] = useState<ApiResponse | null>(null);
+  const [runs, setRuns] = useState<RunRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/team/agents")
-      .then((r) => r.json())
-      .then((d) => {
-        setData(d);
+    Promise.all([
+      fetch("/api/team/agents").then((r) => r.json()),
+      fetch("/api/team/runs").then((r) => r.json()),
+    ])
+      .then(([agentsData, runsData]) => {
+        setData(agentsData);
+        setRuns(runsData.runs || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -61,6 +77,14 @@ export default function TeamStatus() {
   const total = data.agents.length;
   const active = data.agents.filter((a) => a.isActive).length;
   const lastRun = formatLastRun(data.agents);
+
+  // Count failed runs in last 24h
+  const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  const recentErrors = runs.filter((r) => {
+    if (r.status !== "failed") return false;
+    if (!r.endTime) return false;
+    return new Date(r.endTime).getTime() > oneDayAgo;
+  }).length;
 
   return (
     <Card
@@ -105,17 +129,31 @@ export default function TeamStatus() {
       </div>
       <div
         style={{
-          maxWidth: "50%",
-          fontSize: "11px",
-          color: "#9CA3AF",
-          fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-          textAlign: "right",
-          whiteSpace: "nowrap",
-          textOverflow: "ellipsis",
-          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-end",
+          gap: "4px",
         }}
       >
-        Last run: {lastRun}
+        <div
+          style={{
+            fontSize: "11px",
+            color: "#9CA3AF",
+            fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+          }}
+        >
+          Errors (24h): <span style={{ color: recentErrors > 0 ? "#F87171" : "#34D399" }}>{recentErrors}</span>
+        </div>
+        <div
+          style={{
+            fontSize: "11px",
+            color: "#9CA3AF",
+            fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+            whiteSpace: "nowrap",
+          }}
+        >
+          Last run: {lastRun}
+        </div>
       </div>
     </Card>
   );

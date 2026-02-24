@@ -121,6 +121,8 @@ export default function GoalsProgress({ goals, loading, onClick }: GoalsProgress
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             {goals.map((goal, i) => {
               const isHovered = hoveredIdx === i;
+              const isComplete = goal.status === "complete";
+              const isAtRisk = !isComplete && goal.progress < 30;
               const progressColor = goal.progress >= 80 ? "#34D399" : goal.progress >= 40 ? "#4F8EF7" : "#8888A0";
 
               return (
@@ -130,9 +132,9 @@ export default function GoalsProgress({ goals, loading, onClick }: GoalsProgress
                   style={{
                     padding: isHovered ? "8px 10px" : "0",
                     margin: isHovered ? "-4px -6px" : "0",
-                    background: isHovered ? "rgba(79, 142, 247, 0.05)" : "transparent",
+                    background: isAtRisk ? "rgba(248, 113, 113, 0.08)" : isHovered ? "rgba(79, 142, 247, 0.05)" : "transparent",
                     borderRadius: "6px",
-                    border: isHovered ? "1px solid rgba(79, 142, 247, 0.2)" : "1px solid transparent",
+                    border: isAtRisk ? "1px solid rgba(248, 113, 113, 0.3)" : isHovered ? "1px solid rgba(79, 142, 247, 0.2)" : "1px solid transparent",
                     transition: "all 0.2s ease",
                     cursor: "pointer",
                     animationDelay: `${i * 80}ms`,
@@ -172,18 +174,25 @@ export default function GoalsProgress({ goals, loading, onClick }: GoalsProgress
                         {goal.objective}
                       </span>
                     </div>
-                    <span
-                      style={{
-                        fontFamily: "var(--font-syne, Syne, sans-serif)",
-                        fontSize: "13px",
-                        fontWeight: 700,
-                        color: progressColor,
-                        whiteSpace: "nowrap",
-                        transform: isHovered ? "scale(1.1)" : "scale(1)",
-                        transition: "transform 0.2s ease",
-                      }}
-                    >
-                      {goal.progress}%
+                    <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                      {isAtRisk && (
+                        <span style={{ fontSize: "9px", padding: "2px 5px", background: "rgba(248, 113, 113, 0.2)", color: "#F87171", borderRadius: "4px", fontWeight: 600 }}>
+                          AT RISK
+                        </span>
+                      )}
+                      <span
+                        style={{
+                          fontFamily: "var(--font-syne, Syne, sans-serif)",
+                          fontSize: "13px",
+                          fontWeight: 700,
+                          color: progressColor,
+                          whiteSpace: "nowrap",
+                          transform: isHovered ? "scale(1.1)" : "scale(1)",
+                          transition: "transform 0.2s ease",
+                        }}
+                      >
+                        {goal.progress}%
+                      </span>
                     </span>
                   </div>
                   <ProgressBar progress={goal.progress} status={goal.status} />
