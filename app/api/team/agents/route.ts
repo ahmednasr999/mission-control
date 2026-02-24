@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import os from "os";
+import { getGatewaySessions } from "@/lib/gateway-client";
 
 const AGENTS_DIR = path.join(os.homedir(), ".openclaw/agents");
 const SESSIONS_JSON = path.join(AGENTS_DIR, "main/sessions/sessions.json");
@@ -24,6 +25,14 @@ const AGENT_META: Record<string, { name: string; emoji: string; role: string }> 
   "content-creator": { name: "Content Creator", emoji: "✍️", role: "Content Creation" },
 };
 
+const GATEWAY_AGENT_MAP: Record<string, string> = {
+  main: "agent:main:main",
+  "cv-optimizer": "agent:main:subagent:cv-optimizer",
+  "job-hunter": "agent:main:subagent:job-hunter",
+  researcher: "agent:main:subagent:researcher",
+  "content-creator": "agent:main:subagent:content-creator",
+};
+
 function readSessionsJson(): Record<string, Record<string, unknown>> {
   try {
     const raw = fs.readFileSync(SESSIONS_JSON, "utf-8");
@@ -36,12 +45,10 @@ function readSessionsJson(): Record<string, Record<string, unknown>> {
 export async function GET(): Promise<NextResponse> {
   try {
     const sessions = readSessionsJson();
+    const gatewaySessions = await getGatewaySessions();
+    const gatewaySessionMap = new Map(gatewaySessions.map(s => [s.id, s]));
     const now = Date.now();
     const twentyFourHours = 24 * 60 * 60 * 1000;
-
-    // For "main" agent: look for keys starting with "agent:main:main"
-    // For sub-agents: no dedicated session entries in sessions.json by agent ID
-    // We need to find the most recent session file
 
     const agents: AgentInfo[] = [];
 
@@ -49,26 +56,37 @@ export async function GET(): Promise<NextResponse> {
       let lastActive: string | null = null;
       let sessionCount = 0;
 
-      if (agentId === "main") {
-        // Get all main session entries (not cron, not hook, not subagent)
-        const mainKeys = Object.keys(sessions).filter(k => k === "agent:main:main");
+      const gatewayKey = GATEWAY_AGENT_MAP[agentId];
+      if (gatewayKey && gatewaySessionMap.has(gatewayKey)) {
+        const gwSession = gatewaySessionMap.get(gatewayKey);
+        if (gwSession?.lastActive) {
+          lastActive = new Date(gwSession.lastActive).toISOString();
+        }
+        if (gwSession?.startedAt) {
+          sessionCount = gatewaySessions.filter(s => 
+            s.id.startsWith(gatewayKey.replace("agent:", ""))
+          ).length || 1;
+        }
+      }
+
+      if (agentId === "main" && !lastActive) {
         const mainEntry = sessions["agent:main:main"] as { updatedAt?: number; sessionFile?: string } | undefined;
         if (mainEntry && mainEntry.updatedAt) {
           lastActive = new Date(mainEntry.updatedAt).toISOString();
         }
-
-        // Count session files (all .jsonl files in sessions dir)
         try {
           const files = fs.readdirSync(path.join(AGENTS_DIR, "main/sessions"));
           sessionCount = files.filter(f => f.endsWith(".jsonl")).length;
         } catch {
           sessionCount = 0;
         }
-      } else {
-        // Sub-agents don't have dedicated session directories
-        // They show 0 sessions and null lastActive (sessions tracked via subagent keys)
-        sessionCount = 0;
-        lastActive = null;
+      } else if (agentId === "main" && sessionCount === 0) {
+        try {
+          const files = fs.readdirSync(path.join(AGENTS_DIR, "main/sessions"));
+          sessionCount = files.filter(f => f.endsWith(".jsonl")).length;
+        } catch {
+          sessionCount = 0;
+        }
       }
 
       const isActive = lastActive

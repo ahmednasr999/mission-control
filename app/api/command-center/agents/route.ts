@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { getGatewaySessions } from "@/lib/gateway-client";
 
 const MEMORY_DIR = path.join(
   process.env.HOME || "/root",
@@ -21,6 +22,14 @@ const AGENTS: AgentInfo[] = [
   { name: "MAHER", emoji: "⚙️", lastAction: "No recent activity", timestamp: null },
   { name: "LOTFI", emoji: "📊", lastAction: "No recent activity", timestamp: null },
 ];
+
+const AGENT_SESSION_MAP: Record<string, string> = {
+  NASR: "agent:main:main",
+  ADHAM: "agent:main:subagent:adham",
+  HEIKAL: "agent:main:subagent:heikal",
+  MAHER: "agent:main:subagent:maher",
+  LOTFI: "agent:main:subagent:lotfi",
+};
 
 /**
  * Get the most recent YYYY-MM-DD.md files (up to last 7 days).
@@ -86,6 +95,20 @@ function extractAgentMention(
 export async function GET() {
   const recentFiles = getRecentDailyFiles();
   const agents: AgentInfo[] = AGENTS.map((a) => ({ ...a }));
+
+  const gatewaySessions = await getGatewaySessions();
+  const sessionMap = new Map(gatewaySessions.map(s => [s.id, s]));
+
+  for (const agent of agents) {
+    const sessionKey = AGENT_SESSION_MAP[agent.name];
+    if (sessionKey && sessionMap.has(sessionKey)) {
+      const session = sessionMap.get(sessionKey);
+      if (session?.lastActive) {
+        agent.timestamp = new Date(session.lastActive).toISOString();
+        agent.lastAction = `Session active - ${session.id}`;
+      }
+    }
+  }
 
   for (const filePath of recentFiles) {
     try {
