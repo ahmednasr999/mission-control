@@ -12,6 +12,7 @@ import GoalsProgress from "@/components/command-center/GoalsProgress";
 import DailyNotesPreview from "@/components/command-center/DailyNotesPreview";
 import SlidePanel from "@/components/ui/SlidePanel";
 import { Badge } from "@/components/ui/badge";
+import ErrorState from "@/components/ErrorState";
 
 // ---- Types ----
 
@@ -256,27 +257,55 @@ export default function CommandCenterPage() {
       `}</style>
 
       {/* Alert Banner */}
-      <AlertBanner alerts={data.alerts} />
+      {errors.alerts ? (
+        <ErrorState message="Couldn't load alerts" onRetry={fetchAll} />
+      ) : (
+        <AlertBanner alerts={data.alerts} />
+      )}
 
       {/* Stat Cards — collapsible */}
-      <StatCards stats={data.stats} loading={loading} onStatClick={(stat) => {
-        if (stat === "activeJobs") setActivePanel("jobs");
-        if (stat === "openTasks") setActivePanel("tasks");
-      }} />
+      {errors.stats ? (
+        <ErrorState message="Couldn't load stats" onRetry={fetchAll} />
+      ) : (
+        <StatCards stats={data.stats} loading={loading} onStatClick={(stat) => {
+          if (stat === "activeJobs") setActivePanel("jobs");
+          if (stat === "openTasks") setActivePanel("tasks");
+        }} />
+      )}
 
       {/* 3-Column grid */}
       <div className="cc-grid-3">
-        <TaskList tasks={data.tasks} loading={loading} />
-        <PipelinePreview jobs={data.jobs} loading={loading} />
+        {errors.tasks ? (
+          <ErrorState message="Couldn't load tasks" onRetry={fetchAll} />
+        ) : (
+          <TaskList tasks={data.tasks} loading={loading} />
+        )}
+        {errors.jobs ? (
+          <ErrorState message="Couldn't load jobs" onRetry={fetchAll} />
+        ) : (
+          <PipelinePreview jobs={data.jobs} loading={loading} />
+        )}
         <ActivityFeed tasks={data.tasks} jobs={data.jobs} agents={data.agents} loading={loading} onAgentClick={() => setActivePanel("agents")} />
       </div>
 
       {/* 2-Column bottom grid */}
       <div className="cc-grid-2">
-        <ContentPreview stages={data.stages} loading={loading} onClick={() => setActivePanel("content")} />
+        {errors.content ? (
+          <ErrorState message="Couldn't load content" onRetry={fetchAll} />
+        ) : (
+          <ContentPreview stages={data.stages} loading={loading} onClick={() => setActivePanel("content")} />
+        )}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <GoalsProgress goals={data.goals} loading={loading} onClick={() => setActivePanel("goals")} />
-          <DailyNotesPreview notes={data.dailyNotes} loading={loading} />
+          {errors.goals ? (
+            <ErrorState message="Couldn't load goals" onRetry={fetchAll} />
+          ) : (
+            <GoalsProgress goals={data.goals} loading={loading} onClick={() => setActivePanel("goals")} />
+          )}
+          {errors.notes ? (
+            <ErrorState message="Couldn't load notes" onRetry={fetchAll} />
+          ) : (
+            <DailyNotesPreview notes={data.dailyNotes} loading={loading} />
+          )}
         </div>
       </div>
 
