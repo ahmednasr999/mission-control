@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import Link from "next/link";
 
 interface Objective {
   text: string;
@@ -63,8 +64,13 @@ function ProgressBar({ progress }: { progress: number }) {
   );
 }
 
-function CategoryCard({ category }: { category: Category }) {
+function CategoryCard({ category, categoryIndex }: { category: Category; categoryIndex: number }) {
   const [expanded, setExpanded] = useState(true);
+
+  const generateGoalId = (catIdx: number, objText: string): number => {
+    const hash = objText.split(" ").reduce((acc, word) => acc + word.charCodeAt(0), 0);
+    return 100 + catIdx * 10 + (hash % 10);
+  };
 
   return (
     <Card style={{ background: "#0D1220", borderColor: "#1E2D45", overflow: "hidden" }}>
@@ -124,7 +130,9 @@ function CategoryCard({ category }: { category: Category }) {
       {/* Objectives list */}
       {expanded && (
         <div style={{ padding: "12px 16px", display: "flex", flexDirection: "column", gap: "6px" }}>
-          {category.objectives.map((obj, i) => (
+          {category.objectives.map((obj, i) => {
+            const goalId = generateGoalId(categoryIndex, obj.text);
+            return (
             <div
               key={i}
               style={{
@@ -160,8 +168,10 @@ function CategoryCard({ category }: { category: Category }) {
                   fontSize: "13px",
                   color: obj.done ? "#A0A0B0" : "#F0F0F5",
                   textDecoration: obj.done ? "line-through" : "none",
+                  textDecorationColor: obj.done ? "#A0A0B0" : "none",
                   lineHeight: 1.5,
                   flex: 1,
+                  cursor: "pointer",
                 }}
               >
                 {obj.text}
@@ -170,7 +180,7 @@ function CategoryCard({ category }: { category: Category }) {
                 <span style={{ color: "#34D399", fontSize: "12px", flexShrink: 0 }}>✓</span>
               )}
             </div>
-          ))}
+          )})}
         </div>
       )}
     </Card>
@@ -347,7 +357,7 @@ export default function GoalsDashboard() {
             }}
           >
             {data.categories.map((cat, i) => (
-              <CategoryCard key={i} category={cat} />
+              <CategoryCard key={i} category={cat} categoryIndex={i} />
             ))}
           </div>
 

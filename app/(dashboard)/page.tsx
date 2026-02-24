@@ -61,6 +61,7 @@ interface ContentStages {
 }
 
 interface Goal {
+  id?: number;
   category: string;
   objective: string;
   progress: number;
@@ -439,7 +440,18 @@ export default function CommandCenterPage() {
               const color = categoryColors[goal.category] || categoryColors.Default;
               const isComplete = goal.status === "complete";
               return (
-                <div key={i} style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "8px", padding: "12px" }}>
+                <Link 
+                  key={i} 
+                  href={`/intelligence/${goal.id}`}
+                  style={{ 
+                    display: "block", 
+                    background: "#0D1220", 
+                    border: "1px solid #1E2D45", 
+                    borderRadius: "8px", 
+                    padding: "12px",
+                    textDecoration: "none"
+                  }}
+                >
                   <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
                     <Badge style={{ fontSize: "9px", background: `${color}20`, color, borderRadius: "3px", border: `1px solid ${color}40` }}>{goal.category}</Badge>
                     <span style={{ fontSize: "13px", fontWeight: 600, color: "#F0F0F5", flex: 1 }}>{goal.objective}</span>
@@ -448,7 +460,7 @@ export default function CommandCenterPage() {
                   <div style={{ height: "4px", background: "#1E2D45", borderRadius: "2px", overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${goal.progress}%`, background: isComplete ? "linear-gradient(90deg, #059669, #34D399)" : "linear-gradient(90deg, #4F8EF7, #7C3AED)", borderRadius: "2px" }}></div>
                   </div>
-                </div>
+                </Link>
               );
             })
           )}
