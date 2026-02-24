@@ -77,13 +77,18 @@ interface ContentItem {
 
 // ---- Data fetcher ----
 
-async function safeFetch<T>(url: string, fallback: T): Promise<T> {
+interface FetchResult<T> {
+  data: T;
+  error: boolean;
+}
+
+async function safeFetch<T>(url: string, fallback: T): Promise<FetchResult<T>> {
   try {
     const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) return fallback;
-    return await res.json();
+    if (!res.ok) return { data: fallback, error: true };
+    return { data: await res.json(), error: false };
   } catch {
-    return fallback;
+    return { data: fallback, error: true };
   }
 }
 
@@ -126,6 +131,7 @@ export default function CommandCenterPage() {
   const [data, setData] = useState<DashboardData>(INITIAL);
   const [loading, setLoading] = useState(true);
   const [activePanel, setActivePanel] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
 
   const fetchAll = useCallback(async () => {
     const [alertsRes, statsRes, tasksRes, pipelineRes, agentsRes, contentRes, goalsRes, notesRes, marketingRes] =
@@ -150,9 +156,9 @@ export default function CommandCenterPage() {
 
     // Flatten columns and filter for Ahmed, non-done
     const allTasks = [
-      ...(tasksRes.columns?.todo || []),
-      ...(tasksRes.columns?.inProgress || []),
-      ...(tasksRes.columns?.blocked || []),
+      ...(tasksRes.data.columns?.todo || []),
+      ...(tasksRes.data.columns?.inProgress || []),
+      ...(tasksRes.data.columns?.blocked || []),
     ].map((t: any) => ({
       ...t,
       id: typeof t.id === 'string' ? parseInt(t.id, 10) : t.id,
@@ -165,22 +171,35 @@ export default function CommandCenterPage() {
     );
 
     setData({
-      alerts: alertsRes.alerts || [],
-      stats: statsRes,
+      alerts: alertsRes.data.alerts || [],
+      stats: statsRes.data,
       tasks: ahmedTasks,
-      jobs: pipelineRes.jobs || [],
-      agents: agentsRes.agents || [],
-      stages: contentRes.stages || null,
-      goals: goalsRes.goals || [],
-      dailyNotes: notesRes.notes || [],
+      jobs: pipelineRes.data.jobs || [],
+      agents: agentsRes.data.agents || [],
+      stages: contentRes.data.stages || null,
+      goals: goalsRes.data.goals || [],
+      dailyNotes: notesRes.data.notes || [],
       contentItems: [
-        ...(marketingRes.columns?.ideas || []),
-        ...(marketingRes.columns?.draft || []),
-        ...(marketingRes.columns?.review || []),
-        ...(marketingRes.columns?.scheduled || []),
-        ...(marketingRes.columns?.published || []),
+        ...(marketingRes.data.columns?.ideas || []),
+        ...(marketingRes.data.columns?.draft || []),
+        ...(marketingRes.data.columns?.review || []),
+        ...(marketingRes.data.columns?.scheduled || []),
+        ...(marketingRes.data.columns?.published || []),
       ],
     });
+
+    setErrors({
+      alerts: alertsRes.error,
+      stats: statsRes.error,
+      tasks: tasksRes.error,
+      jobs: pipelineRes.error,
+      agents: agentsRes.error,
+      content: contentRes.error,
+      goals: goalsRes.error,
+      notes: notesRes.error,
+      marketing: marketingRes.error,
+    });
+
     setLoading(false);
   }, []);
 
