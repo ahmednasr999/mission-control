@@ -9,7 +9,6 @@ import path from 'path';
 import fs from 'fs';
 import {
   ParsedTask,
-  ParsedJobPipeline,
   ParsedContentPipeline,
   ParsedGoal,
   ParsedMemoryHighlight,
@@ -36,19 +35,8 @@ export function getDb(): Database.Database {
 
 function initSchema(db: Database.Database): void {
   db.exec(`
-    CREATE TABLE IF NOT EXISTS job_pipeline (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      company TEXT,
-      role TEXT,
-      location TEXT,
-      link TEXT,
-      jd_status TEXT,
-      cv_status TEXT,
-      status TEXT,
-      ats_score INTEGER,
-      applied_date TEXT,
-      updatedAt TEXT
-    );
+    -- job_pipeline table removed — canonical source is now GOALS.md
+    -- Mission Control reads directly from GOALS.md for interview pipeline
 
     CREATE TABLE IF NOT EXISTS content_pipeline (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -164,39 +152,6 @@ export function writeTasks(tasks: ParsedTask[]): number {
       updateStmt.run(task.status, task.priority, task.description, task.title);
     } else {
       upsert.run(task.title, task.description, 'NASR', task.status, task.priority, task.category, now);
-      count++;
-    }
-  }
-
-  return count;
-}
-
-/**
- * Write job pipeline entries from GOALS.md
- * Strategy: Upsert by (company, role) composite key
- */
-export function writeJobPipeline(jobs: ParsedJobPipeline[]): number {
-  const db = getDb();
-  const now = cairoNow();
-  let count = 0;
-
-  const existing = db.prepare(`SELECT id FROM job_pipeline WHERE company = ? AND role = ?`);
-  const insert = db.prepare(`
-    INSERT INTO job_pipeline (company, role, location, link, jd_status, cv_status, status, ats_score, applied_date, updatedAt)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `);
-  const update = db.prepare(`
-    UPDATE job_pipeline
-    SET location = ?, link = ?, jd_status = ?, cv_status = ?, status = ?, ats_score = ?, applied_date = ?, updatedAt = ?
-    WHERE company = ? AND role = ?
-  `);
-
-  for (const job of jobs) {
-    const found = existing.get(job.company, job.role) as any;
-    if (found) {
-      update.run(job.location, job.link, job.jd_status, job.cv_status, job.status, job.ats_score, job.applied_date || null, now, job.company, job.role);
-    } else {
-      insert.run(job.company, job.role, job.location, job.link, job.jd_status, job.cv_status, job.status, job.ats_score, job.applied_date || null, now);
       count++;
     }
   }
@@ -351,7 +306,7 @@ export function writeCVHistory(entries: ParsedCVHistory[]): number {
 
 export function getRowCounts(): Record<string, number> {
   const db = getDb();
-  const tables = ['job_pipeline', 'content_pipeline', 'goals', 'memory_highlights', 'daily_notes', 'tasks', 'cv_history', 'sync_log'];
+  const tables = ['content_pipeline', 'goals', 'memory_highlights', 'daily_notes', 'tasks', 'cv_history', 'sync_log'];
   const counts: Record<string, number> = {};
 
   for (const table of tables) {

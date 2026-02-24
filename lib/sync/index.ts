@@ -16,8 +16,6 @@ import path from 'path';
 import os from 'os';
 import {
   parseActiveTasks,
-  parseJobPipeline,
-  parseJobApplicationTracker,
   parseContentPipeline,
   parseGoals,
   parseMemoryHighlights,
@@ -26,7 +24,6 @@ import {
 } from './parser';
 import {
   writeTasks,
-  writeJobPipeline,
   writeContentPipeline,
   writeGoals,
   writeMemoryHighlights,
@@ -209,23 +206,19 @@ export async function syncFile(filePath: string): Promise<number> {
       return rows;
     }
 
-    // job-application-tracker.md → job_pipeline (consolidated tracker)
+    // job-application-tracker.md — legacy file, skipped
+    // (canonical source is now GOALS.md, read directly by Mission Control)
     if (fileName === 'job-application-tracker.md') {
-      const parsed = parseJobApplicationTracker(content);
-      rows = writeJobPipeline(parsed);
-      logSync(fileName, 'ok', rows);
-      return rows;
+      console.log('[sync] job-application-tracker.md skipped — use GOALS.md instead');
+      logSync(fileName, 'skipped', 0, 'Use GOALS.md instead');
+      return 0;
     }
 
-    // GOALS.md → goals + job_pipeline
+    // GOALS.md → goals only (job pipeline now read directly by API)
     if (fileName === 'GOALS.md') {
       const parsedGoals = parseGoals(content);
-      const goalsRows = writeGoals(parsedGoals);
-
-      const parsedJobs = parseJobPipeline(content);
-      const jobRows = writeJobPipeline(parsedJobs);
-
-      rows = goalsRows + jobRows;
+      rows = writeGoals(parsedGoals);
+      // Note: job pipeline is NOT synced to DB — Mission Control reads GOALS.md directly
       logSync(fileName, 'ok', rows);
       return rows;
     }
@@ -246,12 +239,12 @@ export async function syncFile(filePath: string): Promise<number> {
       return rows;
     }
 
-    // job-pipeline.md → job_pipeline (if it exists as a standalone file)
+    // job-pipeline.md — legacy file, skipped
+    // (canonical source is now GOALS.md, read directly by Mission Control)
     if (fileName === 'job-pipeline.md') {
-      const parsed = parseJobPipeline(content);
-      rows = writeJobPipeline(parsed);
-      logSync(fileName, 'ok', rows);
-      return rows;
+      console.log('[sync] job-pipeline.md skipped — use GOALS.md instead');
+      logSync(fileName, 'skipped', 0, 'Use GOALS.md instead');
+      return 0;
     }
 
     console.warn(`[sync] Unknown file type, skipping: ${fileName}`);

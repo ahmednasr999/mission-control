@@ -63,20 +63,20 @@ function parseJobsFromGoals(): Job[] {
 }
 
 export async function GET() {
-  // Try DB first
-  const dbJobs = getActiveJobs(4);
+  // PRIMARY: Read from GOALS.md (canonical source of truth)
+  // Falls back to DB only if GOALS.md is empty
+  let jobs: Job[] = parseJobsFromGoals();
 
-  if (dbJobs.length > 0) {
-    const jobs: Job[] = dbJobs.map((j) => ({
+  if (jobs.length === 0) {
+    // Fallback: try DB if GOALS.md is empty
+    const dbJobs = getActiveJobs(4);
+    jobs = dbJobs.map((j) => ({
       company: j.company || "Unknown",
       role: j.role || "Unknown",
       status: j.status || "Applied",
       atsScore: j.ats_score,
     }));
-    return NextResponse.json({ jobs });
   }
 
-  // Fallback: parse GOALS.md
-  const fallbackJobs = parseJobsFromGoals();
-  return NextResponse.json({ jobs: fallbackJobs });
+  return NextResponse.json({ jobs });
 }

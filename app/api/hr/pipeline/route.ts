@@ -1,6 +1,7 @@
-// DATA SOURCE: SQLite DB (primary), markdown fallback (GOALS.md)
-// Canonical source: /workspace/GOALS.md "Active Job Pipeline" table
-// DB populated by sync engine; markdown fallback used when DB is empty
+// DATA SOURCE: GOALS.md (canonical source of truth)
+// Mission Control reads directly from GOALS.md
+// Single source: /workspace/GOALS.md "Active Job Pipeline" table
+// Ensures instant sync: update GOALS.md in Telegram → immediately reflected in Mission Control
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -114,11 +115,15 @@ function parseJobsFromGoals(): KanbanJob[] {
 
 export async function GET() {
   try {
-    const rows = getAllPipelineJobs();
-
-    const allJobs: KanbanJob[] = rows.length > 0
-      ? rows.map(rowToKanbanJob)
-      : parseJobsFromGoals();
+    // PRIMARY: Read from GOALS.md (canonical source of truth)
+    // Falls back to SQLite only if GOALS.md parse fails
+    let allJobs: KanbanJob[] = parseJobsFromGoals();
+    
+    if (allJobs.length === 0) {
+      // Fallback: try SQLite if GOALS.md is empty
+      const rows = getAllPipelineJobs();
+      allJobs = rows.map(rowToKanbanJob);
+    }
 
     // Group into columns
     const columns: Record<string, KanbanJob[]> = {
