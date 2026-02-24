@@ -20,11 +20,11 @@ const COLUMNS: {
   label: string;
   dotColor: string;
 }[] = [
-  { key: "ideas",     label: "Ideas",     dotColor: "#3B82F6" },
-  { key: "draft",     label: "Draft",     dotColor: "#8B5CF6" },
-  { key: "review",    label: "Review",    dotColor: "#F59E0B" },
-  { key: "scheduled", label: "Scheduled", dotColor: "#22D3EE" },
-  { key: "published", label: "Published", dotColor: "#34D399" },
+  { key: "ideas",     label: "Ideas",     dotColor: "#8888A0" },
+  { key: "draft",     label: "Draft",     dotColor: "#D97706" },
+  { key: "review",    label: "Review",    dotColor: "#7C3AED" },
+  { key: "scheduled", label: "This Week", dotColor: "#F59E0B" },
+  { key: "published",  label: "Done",      dotColor: "#059669" },
 ];
 
 function EmptyColumn({ label }: { label: string }) {
@@ -47,6 +47,7 @@ export default function MarketingKanban() {
   const [data, setData] = useState<PipelineResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetch("/api/marketing/pipeline")
@@ -107,6 +108,47 @@ export default function MarketingKanban() {
           </span>
         )}
       </CardHeader>
+
+      {/* Search bar */}
+      <div style={{ padding: "12px 20px", borderBottom: "1px solid #1E2D45" }}>
+        <div style={{ position: "relative" }}>
+          <input
+            type="text"
+            placeholder="Search content..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              background: "#080C16",
+              border: "1px solid #1E2D45",
+              borderRadius: "6px",
+              padding: "8px 12px 8px 32px",
+              fontSize: "12px",
+              color: "#F0F0F5",
+              width: "100%",
+              maxWidth: "240px",
+              outline: "none",
+            }}
+          />
+          <span style={{ position: "absolute", left: "10px", top: "8px", fontSize: "12px", color: "#6B7280" }}>🔍</span>
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              style={{
+                position: "absolute",
+                right: "8px",
+                top: "8px",
+                background: "none",
+                border: "none",
+                color: "#6B7280",
+                cursor: "pointer",
+                fontSize: "10px",
+              }}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      </div>
       <CardContent className="p-0">
         {loading ? (
           <div
@@ -151,7 +193,15 @@ export default function MarketingKanban() {
               }
             `}</style>
             {COLUMNS.map((col, idx) => {
-              const items = data?.columns[col.key] ?? [];
+              let items = data?.columns[col.key] ?? [];
+              // Filter by search query
+              if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                items = items.filter((item) =>
+                  (item.title || "").toLowerCase().includes(q) ||
+                  (item.pillar || "").toLowerCase().includes(q)
+                );
+              }
               return (
                 <div
                   key={col.key}
