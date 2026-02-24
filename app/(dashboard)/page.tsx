@@ -156,7 +156,7 @@ export default function CommandCenterPage() {
     ].map((t: any) => ({
       ...t,
       id: typeof t.id === 'string' ? parseInt(t.id, 10) : t.id,
-      priority: t.priority ? t.priority.charAt(0).toUpperCase() + t.priority.slice(1).toLowerCase() : 'Medium',
+      priority: (t.priority && t.priority.length > 0) ? t.priority.charAt(0).toUpperCase() + t.priority.slice(1).toLowerCase() : 'Medium',
     }));
     const ahmedTasks = allTasks.filter(
       (t: Task) =>
@@ -277,7 +277,7 @@ export default function CommandCenterPage() {
               };
               const status = job.status || "Applied";
               const colors = statusColors[status] || { bg: "rgba(136, 136, 160, 0.15)", text: "#8888A0" };
-              const jobId = job.company.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+              const jobId = (job.company || "unknown").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
               return (
                 <Link 
                   key={i} 
@@ -345,7 +345,7 @@ export default function CommandCenterPage() {
             <div style={{ textAlign: "center", color: "#A0A0B0", padding: "32px 0" }}>No agents configured</div>
           ) : (
             data.agents.map((agent, i) => {
-              const agentId = agent.agentId || (agent.name === "NASR" ? "main" : agent.name.toLowerCase().replace(/\s+/g, "-"));
+              const agentId = agent.agentId || (agent.name === "NASR" ? "main" : (agent.name || "unknown").toLowerCase().replace(/\s+/g, "-"));
               return (
                 <Link 
                   key={agent.name} 
@@ -377,7 +377,7 @@ export default function CommandCenterPage() {
       <SlidePanel isOpen={activePanel === "content"} onClose={() => setActivePanel(null)} title="Content Pipeline">
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {["ideas", "draft", "review", "published"].map((stage) => {
-            const items = data.contentItems.filter(item => item.stage.toLowerCase() === stage);
+            const items = data.contentItems.filter(item => (item.stage || "").toLowerCase() === stage);
             const stageColors: Record<string, { color: string; bg: string }> = {
               ideas: { color: "#8888A0", bg: "rgba(136, 136, 160, 0.15)" },
               draft: { color: "#D97706", bg: "rgba(217, 119, 6, 0.15)" },

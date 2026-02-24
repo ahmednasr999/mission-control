@@ -42,8 +42,8 @@ const PILLAR_COLORS: Record<string, string> = {
   leadership: "#EC4899",
 };
 
-function getPillarColor(pillar: string): string {
-  const key = pillar.toLowerCase().trim();
+function getPillarColor(pillar?: string): string {
+  const key = (pillar || "").toLowerCase().trim();
   for (const [k, v] of Object.entries(PILLAR_COLORS)) {
     if (key.includes(k)) return v;
   }

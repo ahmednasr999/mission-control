@@ -163,7 +163,11 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
   const [jobId, setJobId] = useState<string>("");
 
   useEffect(() => {
-    params.then((p) => setJobId(p.jobId));
+    async function loadParams() {
+      const resolved = await params;
+      setJobId(resolved.jobId);
+    }
+    loadParams();
   }, [params]);
 
   useEffect(() => {

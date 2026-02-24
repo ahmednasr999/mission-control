@@ -56,13 +56,13 @@ const ASSIGNEE_DISPLAY: Record<string, string> = {
   lotfi: "Content Creator",
 };
 
-function getAssigneeDisplay(name: string): string {
-  const key = name.toLowerCase().trim();
-  return ASSIGNEE_DISPLAY[key] || name;
+function getAssigneeDisplay(name?: string): string {
+  const key = (name || "").toLowerCase().trim();
+  return ASSIGNEE_DISPLAY[key] || name || "Unassigned";
 }
 
-function getAssigneeColor(name: string): { text: string; bg: string } {
-  const key = name.toLowerCase().trim();
+function getAssigneeColor(name?: string): { text: string; bg: string } {
+  const key = (name || "").toLowerCase().trim();
   for (const [k, v] of Object.entries(ASSIGNEE_COLORS)) {
     if (key.includes(k)) return v;
   }
@@ -105,8 +105,8 @@ function StatusBadge({ status }: { status?: string }) {
   );
 }
 
-function PriorityBadge({ priority }: { priority: string }) {
-  const p = priority.toLowerCase();
+function PriorityBadge({ priority }: { priority?: string }) {
+  const p = (priority || "medium").toLowerCase();
   const colors = PRIORITY_COLORS[p] || PRIORITY_COLORS["medium"];
   const labels: Record<string, string> = { high: "High", medium: "Medium", low: "Low" };
   return (
