@@ -7,6 +7,7 @@ interface ContentStages {
   ideas: number;
   draft: number;
   review: number;
+  scheduled?: number;
   published: number;
 }
 
@@ -85,12 +86,14 @@ const STAGES = [
   { key: "ideas" as keyof ContentStages, label: "Ideas", color: "#8888A0", bg: "rgba(136, 136, 160, 0.12)" },
   { key: "draft" as keyof ContentStages, label: "Draft", color: "#D97706", bg: "rgba(217, 119, 6, 0.12)" },
   { key: "review" as keyof ContentStages, label: "Review", color: "#7C3AED", bg: "rgba(124, 58, 237, 0.12)" },
-  { key: "published" as keyof ContentStages, label: "Published", color: "#059669", bg: "rgba(5, 150, 105, 0.12)" },
+  { key: "scheduled" as keyof ContentStages, label: "This Week", color: "#F59E0B", bg: "rgba(245, 158, 11, 0.12)" },
+  { key: "published" as keyof ContentStages, label: "Done", color: "#059669", bg: "rgba(5, 150, 105, 0.12)" },
 ];
 
 export default function ContentPreview({ stages, loading, onClick }: ContentPreviewProps) {
-  const data = stages || { ideas: 0, draft: 0, review: 0, published: 0 };
-  const total = data.ideas + data.draft + data.review + data.published;
+  const data = stages || { ideas: 0, draft: 0, review: 0, scheduled: 0, published: 0 };
+  const total = data.ideas + data.draft + data.review + (data.scheduled || 0) + data.published;
+  const thisWeek = data.scheduled || 0;
 
   return (
     <Card 
@@ -132,7 +135,7 @@ export default function ContentPreview({ stages, loading, onClick }: ContentPrev
             <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "space-between" }}>
               {STAGES.map((stage, i) => (
                 <div key={stage.key} style={{ display: "flex", alignItems: "center", flex: 1 }}>
-                  <StageColumn label={stage.label} count={data[stage.key]} color={stage.color} bg={stage.bg} />
+                  <StageColumn label={stage.label} count={data[stage.key] || 0} color={stage.color} bg={stage.bg} />
                   {i < STAGES.length - 1 && (
                     <div className="arrow-fade" style={{ fontSize: "16px", color: "#1E2D45", flexShrink: 0, margin: "0 -8px", paddingBottom: "24px", animationDelay: `${i * 100 + 200}ms` }}>
                       →
@@ -143,9 +146,14 @@ export default function ContentPreview({ stages, loading, onClick }: ContentPrev
             </div>
 
             <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #1E2D45", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: "15px", color: "#8888A0", fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)", fontWeight: 500 }}>
-                Total pieces
-              </span>
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                <span style={{ fontSize: "13px", color: "#8888A0", fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)", fontWeight: 500 }}>
+                  Total pieces
+                </span>
+                <span style={{ fontSize: "11px", color: "#FBBF24", fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)" }}>
+                  This week: {thisWeek}
+                </span>
+              </div>
               <span style={{ fontSize: "18px", fontWeight: 800, fontFamily: "var(--font-syne, Syne, sans-serif)", color: "#F0F0F5" }}>
                 {total}
               </span>

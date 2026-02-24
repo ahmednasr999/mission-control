@@ -152,6 +152,7 @@ export function getContentStageCounts(): {
   ideas: number;
   draft: number;
   review: number;
+  scheduled: number;
   published: number;
 } {
   try {
@@ -160,17 +161,18 @@ export function getContentStageCounts(): {
       .prepare(`SELECT stage, COUNT(*) as cnt FROM content_pipeline GROUP BY stage`)
       .all() as { stage: string; cnt: number }[];
 
-    const result = { ideas: 0, draft: 0, review: 0, published: 0 };
+    const result = { ideas: 0, draft: 0, review: 0, scheduled: 0, published: 0 };
     for (const r of rows) {
       const stage = (r.stage || "").toLowerCase();
       if (stage === "ideas" || stage === "idea") result.ideas += r.cnt;
       else if (stage === "draft") result.draft += r.cnt;
       else if (stage === "review") result.review += r.cnt;
+      else if (stage === "scheduled") result.scheduled += r.cnt;
       else if (stage === "published") result.published += r.cnt;
     }
     return result;
   } catch {
-    return { ideas: 0, draft: 0, review: 0, published: 0 };
+    return { ideas: 0, draft: 0, review: 0, scheduled: 0, published: 0 };
   }
 }
 
