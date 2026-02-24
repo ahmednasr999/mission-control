@@ -395,10 +395,23 @@ export default function CommandCenterPage() {
                   <div style={{ fontSize: "12px", color: "#666", paddingLeft: "16px" }}>No items</div>
                 ) : (
                   items.slice(0, 3).map((item, i) => (
-                    <div key={item.id || i} style={{ marginLeft: "16px", padding: "8px 10px", background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "6px", marginBottom: "6px" }}>
+                    <Link
+                      key={item.id || i}
+                      href={`/marketing/${item.id}`}
+                      style={{
+                        display: "block",
+                        marginLeft: "16px",
+                        padding: "8px 10px",
+                        background: "#0D1220",
+                        border: "1px solid #1E2D45",
+                        borderRadius: "6px",
+                        marginBottom: "6px",
+                        textDecoration: "none",
+                      }}
+                    >
                       <div style={{ fontSize: "13px", color: "#F0F0F5", marginBottom: "4px" }}>{item.title}</div>
                       <Badge style={{ fontSize: "9px", background: colors.bg, color: colors.color, borderRadius: "3px" }}>{item.pillar}</Badge>
-                    </div>
+                    </Link>
                   ))
                 )}
               </div>

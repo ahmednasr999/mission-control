@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { ContentItem } from "@/lib/marketing-db";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -102,54 +103,56 @@ export default function ContentCard({
   const [hovered, setHovered] = useState(false);
 
   return (
-    <Card
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className={`bg-slate-900/60 border-slate-700/50 hover:border-slate-600 transition-all mb-2 cursor-default ${dimmed ? "opacity-55" : ""}`}
-      style={{
-        borderColor: hovered ? `${accentColor}55` : undefined,
-        transform: hovered ? "translateY(-2px)" : "translateY(0)",
-        boxShadow: hovered ? `0 4px 20px ${accentColor}20, 0 0 0 1px ${accentColor}25` : "none",
-      }}
-    >
-      <CardContent className="p-3">
-        {/* Title */}
-        <div
-          style={{
-            fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            fontSize: "14px",
-            fontWeight: 700,
-            color: "#F0F0F5",
-            lineHeight: 1.35,
-            marginBottom: "8px",
-          }}
-        >
-          {item.title}
-        </div>
-
-        {/* Pillar + Assignee row */}
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
-          <PillarTag pillar={item.pillar} />
-          {item.assignee && <AssigneeBadge name={item.assignee} />}
-        </div>
-
-        {/* Performance Notes */}
-        {item.performance && (
+    <Link href={`/marketing/${item.id}`} style={{ textDecoration: "none", display: "block" }}>
+      <Card
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className={`bg-slate-900/60 border-slate-700/50 hover:border-slate-600 transition-all mb-2 cursor-pointer ${dimmed ? "opacity-55" : ""}`}
+        style={{
+          borderColor: hovered ? `${accentColor}55` : undefined,
+          transform: hovered ? "translateY(-2px)" : "translateY(0)",
+          boxShadow: hovered ? `0 4px 20px ${accentColor}20, 0 0 0 1px ${accentColor}25` : "none",
+        }}
+      >
+        <CardContent className="p-3">
+          {/* Title */}
           <div
             style={{
-              fontSize: "12px",
-              color: "#A0A0B0",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              lineHeight: 1.4,
+              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+              fontSize: "14px",
+              fontWeight: 700,
+              color: "#F0F0F5",
+              lineHeight: 1.35,
+              marginBottom: "8px",
             }}
-            title={item.performance}
           >
-            {item.performance}
+            {item.title}
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {/* Pillar + Assignee row */}
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "8px" }}>
+            <PillarTag pillar={item.pillar} />
+            {item.assignee && <AssigneeBadge name={item.assignee} />}
+          </div>
+
+          {/* Performance Notes */}
+          {item.performance && (
+            <div
+              style={{
+                fontSize: "12px",
+                color: "#A0A0B0",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                lineHeight: 1.4,
+              }}
+              title={item.performance}
+            >
+              {item.performance}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
