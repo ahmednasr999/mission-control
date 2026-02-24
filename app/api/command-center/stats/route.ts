@@ -1,27 +1,50 @@
-// DATA SOURCE: SQLite DB (primary) — populated by sync engine from markdown files
-// Canonical source: GOALS.md (jobs/goals), content-pipeline.md (content), active-tasks.md (tasks)
-// If DB is empty after sync, stats will show zeros. Trigger a sync to refresh.
+// DATA SOURCE: Mixed — GOALS.md for jobs, SQLite for tasks/content/ats
 import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+import os from "os";
 import {
-  getActiveJobCount,
   getAvgAtsScore,
   getContentDueCount,
   getOpenTaskCount,
-  getRadarJobCount,
 } from "@/lib/command-center-db";
 
+const GOALS_PATH = path.join(os.homedir(), ".openclaw/workspace/GOALS.md");
+
+function getActiveJobsFromGoals(): number {
+  try {
+    const content = fs.readFileSync(GOALS_PATH, "utf-8");
+    const lines = content.split("\n");
+    let inPipeline = false;
+    let count = 0;
+    for (const line of lines) {
+      if (line.includes("Active Job Pipeline") || line.includes("Job Pipeline")) inPipeline = true;
+      if (inPipeline && line.startsWith("##") && !line.includes("Pipeline")) inPipeline = false;
+      if (inPipeline && line.startsWith("|") && !line.includes("---") && !line.includes("Company")) {
+        const cols = line.split("|").map(c => c.trim()).filter(Boolean);
+        if (cols.length >= 2) {
+          const status = (cols[cols.length - 1] || "").toLowerCase();
+          if (!status.includes("closed") && !status.includes("rejected")) count++;
+        }
+      }
+    }
+    return count;
+  } catch { return 0; }
+}
+
+export const dynamic = "force-dynamic";
+
 export async function GET() {
-  const activeJobs = getActiveJobCount();
+  const activeJobs = getActiveJobsFromGoals();
   const avgAts = getAvgAtsScore();
   const contentDue = getContentDueCount();
   const openTasks = getOpenTaskCount();
-  const radarJobs = getRadarJobCount();
 
   return NextResponse.json({
     activeJobs,
     avgAts,
     contentDue,
     openTasks,
-    radarJobs,
+    radarJobs: 0,
   });
 }

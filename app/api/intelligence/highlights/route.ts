@@ -46,7 +46,7 @@ export async function GET(): Promise<NextResponse<HighlightsResponse>> {
     const priorities = prioritiesSection
       .split("\n")
       .filter(l => /^[\d\-*]/.test(l.trim()))
-      .map(l => l.replace(/^[\d.)\-*]\s*/, "").replace(/\*\*/g, "").trim())
+      .map(l => l.replace(/^[\d.)\-*]+\s*/, "").replace(/\*\*/g, "").replace(/^\.\s*/, "").replace(/\*$/, "").trim())
       .filter(Boolean)
       .slice(0, 6);
 

@@ -23,7 +23,7 @@ const HARDCODED_ADOPT: Tool[] = [
   { name: "GitHub CLI", description: "Version control & workspace backup (2 repos)", category: "DevOps", evaluatedAt: "Jan 2026" },
   { name: "Brave Search", description: "Primary web search — fast, privacy-first", category: "Research", evaluatedAt: "Feb 2026" },
   { name: "Memory System", description: "Markdown-based long-term memory with semantic search", category: "AI", evaluatedAt: "Feb 2026" },
-  { name: "ATS Engine (ADHAM)", description: "5-step CV optimizer — 90+ ATS scores proven", category: "HR", evaluatedAt: "Feb 2026" },
+  { name: "CV Optimizer", description: "5-step CV optimizer — 90+ ATS scores proven", category: "HR", evaluatedAt: "Feb 2026" },
   { name: "better-sqlite3", description: "Local SQLite — fast, zero-config persistent storage", category: "Database", evaluatedAt: "Feb 2026" },
 ];
 
