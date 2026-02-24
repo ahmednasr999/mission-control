@@ -103,6 +103,32 @@ function rowToTask(row: any): OpsTask {
   };
 }
 
+/** Get a single task by id */
+export function getTaskById(id: string | number): OpsTask | null {
+  try {
+    const db = getDb();
+    const row = db.prepare(
+      `SELECT id, title, description, assignee, status, priority, category, dueDate, completedDate, createdAt, blocker FROM tasks WHERE id = ?`
+    ).get(id) as any;
+    return row ? rowToTask(row) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Get all tasks as an array */
+export function getAllTasks(): OpsTask[] {
+  try {
+    const db = getDb();
+    const rows = db.prepare(
+      `SELECT id, title, description, assignee, status, priority, category, dueDate, completedDate, createdAt, blocker FROM tasks ORDER BY createdAt DESC`
+    ).all() as any[];
+    return rows.map(rowToTask);
+  } catch {
+    return [];
+  }
+}
+
 /** Get all tasks grouped by kanban column */
 export function getAllTaskColumns(): OpsColumns {
   try {

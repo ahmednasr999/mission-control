@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import type { OpsTask } from "@/lib/ops-db";
 
@@ -163,15 +164,24 @@ interface OpsTaskCardProps {
 }
 
 export default function OpsTaskCard({ task, dimmed = false, onClick }: OpsTaskCardProps) {
+  const router = useRouter();
   const [hovered, setHovered] = useState(false);
   const overdue = isOverdue(task.dueDate);
   const priorityColor = PRIORITY_COLORS[task.priority] ?? "#8888A0";
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(task);
+    } else {
+      router.push(`/ops/${task.id}`);
+    }
+  };
 
   return (
     <Card
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={() => onClick?.(task)}
+      onClick={handleClick}
       className={`bg-slate-900/60 border-slate-700/50 hover:border-slate-600 transition-all mb-2 ${dimmed ? "opacity-60" : ""}`}
       style={{
         borderColor: hovered ? `${priorityColor}50` : undefined,
@@ -179,7 +189,7 @@ export default function OpsTaskCard({ task, dimmed = false, onClick }: OpsTaskCa
         boxShadow: hovered
           ? `0 4px 16px ${priorityColor}18, 0 0 0 1px ${priorityColor}22`
           : "none",
-        cursor: onClick ? "pointer" : "default",
+        cursor: "pointer",
       }}
     >
       <CardContent className="p-3">

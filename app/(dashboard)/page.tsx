@@ -321,13 +321,13 @@ export default function CommandCenterPage() {
               const order = { High: 0, Medium: 1, Low: 2 };
               return (order[a.priority as keyof typeof order] ?? 1) - (order[b.priority as keyof typeof order] ?? 1);
             }).map((task, i) => (
-              <div key={task.id || i} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px 12px", background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "6px" }}>
+              <Link key={task.id || i} href={`/ops/${task.id}`} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px 12px", background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "6px", textDecoration: "none" }}>
                 <span style={{ fontSize: "12px" }}>{task.priority === "High" ? "🔴" : task.priority === "Medium" ? "🟡" : "🟢"}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: "13px", color: "#F0F0F5", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{task.title}</div>
                   <div style={{ fontSize: "11px", color: "#A0A0B0" }}>{task.assignee} • {task.dueDate || "No due date"}</div>
                 </div>
-              </div>
+              </Link>
             ))
           )}
           <Link href="/ops" style={{ display: "block", textAlign: "center", marginTop: "8px", padding: "10px", background: "#1E2D45", borderRadius: "6px", color: "#EC4899", textDecoration: "none", fontSize: "13px", fontWeight: 600 }}>
