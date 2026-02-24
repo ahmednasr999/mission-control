@@ -219,9 +219,9 @@ export function getOpenTaskCount(): number {
 
 export interface MemoryHighlightRow {
   id: number;
-  title: string | null;
+  section: string | null;
   content: string | null;
-  category: string | null;
+  file_source: string | null;
   updatedAt: string | null;
 }
 
@@ -230,7 +230,7 @@ export function getMemoryHighlights(): MemoryHighlightRow[] {
     const db = getDb();
     return db
       .prepare(
-        `SELECT id, title, content, category, updatedAt FROM memory_highlights ORDER BY updatedAt DESC LIMIT 20`
+        `SELECT id, section, content, file_source, updatedAt FROM memory_highlights ORDER BY updatedAt DESC LIMIT 20`
       )
       .all() as MemoryHighlightRow[];
   } catch {

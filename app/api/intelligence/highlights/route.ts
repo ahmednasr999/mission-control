@@ -24,7 +24,7 @@ export async function GET(): Promise<NextResponse<HighlightsResponse>> {
     const agents: Agent[] = [];
 
     for (const h of highlights) {
-      const section = (h.category || h.title || "") as string;
+      const section = (h.section || "") as string;
       const content = (h.content || "") as string;
       
       if (section.includes("Current Strategic Priorities") || section.includes("🎯")) {
