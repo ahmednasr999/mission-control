@@ -78,6 +78,7 @@ function StageColumn({ label, count, color, bg }: StageColumnProps) {
 interface ContentPreviewProps {
   stages: ContentStages | null;
   loading?: boolean;
+  onClick?: () => void;
 }
 
 const STAGES = [
@@ -87,12 +88,16 @@ const STAGES = [
   { key: "published" as keyof ContentStages, label: "Published", color: "#059669", bg: "rgba(5, 150, 105, 0.12)" },
 ];
 
-export default function ContentPreview({ stages, loading }: ContentPreviewProps) {
+export default function ContentPreview({ stages, loading, onClick }: ContentPreviewProps) {
   const data = stages || { ideas: 0, draft: 0, review: 0, published: 0 };
   const total = data.ideas + data.draft + data.review + data.published;
 
   return (
-    <Card className="bg-[#0D1220] border-[#1E2D45] rounded-[10px] overflow-hidden">
+    <Card 
+      className="bg-[#0D1220] border-[#1E2D45] rounded-[10px] overflow-hidden"
+      onClick={onClick}
+      style={{ cursor: onClick ? "pointer" : undefined }}
+    >
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }

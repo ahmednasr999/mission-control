@@ -18,6 +18,7 @@ interface ActivityFeedProps {
   jobs: any[];
   agents: any[];
   loading?: boolean;
+  onAgentClick?: () => void;
 }
 
 function getTimeAgo(timestamp: string | null): string {
@@ -43,7 +44,7 @@ const TYPE_STYLES: Record<string, { bg: string; border: string; icon: string }> 
   agent: { bg: "rgba(251, 191, 36, 0.08)", border: "rgba(251, 191, 36, 0.2)", icon: "#FBBF24" },
 };
 
-export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityFeedProps) {
+export default function ActivityFeed({ tasks, jobs, agents, loading, onAgentClick }: ActivityFeedProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const activities: Activity[] = [];
@@ -109,7 +110,11 @@ export default function ActivityFeed({ tasks, jobs, agents, loading }: ActivityF
   }
 
   return (
-    <Card className="bg-[#0D1220] border-[#1E2D45] rounded-[10px]" style={{ padding: "12px", height: "100%", display: "flex", flexDirection: "column" }}>
+    <Card 
+      className="bg-[#0D1220] border-[#1E2D45] rounded-[10px]" 
+      style={{ padding: "12px", height: "100%", display: "flex", flexDirection: "column", cursor: onAgentClick ? "pointer" : undefined }}
+      onClick={onAgentClick}
+    >
       <style>{`
         @keyframes slideInRight {
           from { opacity: 0; transform: translateX(10px); }

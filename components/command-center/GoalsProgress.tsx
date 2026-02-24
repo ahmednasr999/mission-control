@@ -70,16 +70,21 @@ function ProgressBar({ progress, status }: { progress: number; status: string })
 interface GoalsProgressProps {
   goals: Goal[];
   loading?: boolean;
+  onClick?: () => void;
 }
 
-export default function GoalsProgress({ goals, loading }: GoalsProgressProps) {
+export default function GoalsProgress({ goals, loading, onClick }: GoalsProgressProps) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   const completedCount = goals?.filter(g => g.status === "complete").length || 0;
   const totalCount = goals?.length || 0;
 
   return (
-    <Card className="bg-[#0D1220] border-[#1E2D45] rounded-[10px] overflow-hidden">
+    <Card 
+      className="bg-[#0D1220] border-[#1E2D45] rounded-[10px] overflow-hidden"
+      onClick={onClick}
+      style={{ cursor: onClick ? "pointer" : undefined }}
+    >
       <style>{`
         @keyframes slideInUp {
           from { opacity: 0; transform: translateY(10px); }

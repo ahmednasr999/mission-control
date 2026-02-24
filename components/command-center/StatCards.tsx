@@ -27,6 +27,7 @@ interface StatCardProps {
   showDetails: boolean;
   details?: string;
   delay?: number;
+  onClick?: () => void;
 }
 
 function TrendBadge({ trend }: { trend: TrendDirection }) {
@@ -61,7 +62,7 @@ function TrendBadge({ trend }: { trend: TrendDirection }) {
   );
 }
 
-function StatCard({ value, label, color, glow, trend, showDetails, details }: StatCardProps) {
+function StatCard({ value, label, color, glow, trend, showDetails, details, onClick }: StatCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -69,8 +70,10 @@ function StatCard({ value, label, color, glow, trend, showDetails, details }: St
       className={`bg-slate-900/60 border-slate-700/50 hover:border-slate-600 transition-all`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
       style={{
         borderColor: isHovered ? `${color}60` : undefined,
+        cursor: onClick ? "pointer" : undefined,
       }}
     >
       <CardContent className="p-4">
@@ -133,9 +136,10 @@ function StatCard({ value, label, color, glow, trend, showDetails, details }: St
 interface StatCardsProps {
   stats: Stats | null;
   loading?: boolean;
+  onStatClick?: (stat: string) => void;
 }
 
-export default function StatCards({ stats }: StatCardsProps) {
+export default function StatCards({ stats, loading, onStatClick }: StatCardsProps) {
   if (!stats) {
     return (
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
@@ -151,7 +155,7 @@ export default function StatCards({ stats }: StatCardsProps) {
     );
   }
   
-  const statItems: Array<{ value: string | number; label: string; color: string; glow: string; trend: TrendDirection; details?: string }> = [
+  const statItems: Array<{ value: string | number; label: string; color: string; glow: string; trend: TrendDirection; details?: string; statKey?: string }> = [
     {
       value: stats.activeJobs,
       label: "Active Job Leads",
@@ -167,6 +171,7 @@ export default function StatCards({ stats }: StatCardsProps) {
       details: stats.prevActiveJobs !== null && stats.prevActiveJobs !== undefined
         ? `${Math.abs(stats.activeJobs - stats.prevActiveJobs)} vs last check`
         : undefined,
+      statKey: "activeJobs",
     },
     {
       value: stats.avgAts !== null ? `${stats.avgAts}%` : "—",
@@ -183,6 +188,7 @@ export default function StatCards({ stats }: StatCardsProps) {
       details: stats.prevAvgAts !== null && stats.prevAvgAts !== undefined && stats.avgAts
         ? `${Math.abs(stats.avgAts - stats.prevAvgAts).toFixed(1)}pp vs last check`
         : undefined,
+      statKey: "avgAts",
     },
     {
       value: stats.contentDue,
@@ -199,6 +205,7 @@ export default function StatCards({ stats }: StatCardsProps) {
       details: stats.prevContentDue !== null && stats.prevContentDue !== undefined
         ? `${Math.abs(stats.contentDue - stats.prevContentDue)} vs last check`
         : undefined,
+      statKey: "contentDue",
     },
     {
       value: stats.openTasks,
@@ -215,6 +222,7 @@ export default function StatCards({ stats }: StatCardsProps) {
       details: stats.prevOpenTasks !== null && stats.prevOpenTasks !== undefined
         ? `${Math.abs(stats.openTasks - stats.prevOpenTasks)} vs last check`
         : undefined,
+      statKey: "openTasks",
     },
   ];
 
@@ -236,6 +244,7 @@ export default function StatCards({ stats }: StatCardsProps) {
           showDetails={true}
           details={item.details}
           delay={idx * 0.1}
+          onClick={item.statKey && onStatClick ? () => onStatClick(item.statKey!) : undefined}
         />
       ))}
     </div>

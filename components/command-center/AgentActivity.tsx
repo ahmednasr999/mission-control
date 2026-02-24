@@ -12,11 +12,16 @@ interface Agent {
 interface AgentActivityProps {
   agents: Agent[];
   loading?: boolean;
+  onClick?: () => void;
 }
 
-export default function AgentActivity({ agents, loading }: AgentActivityProps) {
+export default function AgentActivity({ agents, loading, onClick }: AgentActivityProps) {
   return (
-    <Card className="bg-[#0D1220] border-[#1E2D45] rounded-[10px] overflow-hidden">
+    <Card 
+      className="bg-[#0D1220] border-[#1E2D45] rounded-[10px] overflow-hidden"
+      onClick={onClick}
+      style={{ cursor: onClick ? "pointer" : undefined }}
+    >
       <CardHeader className="pb-3" style={{ padding: "16px 20px 14px", borderBottom: "1px solid #1E2D45" }}>
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-bold text-[#F0F0F5]" style={{ fontFamily: "var(--font-syne, Syne, sans-serif)" }}>
