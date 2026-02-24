@@ -3,20 +3,12 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 
-interface Match {
-  line: number;
-  text: string;
-  context: string;
-}
-
-interface FileResult {
+interface QmdResult {
+  uri: string;
   file: string;
-  matches: Match[];
-}
-
-interface SearchResponse {
-  results: FileResult[];
-  totalMatches: number;
+  title: string;
+  score: string;
+  snippet: string;
 }
 
 interface SearchActionsProps {
@@ -24,30 +16,28 @@ interface SearchActionsProps {
 }
 
 export default function SearchActions({ query }: SearchActionsProps) {
-  const [data, setData] = useState<SearchResponse | null>(null);
+  const [results, setResults] = useState<QmdResult[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!query || query.trim().length < 2) {
-      setData(null);
+      setResults([]);
       return;
     }
     setLoading(true);
-    fetch(`/api/intelligence/search?q=${encodeURIComponent(query)}`)
+    fetch(`/api/qmd/search?q=${encodeURIComponent(query)}&limit=3`)
       .then((r) => r.json())
       .then((d) => {
-        setData(d);
+        setResults(d.results || []);
         setLoading(false);
       })
       .catch(() => {
-        setData(null);
+        setResults([]);
         setLoading(false);
       });
   }, [query]);
 
   if (!query || query.trim().length < 2) return null;
-
-  const hasMatches = data && data.totalMatches > 0;
 
   return (
     <Card className="mt-4" style={{ borderRadius: "10px", border: "1px solid #1E2D45", background: "#020617" }}>
@@ -88,7 +78,7 @@ export default function SearchActions({ query }: SearchActionsProps) {
           )}
         </div>
 
-        {!hasMatches && !loading && (
+        {results.length === 0 && !loading && (
           <div
             style={{
               fontSize: "11px",
@@ -96,11 +86,11 @@ export default function SearchActions({ query }: SearchActionsProps) {
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             }}
           >
-            No notes found yet for "{query}". Once you have more history on this topic, I_ll propose concrete next steps here.
+            No results found for "{query}". Try a different search term.
           </div>
         )}
 
-        {hasMatches && data && (
+        {results.length > 0 && (
           <div
             style={{
               display: "flex",
@@ -111,34 +101,54 @@ export default function SearchActions({ query }: SearchActionsProps) {
               fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
             }}
           >
-            {data.results.slice(0, 3).map((file, idx) => (
+            {results.map((result, idx) => (
               <div
                 key={idx}
                 style={{
-                  padding: "6px 8px",
+                  padding: "8px 10px",
                   borderRadius: "6px",
                   border: "1px solid #1E2D45",
-                  background: "#020617",
+                  background: "#0A0F1A",
                 }}
               >
                 <div
                   style={{
-                    marginBottom: "2px",
-                    color: "#9CA3AF",
-                    fontSize: "10px",
-                    fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    marginBottom: "4px",
                   }}
                 >
-                  {file.file}
+                  <span style={{ fontSize: "10px" }}>📄</span>
+                  <span
+                    style={{
+                      color: "#4F8EF7",
+                      fontSize: "10px",
+                      fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                    }}
+                  >
+                    {result.file}
+                  </span>
+                  <span
+                    style={{
+                      color: result.score,
+                      fontSize: "9px",
+                      fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+                      marginLeft: "auto",
+                    }}
+                  >
+                    {result.score}
+                  </span>
                 </div>
                 <div
                   style={{
                     whiteSpace: "pre-wrap",
                     lineHeight: 1.4,
                     color: "#D1D5DB",
+                    fontSize: "11px",
                   }}
                 >
-                  {file.matches[0]?.context}
+                  {result.snippet || result.title}
                 </div>
               </div>
             ))}
