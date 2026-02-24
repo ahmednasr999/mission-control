@@ -39,7 +39,7 @@ import { startWatcher, stopWatcher, MEMORY_DIR, ROOT_DIR } from './watcher';
 // ---- Constants ----
 
 const CRON_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
-const SYNC_FAILURE_ALERT_MS = 5 * 60 * 1000; // alert if no sync for 5 minutes
+const SYNC_FAILURE_ALERT_MS = 15 * 60 * 1000; // alert if no sync for 15 minutes
 
 // ---- Sync Failure Logging ----
 
