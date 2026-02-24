@@ -30,7 +30,7 @@ export default function MobileNav() {
           bottom: 0,
           left: 0,
           right: 0,
-          height: "60px",
+          height: "64px",
           background: "#0D1220",
           borderTop: "1px solid #1E2D45",
           display: "flex",
@@ -51,20 +51,27 @@ export default function MobileNav() {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: "4px",
+                justifyContent: "center",
+                gap: "2px",
                 textDecoration: "none",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                background: isActive ? "rgba(79, 142, 247, 0.12)" : "transparent",
                 color: isActive ? "#4F8EF7" : "#6B7280",
                 fontSize: "10px",
+                fontWeight: isActive ? 600 : 400,
+                transition: "all 0.2s ease",
+                minWidth: "56px",
               }}
             >
-              <span style={{ fontSize: "18px" }}>{item.icon}</span>
-              <span>{item.label}</span>
+              <span style={{ fontSize: "20px", lineHeight: 1 }}>{item.icon}</span>
+              <span style={{ fontSize: "9px", letterSpacing: "0.02em" }}>{item.label}</span>
             </Link>
           );
         })}
       </div>
       {/* Spacer to prevent content from being hidden behind nav */}
-      <div style={{ height: "70px" }} />
+      <div style={{ height: "74px" }} />
     </>
   );
 }

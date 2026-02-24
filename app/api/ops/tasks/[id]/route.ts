@@ -91,6 +91,7 @@ export async function POST(
   if (typeof body.dueDate === "string") fields.dueDate = body.dueDate || "";
   if (typeof body.category === "string") fields.category = body.category;
   if (typeof body.assignee === "string") fields.assignee = body.assignee;
+  if (typeof body.blocker === "string") fields.blocker = body.blocker;
 
   try {
     const updated = updateTask(id, fields);

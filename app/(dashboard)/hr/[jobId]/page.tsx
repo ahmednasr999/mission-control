@@ -161,6 +161,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [jobId, setJobId] = useState<string>("");
+  const [showAllNotes, setShowAllNotes] = useState(false);
 
   useEffect(() => {
     async function loadParams() {
@@ -497,13 +498,32 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
               display: "flex",
               alignItems: "center",
               gap: "8px",
+              justifyContent: "space-between",
             }}
           >
-            <Calendar size={18} color="#A0A0B0" />
-            Activity Timeline
+            <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Calendar size={18} color="#A0A0B0" />
+              Activity Timeline
+            </span>
+            {job.interviewNotes.length > 3 && (
+              <button
+                onClick={() => setShowAllNotes((v) => !v)}
+                style={{
+                  background: "transparent",
+                  border: "1px solid #1E2D45",
+                  borderRadius: "999px",
+                  padding: "4px 10px",
+                  fontSize: "11px",
+                  color: "#A0A0B0",
+                  cursor: "pointer",
+                }}
+              >
+                {showAllNotes ? "Show less" : `Show all (${job.interviewNotes.length})`}
+              </button>
+            )}
           </h2>
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            {job.interviewNotes.map((note, idx) => (
+            {(showAllNotes ? job.interviewNotes : job.interviewNotes.slice(0, 3)).map((note, idx) => (
               <div
                 key={idx}
                 style={{

@@ -151,6 +151,23 @@ export default function TaskDetailPage({ params }: { params: { taskId: string } 
   const [activityLog, setActivityLog] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [isEditingBlocker, setIsEditingBlocker] = useState(false);
+  const [blockerInput, setBlockerInput] = useState("");
+
+  const updateBlocker = (newBlocker: string) => {
+    fetch(`/api/ops/tasks/${params.taskId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ blocker: newBlocker }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (!d.error) {
+          setTask((prev) => prev ? { ...prev, blocker: newBlocker } : null);
+        }
+        setIsEditingBlocker(false);
+      });
+  };
 
   useEffect(() => {
     fetch(`/api/ops/tasks/${params.taskId}`)
@@ -220,8 +237,64 @@ export default function TaskDetailPage({ params }: { params: { taskId: string } 
             <span style={{ color: "#A0A0B0" }}>👤 {displayAssignee}</span>
             <span style={{ color: "#A0A0B0" }}>📂 {task.category}</span>
             {task.dueDate && <span style={{ color: "#F59E0B" }}>⏰ Due {formatDate(task.dueDate)}</span>}
-            {task.blocker && task.blocker.trim() && (
-              <span style={{ color: "#F87171" }}>🛑 Blocker: {task.blocker}</span>
+            {isEditingBlocker ? (
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <input
+                  type="text"
+                  value={blockerInput}
+                  onChange={(e) => setBlockerInput(e.target.value)}
+                  placeholder="What's blocking this?"
+                  autoFocus
+                  style={{
+                    background: "#080C16",
+                    border: "1px solid #F87171",
+                    borderRadius: "4px",
+                    padding: "4px 8px",
+                    fontSize: "12px",
+                    color: "#F0F0F5",
+                    width: "180px",
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") updateBlocker(blockerInput);
+                    if (e.key === "Escape") setIsEditingBlocker(false);
+                  }}
+                />
+                <button
+                  onClick={() => updateBlocker(blockerInput)}
+                  style={{ background: "#F87171", border: "none", borderRadius: "4px", padding: "4px 8px", fontSize: "11px", color: "#fff", cursor: "pointer" }}
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setIsEditingBlocker(false)}
+                  style={{ background: "transparent", border: "1px solid #1E2D45", borderRadius: "4px", padding: "4px 8px", fontSize: "11px", color: "#A0A0B0", cursor: "pointer" }}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : task.blocker && task.blocker.trim() ? (
+              <span style={{ color: "#F87171", display: "flex", alignItems: "center", gap: "6px" }}>
+                🛑 {task.blocker}
+                <button
+                  onClick={() => { setBlockerInput(task.blocker || ""); setIsEditingBlocker(true); }}
+                  style={{ background: "transparent", border: "none", color: "#F87171", cursor: "pointer", fontSize: "10px", opacity: 0.7 }}
+                >
+                  ✏️
+                </button>
+                <button
+                  onClick={() => updateBlocker("")}
+                  style={{ background: "transparent", border: "none", color: "#F87171", cursor: "pointer", fontSize: "10px", opacity: 0.7 }}
+                >
+                  ✕
+                </button>
+              </span>
+            ) : (
+              <button
+                onClick={() => { setBlockerInput(""); setIsEditingBlocker(true); }}
+                style={{ background: "transparent", border: "1px dashed #1E2D45", borderRadius: "4px", padding: "2px 8px", fontSize: "11px", color: "#6B7280", cursor: "pointer" }}
+              >
+                + Add blocker
+              </button>
             )}
           </div>
         </div>
