@@ -17,6 +17,7 @@ interface ModelInfo {
 interface Provider {
   name: string;
   baseUrl: string;
+  consoleLink?: string | null;
   models: ModelInfo[];
 }
 
@@ -104,9 +105,24 @@ export default function ModelRouting() {
                       <TableRow key={`${provider.name}-${model.id}`} className="border-slate-700/30">
                         <TableCell className="py-2.5">
                           {mi === 0 ? (
-                            <span className="text-xs font-semibold" style={{ color: PROVIDER_COLORS[provider.name] || "#8888A0" }}>
-                              {providerLabel(provider.name)}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-semibold" style={{ color: PROVIDER_COLORS[provider.name] || "#8888A0" }}>
+                                {providerLabel(provider.name)}
+                              </span>
+                              {provider.consoleLink && (
+                                <a
+                                  href={provider.consoleLink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-slate-500 hover:text-blue-400 transition-colors"
+                                  title="Open console"
+                                >
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                  </svg>
+                                </a>
+                              )}
+                            </div>
                           ) : (
                             <span className="text-slate-600">↳</span>
                           )}

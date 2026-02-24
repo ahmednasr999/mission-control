@@ -13,6 +13,12 @@ const ROUTING_RULES = [
   { task: "Long document analysis", model: "Kimi K2.5" },
 ];
 
+const PROVIDER_LINKS: Record<string, string> = {
+  moonshot: "https://platform.moonshot.ai/console/account",
+  "minimax-portal": "https://platform.minimax.io/user-center/payment/coding-plan",
+  anthropic: "https://console.anthropic.com/settings/billing",
+};
+
 export async function GET() {
   try {
     const modelsPath = path.join(homedir(), ".openclaw/agents/main/agent/models.json");
@@ -45,6 +51,7 @@ export async function GET() {
       return {
         name: providerKey,
         baseUrl: safeProvider.baseUrl,
+        consoleLink: PROVIDER_LINKS[providerKey] || null,
         models,
       };
     });
