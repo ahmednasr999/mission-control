@@ -43,6 +43,17 @@ function filterTask(task: OpsTask, filters: FilterState): boolean {
     if (!task.blocker || task.blocker.trim() === "") return false;
   }
 
+  // Search filter
+  if (filters.search) {
+    const q = filters.search.toLowerCase();
+    const matchesSearch = 
+      (task.title || "").toLowerCase().includes(q) ||
+      (task.description || "").toLowerCase().includes(q) ||
+      (task.assignee || "").toLowerCase().includes(q) ||
+      (task.category || "").toLowerCase().includes(q);
+    if (!matchesSearch) return false;
+  }
+
   return true;
 }
 

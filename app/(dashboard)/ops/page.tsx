@@ -14,6 +14,7 @@ const DEFAULT_FILTERS: FilterState = {
   priority: "All",
   category: "All",
   blockersOnly: false,
+  search: "",
 };
 
 type Tab = "kanban" | "calendar" | "metrics";

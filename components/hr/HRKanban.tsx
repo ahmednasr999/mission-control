@@ -53,6 +53,7 @@ export default function HRKanban() {
   const [error, setError] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showRadarOnly, setShowRadarOnly] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetch("/api/hr/pipeline")
@@ -85,6 +86,7 @@ export default function HRKanban() {
             gap: "12px",
           }}
         >
+          {/* Left: title + meta */}
           <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
             <div>
               <span
@@ -121,6 +123,46 @@ export default function HRKanban() {
               </span>
             )}
           </div>
+
+          {/* Middle: search input */}
+          <div style={{ position: "relative" }}>
+            <input
+              type="text"
+              placeholder="Search jobs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                background: "#080C16",
+                border: "1px solid #1E2D45",
+                borderRadius: "6px",
+                padding: "8px 12px 8px 32px",
+                fontSize: "12px",
+                color: "#F0F0F5",
+                width: "180px",
+                outline: "none",
+              }}
+            />
+            <span style={{ position: "absolute", left: "10px", top: "8px", fontSize: "12px", color: "#6B7280" }}>🔍</span>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                style={{
+                  position: "absolute",
+                  right: "8px",
+                  top: "8px",
+                  background: "none",
+                  border: "none",
+                  color: "#6B7280",
+                  cursor: "pointer",
+                  fontSize: "10px",
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Right: radar filter */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             {!loading && (
               <Button
@@ -194,7 +236,16 @@ export default function HRKanban() {
               if (showRadarOnly && col.key !== "radar") {
                 return null;
               }
-              const jobs = data?.columns[col.key] ?? [];
+              let jobs = data?.columns[col.key] ?? [];
+              // Filter by search query
+              if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                jobs = jobs.filter((j) => 
+                  (j.company || "").toLowerCase().includes(q) ||
+                  (j.role || "").toLowerCase().includes(q) ||
+                  (j.status || "").toLowerCase().includes(q)
+                );
+              }
               return (
                 <div
                   key={col.key}

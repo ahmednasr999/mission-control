@@ -34,6 +34,8 @@ export interface FilterState {
   category: CategoryFilter;
   /** Phase 2: Show only tasks with blockers set */
   blockersOnly: boolean;
+  /** Phase 3: Search query */
+  search: string;
 }
 
 interface FilterBarProps {
@@ -155,6 +157,28 @@ const CATEGORIES: CategoryFilter[] = [
 export default function FilterBar({ filters, onChange }: FilterBarProps) {
   return (
     <Card className="mb-4" style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", padding: "12px 16px" }}>
+      {/* Search input */}
+      <div style={{ marginBottom: "12px" }}>
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          value={filters.search}
+          onChange={(e) => onChange({ ...filters, search: e.target.value })}
+          style={{
+            background: "#080C16",
+            border: "1px solid #1E2D45",
+            borderRadius: "6px",
+            padding: "8px 12px 8px 32px",
+            fontSize: "12px",
+            color: "#F0F0F5",
+            width: "100%",
+            maxWidth: "240px",
+            outline: "none",
+          }}
+        />
+        <span style={{ position: "absolute", left: "24px", top: "8px", fontSize: "12px", color: "#6B7280" }}>🔍</span>
+      </div>
+
       <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
         <span
           style={{
