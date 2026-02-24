@@ -20,6 +20,7 @@ interface Task {
   dueDate?: string;
   createdAt: string;
   status?: string;
+  blocker?: string;
 }
 
 const PRIORITY_COLORS: Record<string, string> = {
@@ -209,16 +210,28 @@ export default function TaskDetailPage({ params }: { params: { taskId: string } 
         <h1 style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontSize: "22px", fontWeight: 700, color: "#F0F0F5", marginBottom: "12px", lineHeight: 1.3 }}>
           {task.title}
         </h1>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-          <StatusBadge status={task.status} />
-          <PriorityBadge priority={task.priority} />
+        {/* Quick glance row */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+            <StatusBadge status={task.status} />
+            <PriorityBadge priority={task.priority} />
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap", fontSize: "12px" }}>
+            <span style={{ color: "#A0A0B0" }}>👤 {displayAssignee}</span>
+            <span style={{ color: "#A0A0B0" }}>📂 {task.category}</span>
+            {task.dueDate && <span style={{ color: "#F59E0B" }}>⏰ Due {formatDate(task.dueDate)}</span>}
+            {task.blocker && task.blocker.trim() && (
+              <span style={{ color: "#F87171" }}>🛑 Blocker: {task.blocker}</span>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Key info cards */}
       <div className="info-cards-row" style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
         <Card style={{ flex: 1, background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px" }}>
           <CardContent style={{ padding: "16px" }}>
-            <div style={{ fontSize: "11px", color: "#A0A0B0", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "12px" }}>Details</div>
+            <div style={{ fontSize: "11px", color: "#A0A0B0", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "12px" }}>Task Meta</div>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <div>
                 <div style={{ fontSize: "10px", color: "#6B7280", marginBottom: "2px" }}>Assignee</div>
@@ -227,6 +240,22 @@ export default function TaskDetailPage({ params }: { params: { taskId: string } 
               <div>
                 <div style={{ fontSize: "10px", color: "#6B7280", marginBottom: "2px" }}>Category</div>
                 <div style={{ fontSize: "13px", color: "#F0F0F5" }}>{task.category}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: "10px", color: "#6B7280", marginBottom: "2px" }}>Created</div>
+                <div style={{ fontSize: "13px", color: "#F0F0F5" }}>{formatDate(task.createdAt)}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card style={{ flex: 1, background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px" }}>
+          <CardContent style={{ padding: "16px" }}>
+            <div style={{ fontSize: "11px", color: "#A0A0B0", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "12px" }}>Status & Timing</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <div>
+                <div style={{ fontSize: "10px", color: "#6B7280", marginBottom: "2px" }}>Current Status</div>
+                <div style={{ fontSize: "13px", color: "#F0F0F5" }}>{task.status || "To Do"}</div>
               </div>
               <div>
                 <div style={{ fontSize: "10px", color: "#6B7280", marginBottom: "2px" }}>Due Date</div>
@@ -242,23 +271,7 @@ export default function TaskDetailPage({ params }: { params: { taskId: string } 
 
         <Card style={{ flex: 1, background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px" }}>
           <CardContent style={{ padding: "16px" }}>
-            <div style={{ fontSize: "11px", color: "#A0A0B0", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "12px" }}>Status & Progress</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              <div>
-                <div style={{ fontSize: "10px", color: "#6B7280", marginBottom: "2px" }}>Current Status</div>
-                <div style={{ fontSize: "13px", color: "#F0F0F5" }}>{task.status || "To Do"}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: "10px", color: "#6B7280", marginBottom: "2px" }}>Last Updated</div>
-                <div style={{ fontSize: "13px", color: "#F0F0F5" }}>{formatDate(task.createdAt)}</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card style={{ flex: 1, background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px" }}>
-          <CardContent style={{ padding: "16px" }}>
-            <div style={{ fontSize: "11px", color: "#A0A0B0", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "12px" }}>Assignee</div>
+            <div style={{ fontSize: "11px", color: "#A0A0B0", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "12px" }}>Assignee Avatar</div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: assigneeText, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <span style={{ color: "#F0F0F5", fontSize: "14px", fontWeight: 700 }}>{displayAssignee.charAt(0)}</span>

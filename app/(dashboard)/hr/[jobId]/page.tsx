@@ -265,68 +265,96 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
         </Button>
       </Link>
 
-      {/* Header */}
+      {/* Header - Compact with key metrics */}
       <div
         style={{
           display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          marginBottom: "24px",
-          flexWrap: "wrap",
+          flexDirection: "column",
           gap: "16px",
+          marginBottom: "24px",
         }}
       >
-        <div>
-          <h1
-            style={{
-              fontFamily: "var(--font-syne, Syne, sans-serif)",
-              fontSize: "28px",
-              fontWeight: 700,
-              color: "#F0F0F5",
-              marginBottom: "4px",
-              lineHeight: 1.2,
-            }}
-          >
-            {job.company}
-          </h1>
-          <p
-            style={{
-              fontSize: "16px",
-              color: "#8888A0",
-              fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-            }}
-          >
-            {job.role}
-          </p>
+        {/* Main row: Company + Role + Status */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "12px",
+          }}
+        >
+          <div>
+            <h1
+              style={{
+                fontFamily: "var(--font-syne, Syne, sans-serif)",
+                fontSize: "24px",
+                fontWeight: 700,
+                color: "#F0F0F5",
+                marginBottom: "4px",
+                lineHeight: 1.2,
+              }}
+            >
+              {job.company}
+            </h1>
+            <p
+              style={{
+                fontSize: "14px",
+                color: "#8888A0",
+                fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
+              }}
+            >
+              {job.role}
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+            <StatusBadge status={job.column} />
+            <AtsScoreBadge score={job.atsScore} />
+          </div>
         </div>
-        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-          <StatusBadge status={job.column} />
-          <AtsScoreBadge score={job.atsScore} />
+
+        {/* Quick metrics row */}
+        <div
+          style={{
+            display: "flex",
+            gap: "16px",
+            flexWrap: "wrap",
+          }}
+        >
+          {job.location && (
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#A0A0B0", fontSize: "12px" }}>
+              <span style={{ opacity: 0.6 }}>📍</span> {job.location}
+            </div>
+          )}
+          {job.salary && (
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#A0A0B0", fontSize: "12px" }}>
+              <span style={{ opacity: 0.6 }}>💰</span> {job.salary}
+            </div>
+          )}
+          {job.appliedDate && (
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#A0A0B0", fontSize: "12px" }}>
+              <span style={{ opacity: 0.6 }}>📅</span> Applied {job.appliedDate}
+            </div>
+          )}
+          {job.nextAction && (
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#F59E0B", fontSize: "12px", fontWeight: 500 }}>
+              <span style={{ opacity: 0.6 }}>⚡</span> {job.nextAction}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* 2x2 Info Cards Grid */}
+      {/* Info Cards - Single row, non-redundant */}
       <div
         className="info-grid"
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
           gap: "16px",
           marginBottom: "32px",
         }}
       >
-        {/* Card 1: Job Info */}
-        <InfoCard title="Job Info" icon={<Briefcase size={16} />}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <DetailRow label="Company" value={job.company} />
-            <DetailRow label="Role" value={job.role} />
-            <DetailRow label="Location" value={job.location || "—"} />
-            <DetailRow label="Salary" value={job.salary || "—"} />
-            <DetailRow label="Next Action" value={job.nextAction || "—"} highlight />
-          </div>
-        </InfoCard>
-
-        {/* Card 2: Application Status */}
+        {/* Card: Application Status */}
         <InfoCard title="Application Status" icon={<Clock size={16} />}>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <DetailRow label="Status" value={COLUMN_LABELS[job.column] || job.status} />
