@@ -5,6 +5,7 @@ import GitStatus from "@/components/settings/GitStatus";
 import SyncControl from "@/components/settings/SyncControl";
 import MemoryIndex from "@/components/settings/MemoryIndex";
 import WorkspaceStats from "@/components/settings/WorkspaceStats";
+import DiskHealthCard from "@/components/DiskHealthCard";
 
 export default function SettingsPage() {
   return (
@@ -35,7 +36,10 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* 5. Workspace Statistics — full width */}
+        {/* 3. Disk Health — full width */}
+        <DiskHealthCard />
+
+        {/* 4. Workspace Statistics — full width */}
         <WorkspaceStats />
       </div>
     </div>
