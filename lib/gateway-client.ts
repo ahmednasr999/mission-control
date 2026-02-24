@@ -1,5 +1,7 @@
+// @ts-ignore - ws module loaded at runtime
 const crypto = require("crypto");
 const fs = require("fs");
+// @ts-ignore - ws module loaded at runtime
 const WebSocket = require("ws");
 
 const IDENTITY_DIR = "/root/.openclaw/identity";
