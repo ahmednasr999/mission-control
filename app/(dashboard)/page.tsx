@@ -275,8 +275,20 @@ export default function CommandCenterPage() {
               };
               const status = job.status || "Applied";
               const colors = statusColors[status] || { bg: "rgba(136, 136, 160, 0.15)", text: "#8888A0" };
+              const jobId = job.company.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
               return (
-                <div key={i} style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "8px", padding: "12px" }}>
+                <Link 
+                  key={i} 
+                  href={`/hr/${jobId}`}
+                  style={{ 
+                    display: "block", 
+                    background: "#0D1220", 
+                    border: "1px solid #1E2D45", 
+                    borderRadius: "8px", 
+                    padding: "12px",
+                    textDecoration: "none"
+                  }}
+                >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
                     <div>
                       <div style={{ fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)", fontSize: "14px", fontWeight: 600, color: "#F0F0F5" }}>{job.company}</div>
@@ -289,7 +301,7 @@ export default function CommandCenterPage() {
                       ATS Score: {job.atsScore}%
                     </div>
                   )}
-                </div>
+                </Link>
               );
             })
           )}

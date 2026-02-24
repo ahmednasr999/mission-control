@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -147,16 +148,30 @@ interface JobCardProps {
   job: Job;
   dimmed?: boolean;
   onClick?: (job: Job) => void;
+  navigate?: boolean;
 }
 
-export default function JobCard({ job, dimmed = false, onClick }: JobCardProps) {
+function getJobId(company: string): string {
+  return company.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+}
+
+export default function JobCard({ job, dimmed = false, onClick, navigate = false }: JobCardProps) {
   const [hovered, setHovered] = useState(false);
+  const router = useRouter();
   const colColor = COLUMN_COLORS[job.column] || "#64748B";
   const isHighMatchRadar = job.column === "radar" && (job.atsScore ?? 0) >= 85;
 
+  const handleClick = () => {
+    if (navigate) {
+      router.push(`/hr/${getJobId(job.company)}`);
+    } else {
+      onClick?.(job);
+    }
+  };
+
   return (
     <Card
-      onClick={() => onClick?.(job)}
+      onClick={handleClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className={`bg-slate-900/60 border-slate-700/50 hover:border-slate-600 cursor-pointer transition-all mb-2 ${

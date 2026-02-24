@@ -257,11 +257,12 @@ export default function HRKanban() {
                       <EmptyColumn />
                     ) : (
                       jobs.map((job) => (
-                        <JobCard 
-                          key={job.id} 
-                          job={job} 
-                          onClick={setSelectedJob}
-                        />
+                          <JobCard 
+                            key={job.id} 
+                            job={job} 
+                            onClick={setSelectedJob}
+                            navigate
+                          />
                       ))
                     )}
                   </div>
