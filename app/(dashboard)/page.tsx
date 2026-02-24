@@ -121,7 +121,7 @@ export default function CommandCenterPage() {
           contentDue: 0,
           openTasks: 0,
         }),
-        safeFetch<Task[]>("/api/tasks", []),
+        safeFetch<{ columns: { todo: Task[]; inProgress: Task[]; blocked: Task[]; done: Task[] } }>("/api/ops/tasks", { columns: { todo: [], inProgress: [], blocked: [], done: [] } }),
         safeFetch<{ jobs: Job[] }>("/api/command-center/pipeline", { jobs: [] }),
         safeFetch<{ agents: Agent[] }>("/api/command-center/agents", { agents: [] }),
         safeFetch<{ stages: ContentStages }>("/api/command-center/content", {
@@ -131,8 +131,17 @@ export default function CommandCenterPage() {
         safeFetch<{ notes: DailyNote[] }>("/api/intelligence/daily-notes", { notes: [] }),
       ]);
 
-    // Filter tasks for Ahmed, non-done, sort by priority
-    const ahmedTasks = (Array.isArray(tasksRes) ? tasksRes : []).filter(
+    // Flatten columns and filter for Ahmed, non-done
+    const allTasks = [
+      ...(tasksRes.columns?.todo || []),
+      ...(tasksRes.columns?.inProgress || []),
+      ...(tasksRes.columns?.blocked || []),
+    ].map((t: any) => ({
+      ...t,
+      id: typeof t.id === 'string' ? parseInt(t.id, 10) : t.id,
+      priority: t.priority ? t.priority.charAt(0).toUpperCase() + t.priority.slice(1).toLowerCase() : 'Medium',
+    }));
+    const ahmedTasks = allTasks.filter(
       (t: Task) =>
         t.assignee?.toLowerCase() === "ahmed" &&
         t.status?.toLowerCase() !== "done" &&
