@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import OpsTaskCard from "./OpsTaskCard";
+import OpsTaskModal, { type OpsTaskWithStatus } from "./OpsTaskModal";
 import type { OpsTask, OpsColumns } from "@/lib/ops-db";
 import type { FilterState } from "./FilterBar";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -69,8 +70,10 @@ export default function OpsKanban({ filters }: OpsKanbanProps) {
   const [data, setData] = useState<{ columns: OpsColumns } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<OpsTaskWithStatus | null>(null);
 
-  useEffect(() => {
+  const fetchTasks = useCallback(() => {
+    setLoading(true);
     fetch("/api/ops/tasks")
       .then((r) => r.json())
       .then((d) => {
@@ -82,6 +85,29 @@ export default function OpsKanban({ filters }: OpsKanbanProps) {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
+
+  const handleCardClick = useCallback((task: OpsTask) => {
+    // Cast to OpsTaskWithStatus — status field is populated from DB in rowToTask
+    setSelectedTask(task as OpsTaskWithStatus);
+  }, []);
+
+  const handleModalClose = useCallback(() => {
+    setSelectedTask(null);
+  }, []);
+
+  const handleModalSaved = useCallback(() => {
+    setSelectedTask(null);
+    fetchTasks();
+  }, [fetchTasks]);
+
+  const handleModalDeleted = useCallback(() => {
+    setSelectedTask(null);
+    fetchTasks();
+  }, [fetchTasks]);
 
   const filteredColumns: OpsColumns = {
     todo: (data?.columns.todo ?? []).filter((t) => filterTask(t, filters)),
@@ -96,6 +122,15 @@ export default function OpsKanban({ filters }: OpsKanbanProps) {
   );
 
   return (
+    <>
+    {selectedTask && (
+      <OpsTaskModal
+        task={selectedTask}
+        onClose={handleModalClose}
+        onSaved={handleModalSaved}
+        onDeleted={handleModalDeleted}
+      />
+    )}
     <Card style={{ background: "#0D1220", border: "1px solid #1E2D45", borderRadius: "10px", overflow: "hidden", marginBottom: "20px" }}>
       <CardHeader className="pb-3" style={{ padding: "16px 20px 14px", borderBottom: "1px solid #1E2D45", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -164,6 +199,11 @@ export default function OpsKanban({ filters }: OpsKanbanProps) {
               .ops-kanban-grid {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
+              }
+              @media (max-width: 1200px) {
+                .ops-kanban-grid {
+                  grid-template-columns: repeat(2, 1fr);
+                }
               }
               @media (max-width: 768px) {
                 .ops-kanban-grid {
@@ -244,7 +284,7 @@ export default function OpsKanban({ filters }: OpsKanbanProps) {
                       <EmptyColumn label={col.label} />
                     ) : (
                       tasks.map((task) => (
-                        <OpsTaskCard key={task.id} task={task} />
+                        <OpsTaskCard key={task.id} task={task} onClick={handleCardClick} />
                       ))
                     )}
                   </div>
@@ -255,5 +295,6 @@ export default function OpsKanban({ filters }: OpsKanbanProps) {
         )}
       </CardContent>
     </Card>
+    </>
   );
 }

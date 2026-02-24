@@ -143,7 +143,6 @@ export default function CommandCenterPage() {
     }));
     const ahmedTasks = allTasks.filter(
       (t: Task) =>
-        t.assignee?.toLowerCase() === "ahmed" &&
         t.status?.toLowerCase() !== "done" &&
         t.status?.toLowerCase() !== "completed"
     );

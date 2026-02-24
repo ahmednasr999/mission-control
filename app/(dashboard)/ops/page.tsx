@@ -35,6 +35,10 @@ export default function OpsPage() {
           .ops-page { padding: 16px !important; }
           .ops-filter-bar { overflow-x: auto; }
         }
+        @media (min-width: 601px) and (max-width: 1024px) {
+          .ops-page { padding: 20px 24px 32px !important; }
+          .ops-filter-bar { overflow-x: auto; }
+        }
       `}</style>
       <div className="ops-page" style={{ padding: "24px 32px 40px", maxWidth: "100%" }}>
         {/* Header */}

@@ -51,6 +51,8 @@ export interface OpsTask {
   dueDate?: string;
   completedDate?: string;
   createdAt: string;
+  /** Raw DB status string (e.g. "To Do", "In Progress", "Blocked", "Done") */
+  status?: string;
   /** Phase 2: Optional blocker context — why this task is stuck */
   blocker?: string;
 }
@@ -66,7 +68,7 @@ export interface OpsColumns {
 function mapStatus(status: string | null): keyof OpsColumns {
   const s = (status || "").toLowerCase().trim();
   if (s === "blocked") return "blocked";
-  if (s === "in progress" || s === "my tasks" || s === "in-progress") return "inProgress";
+  if (s === "in progress" || s === "inprogress" || s === "my tasks" || s === "in-progress") return "inProgress";
   if (
     s === "completed" ||
     s === "done" ||
@@ -96,6 +98,7 @@ function rowToTask(row: any): OpsTask {
     dueDate: row.dueDate || undefined,
     completedDate: row.completedDate || undefined,
     createdAt: row.createdAt || new Date().toISOString(),
+    status: row.status || "To Do",
     blocker: row.blocker || undefined,
   };
 }
@@ -148,6 +151,67 @@ export function getArchivedTasks(): OpsTask[] {
   } catch {
     return [];
   }
+}
+
+// ---- Mutation helpers ----
+
+export interface UpdateTaskFields {
+  title?: string;
+  description?: string;
+  status?: string;
+  priority?: string;
+  dueDate?: string;
+  category?: string;
+  assignee?: string;
+}
+
+/** Update a task by id. Returns the updated task, or null if not found. */
+export function updateTask(id: string | number, fields: UpdateTaskFields): OpsTask | null {
+  const db = getDb();
+
+  // Build SET clause dynamically (only for provided fields)
+  const setClauses: string[] = [];
+  const values: any[] = [];
+
+  if (fields.title !== undefined) { setClauses.push("title = ?"); values.push(fields.title.trim()); }
+  if (fields.description !== undefined) { setClauses.push("description = ?"); values.push(fields.description); }
+  if (fields.status !== undefined) { setClauses.push("status = ?"); values.push(fields.status);
+    // Auto-set completedDate when marking done
+    if (["done", "completed"].includes(fields.status.toLowerCase())) {
+      setClauses.push("completedDate = ?");
+      values.push(new Date().toISOString());
+    } else {
+      setClauses.push("completedDate = ?");
+      values.push(null);
+    }
+  }
+  if (fields.priority !== undefined) { setClauses.push("priority = ?"); values.push(fields.priority); }
+  if (fields.dueDate !== undefined) { setClauses.push("dueDate = ?"); values.push(fields.dueDate || null); }
+  if (fields.category !== undefined) { setClauses.push("category = ?"); values.push(fields.category); }
+  if (fields.assignee !== undefined) { setClauses.push("assignee = ?"); values.push(fields.assignee); }
+
+  if (setClauses.length === 0) {
+    // Nothing to update — just return current task
+    const row = db.prepare(
+      `SELECT id, title, description, assignee, status, priority, category, dueDate, completedDate, createdAt, blocker FROM tasks WHERE id = ?`
+    ).get(id) as any;
+    return row ? rowToTask(row) : null;
+  }
+
+  values.push(id);
+  db.prepare(`UPDATE tasks SET ${setClauses.join(", ")} WHERE id = ?`).run(...values);
+
+  const updated = db.prepare(
+    `SELECT id, title, description, assignee, status, priority, category, dueDate, completedDate, createdAt, blocker FROM tasks WHERE id = ?`
+  ).get(id) as any;
+  return updated ? rowToTask(updated) : null;
+}
+
+/** Delete a task by id. Returns true if deleted. */
+export function deleteTask(id: string | number): boolean {
+  const db = getDb();
+  const result = db.prepare(`DELETE FROM tasks WHERE id = ?`).run(id);
+  return result.changes > 0;
 }
 
 // ---- Markdown fallback ----

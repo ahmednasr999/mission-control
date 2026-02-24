@@ -7,16 +7,18 @@ import MarketingCalendar from "@/components/marketing/MarketingCalendar";
 import MarketingMetrics from "@/components/marketing/MarketingMetrics";
 import MarketingFocus from "@/components/marketing/MarketingFocus";
 import MarketingConsistency from "@/components/marketing/MarketingConsistency";
+import LinkedInContent from "@/components/marketing/LinkedInContent";
 
-type Tab = "kanban" | "calendar" | "metrics";
+type Tab = "kanban" | "calendar" | "metrics" | "linkedin";
 
 export default function MarketingPage() {
   const [activeTab, setActiveTab] = useState<Tab>("kanban");
 
   const tabs: { key: Tab; label: string; icon: string }[] = [
-    { key: "kanban", label: "Pipeline", icon: "📋" },
-    { key: "calendar", label: "Calendar", icon: "📅" },
-    { key: "metrics", label: "Metrics", icon: "📊" },
+    { key: "kanban",   label: "Pipeline",  icon: "📋" },
+    { key: "linkedin", label: "LinkedIn",  icon: "💼" },
+    { key: "calendar", label: "Calendar",  icon: "📅" },
+    { key: "metrics",  label: "Metrics",   icon: "📊" },
   ];
 
   return (
@@ -91,6 +93,8 @@ export default function MarketingPage() {
           </div>
         </>
       )}
+
+      {activeTab === "linkedin" && <LinkedInContent />}
 
       {activeTab === "calendar" && <MarketingCalendar />}
 

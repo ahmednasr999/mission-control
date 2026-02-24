@@ -11,13 +11,28 @@ const PRIORITY_COLORS: Record<string, string> = {
 };
 
 const ASSIGNEE_COLORS: Record<string, { text: string; bg: string }> = {
-  ahmed: { text: "#3B82F6", bg: "rgba(59,130,246,0.15)" },
-  nasr: { text: "#7C3AED", bg: "rgba(124,58,237,0.15)" },
-  adham: { text: "#34D399", bg: "rgba(52,211,153,0.15)" },
-  heikal: { text: "#FBBF24", bg: "rgba(251,191,36,0.15)" },
-  maher: { text: "#22D3EE", bg: "rgba(34,211,238,0.15)" },
-  lotfi: { text: "#EC4899", bg: "rgba(236,72,153,0.15)" },
+  Ahmed: { text: "#3B82F6", bg: "rgba(59,130,246,0.15)" },
+  NASR: { text: "#7C3AED", bg: "rgba(124,58,237,0.15)" },
+  "CV Optimizer": { text: "#34D399", bg: "rgba(52,211,153,0.15)" },
+  "Job Hunter": { text: "#FBBF24", bg: "rgba(251,191,36,0.15)" },
+  "Researcher": { text: "#22D3EE", bg: "rgba(34,211,238,0.15)" },
+  "Content Creator": { text: "#EC4899", bg: "rgba(236,72,153,0.15)" },
 };
+
+// Map agent names to role display names
+const ASSIGNEE_DISPLAY: Record<string, string> = {
+  ahmed: "Ahmed",
+  nasr: "NASR",
+  adham: "CV Optimizer",
+  heikal: "Job Hunter",
+  maher: "Researcher",
+  lotfi: "Content Creator",
+};
+
+function getAssigneeDisplayName(name: string): string {
+  const key = name.toLowerCase().trim();
+  return ASSIGNEE_DISPLAY[key] || name;
+}
 
 function getAssigneeColor(name: string): { text: string; bg: string } {
   const key = name.toLowerCase().trim();
@@ -27,16 +42,23 @@ function getAssigneeColor(name: string): { text: string; bg: string } {
   return { text: "#64748B", bg: "rgba(100,116,139,0.15)" };
 }
 
-function formatDate(isoString?: string): string {
+function formatDate(isoString?: string, withTime = false): string {
   if (!isoString) return "";
   try {
     const d = new Date(isoString);
-    return d.toLocaleDateString("en-GB", {
+    const dateStr = d.toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
       year: "numeric",
       timeZone: "Africa/Cairo",
     });
+    if (!withTime) return dateStr;
+    const timeStr = d.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Africa/Cairo",
+    });
+    return `${dateStr} ${timeStr}`;
   } catch {
     return isoString;
   }
@@ -71,8 +93,9 @@ function PriorityDot({ priority }: { priority: string }) {
 
 function AssigneeBadge({ name }: { name: string }) {
   const { text, bg } = getAssigneeColor(name);
-  const initial = name.charAt(0).toUpperCase();
-  const label = name.toUpperCase();
+  const displayName = getAssigneeDisplayName(name);
+  const initial = displayName.charAt(0).toUpperCase();
+  const label = displayName.toUpperCase();
 
   return (
     <span
@@ -136,9 +159,10 @@ function CategoryTag({ category }: { category: string }) {
 interface OpsTaskCardProps {
   task: OpsTask;
   dimmed?: boolean;
+  onClick?: (task: OpsTask) => void;
 }
 
-export default function OpsTaskCard({ task, dimmed = false }: OpsTaskCardProps) {
+export default function OpsTaskCard({ task, dimmed = false, onClick }: OpsTaskCardProps) {
   const [hovered, setHovered] = useState(false);
   const overdue = isOverdue(task.dueDate);
   const priorityColor = PRIORITY_COLORS[task.priority] ?? "#8888A0";
@@ -147,6 +171,7 @@ export default function OpsTaskCard({ task, dimmed = false }: OpsTaskCardProps) 
     <Card
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={() => onClick?.(task)}
       className={`bg-slate-900/60 border-slate-700/50 hover:border-slate-600 transition-all mb-2 ${dimmed ? "opacity-60" : ""}`}
       style={{
         borderColor: hovered ? `${priorityColor}50` : undefined,
@@ -154,6 +179,7 @@ export default function OpsTaskCard({ task, dimmed = false }: OpsTaskCardProps) 
         boxShadow: hovered
           ? `0 4px 16px ${priorityColor}18, 0 0 0 1px ${priorityColor}22`
           : "none",
+        cursor: onClick ? "pointer" : "default",
       }}
     >
       <CardContent className="p-3">
@@ -201,8 +227,29 @@ export default function OpsTaskCard({ task, dimmed = false }: OpsTaskCardProps) 
                 fontWeight: overdue ? 700 : 400,
               }}
             >
-              {overdue ? "⚠" : "📅"} {formatDate(task.dueDate)}
+              {overdue ? "⚠" : "📅"} Due: {formatDate(task.dueDate, true)}
             </span>
+          )}
+        </div>
+
+        {/* Date row - Created & Updated */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            fontSize: "9px",
+            color: "#6B7280",
+            fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
+            marginTop: "8px",
+            paddingTop: "8px",
+            borderTop: "1px solid rgba(107,114,128,0.15)",
+            flexWrap: "wrap",
+          }}
+        >
+          <span>📝 Created: {formatDate(task.createdAt, true)}</span>
+          {task.completedDate && (
+            <span>✅ Completed: {formatDate(task.completedDate, true)}</span>
           )}
         </div>
 

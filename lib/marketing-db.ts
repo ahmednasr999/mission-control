@@ -358,3 +358,36 @@ export function getArchivedContent(): { archived: ContentItem[]; count: number }
 
   return { archived, count: archived.length };
 }
+
+// ---- LinkedIn-specific queries ----
+
+export interface LinkedInPost {
+  id: number;
+  title: string;
+  content: string;
+  platform: string;
+  contentType: string;
+  status: string;
+  assignee: string;
+  priority: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export function getLinkedInPosts(): LinkedInPost[] {
+  try {
+    const db = getDb();
+    if (!db) return [];
+    return db
+      .prepare(
+        `SELECT id, title, content, platform, contentType, status, 
+                assignee, priority, createdAt, updatedAt
+         FROM content_posts
+         WHERE platform = 'linkedin'
+         ORDER BY createdAt DESC`
+      )
+      .all() as LinkedInPost[];
+  } catch {
+    return [];
+  }
+}
