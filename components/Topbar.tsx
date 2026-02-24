@@ -72,7 +72,7 @@ export default function Topbar() {
         <Button
           variant="ghost"
           size="icon"
-          className="topbar-hamburger lg:hidden"
+          className="topbar-hamburger"
           onClick={toggleSidebar}
           aria-label="Toggle sidebar"
         >
