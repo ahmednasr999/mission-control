@@ -1,29 +1,29 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
-interface Match {
-  line: number;
-  text: string;
-  context: string;
-}
-
-interface FileResult {
+export interface QmdResult {
+  uri: string;
   file: string;
-  matches: Match[];
+  title: string;
+  score: string;
+  snippet: string;
 }
 
 interface SearchResultsProps {
-  results: FileResult[];
+  results: QmdResult[];
   query: string;
-  totalMatches: number;
   focusedIndex: number;
-  onResultClick?: (result: FileResult, match: Match) => void;
+  onResultClick?: (result: QmdResult) => void;
 }
 
 function highlightText(text: string, query: string): React.ReactNode {
   if (!query) return text;
-  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
+  const regex = new RegExp(
+    `(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+    "gi"
+  );
   const parts = text.split(regex);
   return parts.map((part, i) =>
     regex.test(part) ? (
@@ -45,12 +45,16 @@ function highlightText(text: string, query: string): React.ReactNode {
   );
 }
 
-let flatIndex = 0;
+function scoreColor(score: string): string {
+  const num = parseInt(score);
+  if (num >= 70) return "#34D399";
+  if (num >= 40) return "#FBBF24";
+  return "#A0A0B0";
+}
 
 export default function SearchResults({
   results,
   query,
-  totalMatches,
   focusedIndex,
   onResultClick,
 }: SearchResultsProps) {
@@ -65,120 +69,136 @@ export default function SearchResults({
           padding: "24px 0",
         }}
       >
-        {query.length >= 2 ? `No results for "${query}"` : "Type to search across 51+ memory files"}
+        {query.length >= 2
+          ? `No results for "${query}"`
+          : "Search across your workspace with QMD semantic search"}
       </div>
     );
   }
 
-  let currentFlatIndex = 0;
-
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       <div
         style={{
           fontSize: "11px",
           color: "#A0A0B0",
           fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
           paddingBottom: "4px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
         }}
       >
-        {totalMatches} match{totalMatches !== 1 ? "es" : ""} across {results.length} file{results.length !== 1 ? "s" : ""}
+        <span>
+          {results.length} result{results.length !== 1 ? "s" : ""}
+        </span>
+        <Badge
+          variant="outline"
+          style={{
+            fontSize: "9px",
+            padding: "1px 6px",
+            color: "#4F8EF7",
+            borderColor: "#4F8EF720",
+          }}
+        >
+          QMD Semantic
+        </Badge>
       </div>
 
-      {results.map((fileResult) => (
-        <div key={fileResult.file}>
-          <div
+      {results.map((result, idx) => {
+        const isFocused = idx === focusedIndex;
+        return (
+          <Card
+            key={result.uri}
+            onClick={() => onResultClick?.(result)}
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              marginBottom: "6px",
+              background: isFocused
+                ? "rgba(79, 142, 247, 0.08)"
+                : "rgba(255,255,255,0.02)",
+              border: isFocused
+                ? "1px solid rgba(79, 142, 247, 0.4)"
+                : "1px solid #1E2D45",
+              borderRadius: "8px",
+              padding: "12px 14px",
+              cursor: "pointer",
+              transition: "all 0.15s ease",
             }}
           >
-            <span style={{ fontSize: "14px" }}>📄</span>
-            <span
+            {/* Header: file + score */}
+            <div
               style={{
-                fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                fontSize: "12px",
-                fontWeight: 600,
-                color: "#4F8EF7",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "6px",
               }}
             >
-              {fileResult.file}
-            </span>
-            <span
-              style={{
-                fontSize: "10px",
-                color: "#A0A0B0",
-                fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-              }}
-            >
-              ({fileResult.matches.length} match{fileResult.matches.length !== 1 ? "es" : ""})
-            </span>
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px", paddingLeft: "22px" }}>
-            {fileResult.matches.map((match) => {
-              const idx = currentFlatIndex++;
-              const isFocused = idx === focusedIndex;
-              return (
-                <div
-                  key={`${fileResult.file}-${match.line}`}
-                  onClick={() => onResultClick?.(fileResult, match)}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+              >
+                <span style={{ fontSize: "14px" }}>📄</span>
+                <span
                   style={{
-                    background: isFocused ? "rgba(79, 142, 247, 0.08)" : "rgba(255,255,255,0.02)",
-                    border: isFocused ? "1px solid rgba(79, 142, 247, 0.4)" : "1px solid #1E2D45",
-                    borderRadius: "6px",
-                    padding: "8px 12px",
-                    cursor: "pointer",
-                    transition: "all 0.1s ease",
+                    fontFamily:
+                      "var(--font-dm-mono, DM Mono, monospace)",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    color: "#4F8EF7",
                   }}
                 >
-                  <div
-                    style={{
-                      fontSize: "10px",
-                      color: "#A0A0B0",
-                      fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                      marginBottom: "3px",
-                    }}
-                  >
-                    Line {match.line}
-                  </div>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-dm-sans, DM Sans, sans-serif)",
-                      fontSize: "13px",
-                      color: "#F0F0F5",
-                      lineHeight: 1.5,
-                      whiteSpace: "pre-wrap",
-                      wordBreak: "break-word",
-                    }}
-                  >
-                    {highlightText(match.text.trim(), query)}
-                  </div>
-                  {isFocused && match.context !== match.text && (
-                    <div
-                      style={{
-                        marginTop: "8px",
-                        paddingTop: "8px",
-                        borderTop: "1px solid #1E2D45",
-                        fontFamily: "var(--font-dm-mono, DM Mono, monospace)",
-                        fontSize: "11px",
-                        color: "#A0A0B0",
-                        whiteSpace: "pre-wrap",
-                        wordBreak: "break-word",
-                        lineHeight: 1.6,
-                      }}
-                    >
-                      {highlightText(match.context, query)}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ))}
+                  {result.file}
+                </span>
+              </div>
+              <Badge
+                variant="outline"
+                style={{
+                  fontSize: "10px",
+                  padding: "2px 8px",
+                  color: scoreColor(result.score),
+                  borderColor: `${scoreColor(result.score)}40`,
+                }}
+              >
+                {result.score}
+              </Badge>
+            </div>
+
+            {/* Title */}
+            <div
+              style={{
+                fontFamily:
+                  "var(--font-dm-sans, DM Sans, sans-serif)",
+                fontSize: "13px",
+                fontWeight: 600,
+                color: "#F0F0F5",
+                marginBottom: "4px",
+              }}
+            >
+              {result.title}
+            </div>
+
+            {/* Snippet */}
+            {result.snippet && (
+              <div
+                style={{
+                  fontFamily:
+                    "var(--font-dm-sans, DM Sans, sans-serif)",
+                  fontSize: "12px",
+                  color: "#A0A0B0",
+                  lineHeight: 1.5,
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                }}
+              >
+                {highlightText(result.snippet, query)}
+              </div>
+            )}
+          </Card>
+        );
+      })}
     </div>
   );
 }

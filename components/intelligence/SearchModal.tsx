@@ -6,16 +6,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-interface Match {
-  line: number;
-  text: string;
-  context: string;
-}
-
-interface FileResult {
-  file: string;
-  matches: Match[];
-}
+import type { QmdResult } from "./SearchResults";
 
 interface SearchModalProps {
   open: boolean;
@@ -24,27 +15,24 @@ interface SearchModalProps {
 
 export default function SearchModal({ open, onClose }: SearchModalProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<FileResult[]>([]);
-  const [totalMatches, setTotalMatches] = useState(0);
+  const [results, setResults] = useState<QmdResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const totalFlat = results.reduce((sum, r) => sum + r.matches.length, 0);
+  const totalFlat = results.length;
 
   const doSearch = useCallback(async (q: string) => {
     if (q.length < 2) {
       setResults([]);
-      setTotalMatches(0);
       return;
     }
     setLoading(true);
     try {
-      const res = await fetch(`/api/intelligence/search?q=${encodeURIComponent(q)}`);
+      const res = await fetch(`/api/qmd/search?q=${encodeURIComponent(q)}&limit=10`);
       const data = await res.json();
       setResults(data.results || []);
-      setTotalMatches(data.totalMatches || 0);
       setFocusedIndex(-1);
     } catch {
       setResults([]);
@@ -193,7 +181,6 @@ export default function SearchModal({ open, onClose }: SearchModalProps) {
             <SearchResults
               results={results}
               query={query}
-              totalMatches={totalMatches}
               focusedIndex={focusedIndex}
             />
           )}
