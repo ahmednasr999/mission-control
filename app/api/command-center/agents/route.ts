@@ -16,19 +16,20 @@ interface AgentInfo {
 }
 
 const AGENTS: AgentInfo[] = [
-  { name: "NASR", emoji: "🧠", lastAction: "No recent activity", timestamp: null },
-  { name: "ADHAM", emoji: "📋", lastAction: "No recent activity", timestamp: null },
-  { name: "HEIKAL", emoji: "🔍", lastAction: "No recent activity", timestamp: null },
-  { name: "MAHER", emoji: "⚙️", lastAction: "No recent activity", timestamp: null },
-  { name: "LOTFI", emoji: "📊", lastAction: "No recent activity", timestamp: null },
+  { name: "NASR", emoji: "🎯", lastAction: "No recent activity", timestamp: null },
+  { name: "CV Optimizer", emoji: "📄", lastAction: "No recent activity", timestamp: null },
+  { name: "Job Hunter", emoji: "🔍", lastAction: "No recent activity", timestamp: null },
+  { name: "Researcher", emoji: "🔬", lastAction: "No recent activity", timestamp: null },
+  { name: "Content Creator", emoji: "✍️", lastAction: "No recent activity", timestamp: null },
 ];
 
+// Gateway sessions use "agent:main:main" for NASR
 const AGENT_SESSION_MAP: Record<string, string> = {
-  NASR: "agent:main:main",
-  ADHAM: "agent:main:subagent:adham",
-  HEIKAL: "agent:main:subagent:heikal",
-  MAHER: "agent:main:subagent:maher",
-  LOTFI: "agent:main:subagent:lotfi",
+  "NASR": "agent:main:main",
+  "CV Optimizer": "agent:main:main",
+  "Job Hunter": "agent:main:main",
+  "Researcher": "agent:main:main",
+  "Content Creator": "agent:main:main",
 };
 
 /**
