@@ -11,6 +11,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
+import MobileNav from "@/components/MobileNav";
 import { SidebarContext } from "@/lib/sidebar-context";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -78,6 +79,7 @@ export default function DashboardShell({ children }: DashboardShellProps) {
           <ScrollArea className="flex-1 bg-[#080C16]">
             {children}
           </ScrollArea>
+          <MobileNav />
         </div>
       </div>
     </SidebarContext.Provider>
